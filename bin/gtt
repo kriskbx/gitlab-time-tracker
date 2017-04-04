@@ -1,0 +1,14 @@
+#! /usr/bin/env php
+
+<?php
+
+$sourceGlobal = __DIR__ . '/../kriskbx/gitlab-time-tracker/src/index.php';
+$sourceLocal  = __DIR__ . '/../src/index.php';
+
+if ( file_exists( $sourceGlobal ) ) {
+	include $sourceGlobal;
+} elseif ( file_exists( $sourceLocal ) ) {
+	include $sourceLocal;
+} else {
+	throw new Exception( "Can't find source!" );
+}

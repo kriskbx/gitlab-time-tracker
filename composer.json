@@ -1,0 +1,25 @@
+{
+  "name": "kriskbx/gitlab-time-tracker",
+  "license": "GPL v2",
+  "authors": [
+    {
+      "name": "Kris Siepert",
+      "email": "m@kris.cool"
+    }
+  ],
+  "require": {
+    "symfony/console": "^3.2",
+    "m4tthumphrey/php-gitlab-api": "^7.15",
+    "illuminate/support": "^5.4",
+    "nesbot/carbon": "^1.22",
+    "symfony/yaml": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "kriskbx\\gtt\\": "src"
+    }
+  },
+  "bin": [
+    "bin/gtt"
+  ]
+}
