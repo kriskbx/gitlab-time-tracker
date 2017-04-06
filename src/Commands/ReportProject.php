@@ -77,6 +77,16 @@ class ReportProject extends BaseCommand
         // Get params (for filtering via milestone/label/closed)
         $params = $this->getParams($closed, $milestone);
 
+        // Choose output
+        if ( ! $outputOption) {
+            $outputInstance = new Table($input, $output, $questionHelper, $columns, $file);
+        } elseif (array_key_exists($outputOption, $this->outputs)) {
+            $outputClassName = $this->outputs[$outputOption];
+            $outputInstance  = new $outputClassName($input, $output, $questionHelper, $columns, $file);
+        } else {
+            throw new \Exception("Output '{$output}' not found!");
+        }
+
         // Get issues
         $issues = $this->getIssues($output, $project, $params, $includeLabels, $excludeLabels);
         $issues = $this->filterIssuesByArgument($issues, $input);
@@ -87,16 +97,6 @@ class ReportProject extends BaseCommand
 
         // Set time records in issues
         $issues = $this->setTimesInIssues($output, $issues, $from, $to, $user);
-
-        // Choose output
-        if ( ! $outputOption) {
-            $outputInstance = new Table($input, $output, $questionHelper, $columns, $file);
-        } elseif (array_key_exists($outputOption, $this->outputs)) {
-            $outputClassName = $this->outputs[$outputOption];
-            $outputInstance  = new $outputClassName($input, $output, $questionHelper, $columns, $file);
-        } else {
-            throw new \Exception("Output '{$output}' not found!");
-        }
 
         // Put everything out there!
         $outputInstance->render($issues, $this->config);

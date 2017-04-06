@@ -108,9 +108,9 @@ abstract class AbstractOutput implements \kriskbx\gtt\Output\OutputInterface
             throw new \Exception('You have to specify a file path using the --file option!');
         }
 
-        if ( ! file_exists($file)) {
+        if (file_exists($file)) {
             $question = new ConfirmationQuestion(
-                "File '{$file}' doesn't exist. Should it be created?",
+                "File '{$file}' exist. Overwrite it?",
                 true,
                 '/^(y|j)/i'
             );
@@ -119,13 +119,14 @@ abstract class AbstractOutput implements \kriskbx\gtt\Output\OutputInterface
                 throw new \Exception("Could not write file '{$file}'");
             }
 
-            if ( ! file_exists(dirname($file))) {
-                mkdir(dirname($file), 0755, true);
-            }
-
-            touch($file);
+            unlink($file);
         }
 
+        if ( ! file_exists(dirname($file))) {
+            mkdir(dirname($file), 0755, true);
+        }
+
+        touch($file);
         file_put_contents($file, $contents);
     }
 }
