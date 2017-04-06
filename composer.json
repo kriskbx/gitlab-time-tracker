@@ -1,5 +1,6 @@
 {
   "name": "kriskbx/gitlab-time-tracker",
+  "description": "A command line interface that makes working with GitLabs time tracking feature more enjoyable.",
   "license": "GPL v2",
   "authors": [
     {
@@ -12,7 +13,8 @@
     "m4tthumphrey/php-gitlab-api": "^7.15",
     "illuminate/support": "^5.4",
     "nesbot/carbon": "^1.22",
-    "symfony/yaml": "^3.2"
+    "symfony/yaml": "^3.2",
+    "symfony/process": "^3.2"
   },
   "autoload": {
     "psr-4": {

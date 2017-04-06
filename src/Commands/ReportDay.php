@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReportMonth extends BaseCommand
+class ReportDay extends BaseCommand
 {
     /**
      * Configure.
@@ -17,8 +17,8 @@ class ReportMonth extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('report:month')
-            ->addArgument('month', InputArgument::OPTIONAL, 'Date of the month, defaults to this month.')
+            ->setName('report:day')
+            ->addArgument('day', InputArgument::OPTIONAL, 'Date of the day, defaults to today.')
             ->addArgument('project', InputArgument::OPTIONAL,
                 'Id or project namespace. Defaults to project defined in config.')
             ->setDescription('Get metrics for a month');
@@ -40,17 +40,17 @@ class ReportMonth extends BaseCommand
 
         $command = $this->getApplication()->find('report');
 
-        $month           = $input->getArgument('month') ? Carbon::parse($input->getArgument('month')) : Carbon::now();
-        $firstDayOfMonth = Carbon::parse($month->format('Y-m-') . '01 00:00:00');
-        $lastDayOfMonth  = $firstDayOfMonth->copy()->addMonth();
+        $day = $input->getArgument('day') ? Carbon::parse($input->getArgument('day')) : Carbon::now();
+        $from  = Carbon::parse($day->format('Y-m-d') . ' 00:00:00');
+        $to    = $from->copy()->addDay();
 
-        $output->writeln("* Querying times from '" . $firstDayOfMonth->format($this->config['dateFormat']) . "' to '" . $lastDayOfMonth->format($this->config['dateFormat']) . "'");
+        $output->writeln("* Querying times from '" . $from->format($this->config['dateFormat']) . "' to '" . $to->format($this->config['dateFormat']) . "'");
 
         $arguments = [
             'command' => 'report',
             'project' => $input->getArgument('project'),
-            '--from'  => $firstDayOfMonth->format('Y-m-d H:i:s'),
-            '--to'    => $lastDayOfMonth->format('Y-m-d H:i:s')
+            '--from'  => $from->format('Y-m-d H:i:s'),
+            '--to'    => $to->format('Y-m-d H:i:s')
         ];
 
         $command->run(new ArrayInput(array_merge($arguments, $this->getDefaultArguments($input))), $output);
