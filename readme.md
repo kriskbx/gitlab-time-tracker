@@ -2,6 +2,8 @@
 
 > A command line interface that makes working with GitLabs time tracking feature more enjoyable.
 
+![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
+
 ### requirements
 
 * **php >= 7.0** (5.6 won't work)
