@@ -113,7 +113,7 @@ milestone: milestone_name
 hoursPerDay: 8
 
 # columns to include in the report
-# available columns: id, iid, title, 
+# available columns: id, iid, title, project_id, description, labels, milestone, assignee, author, closed, updated_at, created_at, state
 columns:
 - iid
 - title
