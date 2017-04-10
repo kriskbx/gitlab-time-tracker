@@ -6,7 +6,11 @@ namespace kriskbx\gtt\Api;
 
 use Gitlab\Api\AbstractApi;
 
-class TimeStats extends AbstractApi
+/**
+ * Class TimeStats
+ * @package kriskbx\gtt\Api
+ */
+class IssueTimeStats extends AbstractApi
 {
     /**
      * @param int $project_id

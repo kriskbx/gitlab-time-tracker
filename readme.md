@@ -50,6 +50,9 @@ gtt report ["namespace/project"] [issue_id]
 gtt report:month ["2017-03"] ["namespace/project"]
 gtt report:day ["2017-03-01"] ["namespace/project"]
 
+# timeframe
+git report --from="2017-03-01" --to="2017-04-01"
+
 # include closed issues
 gtt report --closed=true
 
@@ -65,14 +68,21 @@ gtt report --date_format="d.m.Y H:i:s"
 # overwrite the default columns or the columns stored in your config
 gtt report --columns=iid --columns=title --columns=estimation
 
-# only include the given labels in the results, overwrites the includeLabels stored in your config file
+# only include issues and merge requests that have the following labels, overwrites the includeByLabels store in your config
+gtt report --include_by_labels=critical --include_by_labels=important
+
+# exclude issues and merge requests that have the following labels, overwrites the excludeByLabels store in your config
+gtt report --exclude_by_labels=wont-fix --exclude_by_labels=ignore
+
+# only include the given labels in the results, overwrites the includeLabels stored in your config
 gtt report --include_labels=pending --include_labels=approved
 
-# exclude the given labels from the results, overwrites the excludeLabels stored in your config file
+# exclude the given labels from the results, overwrites the excludeLabels stored in your config
 gtt report --exclude_labels=bug --exclude_labels=feature
 
-# choose a different output than a stdout table (csv & json coming soon)
+# choose a different output than a stdout table (json coming soon)
 gtt report --output=markdown --file=filename.md
+gtt report --output=csv --file=filename.csv
 ```
 
 #### time tracking
@@ -96,13 +106,14 @@ project: namespace/projectname
 # include closed by default
 closed: true
 
-# default milestone
+# default milestone to filter issues by
 milestone: milestone_name
 
 # hours per day
 hoursPerDay: 8
 
-# columns
+# columns to include in the report
+# available columns: id, iid, title, 
 columns:
 - iid
 - title
@@ -113,6 +124,16 @@ dateFormat: Y-m-d H:i:s
 
 # default output
 output: markdown
+
+# exclude issues and merge requests that have the following labels
+excludeByLabels:
+- wont-fix
+- ignore
+
+# only include issues and merge request that have the following labels
+includeByLabels:
+- critical
+- important
 
 # exclude the following labels in the results
 excludeLabels:

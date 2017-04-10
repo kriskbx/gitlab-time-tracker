@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use kriskbx\gtt\Issue;
 use kriskbx\gtt\Time;
 
-class Markdown extends AbstractOutput
+class MarkdownOutput extends AbstractOutput
 {
     /**
      * @var string
@@ -19,11 +19,12 @@ class Markdown extends AbstractOutput
      * Render.
      *
      * @param Collection $issues
+     * @param string $title
      * @param array $params
      *
      * @return void
      */
-    public function render(Collection $issues, array $params)
+    public function render(Collection $issues, $title, array $params)
     {
         $params = array_merge($params, [
             'columns'         => $this->columns,
@@ -35,6 +36,8 @@ class Markdown extends AbstractOutput
             'beforeHeadline'  => "***",
             'afterHeadline'   => "***"
         ]);
+
+        $this->contents = '### ' . $title . "\n\n";
 
         $this->tableHeaders();
 

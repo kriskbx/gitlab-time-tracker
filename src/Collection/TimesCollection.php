@@ -7,6 +7,12 @@ namespace kriskbx\gtt\Collection;
 use Illuminate\Support\Collection;
 use kriskbx\gtt\Time;
 
+/**
+ * Class TimesCollection
+ *
+ * Time should be rendered differently, so we extend the base Collection and implement our own toString method.
+ * @package kriskbx\gtt\Collection
+ */
 class TimesCollection extends Collection
 {
     /**

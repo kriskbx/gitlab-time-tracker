@@ -11,7 +11,7 @@ use kriskbx\gtt\Time;
 use Symfony\Component\Console\Helper\Table as ConsoleTable;
 use Symfony\Component\Console\Helper\TableSeparator;
 
-class Table extends AbstractOutput
+class TableOutput extends AbstractOutput
 {
     /**
      * @var ConsoleTable
@@ -22,11 +22,12 @@ class Table extends AbstractOutput
      * Render.
      *
      * @param Collection $issues
+     * @param string $title
      * @param array $params
      *
      * @return mixed
      */
-    public function render(Collection $issues, array $params)
+    public function render(Collection $issues, $title, array $params)
     {
         $params = array_merge($params, [
             'columns'         => $this->columns,
@@ -60,6 +61,8 @@ class Table extends AbstractOutput
 
         // WE NEED SPACES
         $this->output->writeln('');
+        $this->output->writeln('');
+        $this->output->writeln($title);
         $this->output->writeln('');
 
         $this->total();

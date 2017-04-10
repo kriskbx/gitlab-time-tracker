@@ -2,6 +2,13 @@
 
 namespace kriskbx\gtt\Helper;
 
+/**
+ * Class ArrayAccessForGetterMethods
+ *
+ * Automagically uses all available getter methods in a class for the toArray method
+ * as well as for the ArrayAccess Interface.
+ * @package kriskbx\gtt\Helper
+ */
 trait ArrayAccessForGetterMethods
 {
 

@@ -7,6 +7,10 @@ namespace kriskbx\gtt;
 use Illuminate\Contracts\Support\Arrayable;
 use kriskbx\gtt\Helper\ArrayAccessForGetterMethods;
 
+/**
+ * Class Estimation
+ * @package kriskbx\gtt
+ */
 class Estimation implements Arrayable, \ArrayAccess
 {
     use ArrayAccessForGetterMethods;

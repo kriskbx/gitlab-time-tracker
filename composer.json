@@ -14,7 +14,8 @@
     "illuminate/support": "^5.4",
     "nesbot/carbon": "^1.22",
     "symfony/yaml": "^3.2",
-    "symfony/process": "^3.2"
+    "symfony/process": "^3.2",
+    "league/csv": "^8.2"
   },
   "autoload": {
     "psr-4": {

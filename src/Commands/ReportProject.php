@@ -5,8 +5,10 @@ namespace kriskbx\gtt\Commands;
 use Carbon\Carbon;
 use Gitlab\Api\Issues;
 use Illuminate\Support\Collection;
+use kriskbx\gtt\Api\MergeRequests;
 use kriskbx\gtt\Issue;
-use kriskbx\gtt\Output\Table;
+use kriskbx\gtt\MergeRequest;
+use kriskbx\gtt\Output\TableOutput;
 use kriskbx\gtt\Project;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -68,18 +70,20 @@ class ReportProject extends BaseCommand
             $milestone,
             $outputOption,
             $includeLabels,
-            $excludeLabels
+            $excludeLabels,
+            $includeByLabels,
+            $excludeByLabels
             ) = $this->getConfiguration($input);
 
         // Get project
         $project = $this->getProject($output, $projectName);
 
         // Get params (for filtering via milestone/label/closed)
-        $params = $this->getParams($closed, $milestone);
+        $params = $this->getParams($closed, $milestone, $includeByLabels);
 
         // Choose output
         if ( ! $outputOption) {
-            $outputInstance = new Table($input, $output, $questionHelper, $columns, $file);
+            $outputInstance = new TableOutput($input, $output, $questionHelper, $columns, $file);
         } elseif (array_key_exists($outputOption, $this->outputs)) {
             $outputClassName = $this->outputs[$outputOption];
             $outputInstance  = new $outputClassName($input, $output, $questionHelper, $columns, $file);
@@ -90,16 +94,23 @@ class ReportProject extends BaseCommand
         // Get issues
         $issues = $this->getIssues($output, $project, $params, $includeLabels, $excludeLabels);
         $issues = $this->filterIssuesByArgument($issues, $input);
+        $issues = $this->filterIssuesByLabels($issues, $excludeByLabels);
+
+        // Get merge requests
+//        $mergeRequests = $this->getMergeRequests($output, $project, $params, $includeLabels, $excludeLabels);
+//        $mergeRequests = $this->filterIssuesByArgument($mergeRequests, $input);
+//        $mergeRequests = $this->filterIssuesByLabels($mergeRequests, $excludeByLabels);
 
         if ($issues->count() == 0) {
-            throw new \Exception('No issues found that match your criteria!');
+            throw new \Exception('No issues or merge requests found that match your criteria!');
         }
 
         // Set time records in issues
-        $issues = $this->setTimesInIssues($output, $issues, $from, $to, $user);
+        $issues        = $this->setTimesInIssues($output, $issues, $from, $to, $user);
+//        $mergeRequests = $this->setTimesInIssues($output, $mergeRequests, $from, $to, $user);
 
         // Put everything out there!
-        $outputInstance->render($issues, $this->config);
+        $outputInstance->render($issues, 'Issues', $this->config->toArray());
 
         $output->writeln("<fg=green>Done!</> 🍺");
     }
@@ -182,6 +193,59 @@ class ReportProject extends BaseCommand
     }
 
     /**
+     * Get all Merge Requests by the given project and params.
+     *
+     * @param OutputInterface $output
+     * @param Project $project
+     * @param array $params
+     *
+     * @param null $includeLabels
+     * @param array $excludeLabels
+     *
+     * @return Collection
+     */
+    protected function getMergeRequests(
+        OutputInterface $output,
+        Project $project,
+        array $params,
+        $includeLabels = null,
+        $excludeLabels = []
+    ) {
+        $output->write("* Getting merge requests... ");
+
+        $issues = collect([]);
+
+        $page    = 1;
+        $perPage = 100;
+
+        // Loop through all pages
+        while (true) {
+            $response = collect((new MergeRequests($this->client))->all($project->id, $page, $perPage));
+            $issues   = $issues->merge($response);
+
+            $page++;
+
+            if ($response->count() < $perPage) {
+                break;
+            }
+        }
+
+        // Create Issue objects
+        $issues = $issues->map(function ($data) use ($project, $includeLabels, $excludeLabels) {
+            $issue = MergeRequest::fromArray($this->client, $project, $data);
+
+            $issue->setIncludeLabels($includeLabels);
+            $issue->setExcludeLabels($excludeLabels);
+
+            return $issue;
+        });
+
+        $output->writeln($this->check);
+
+        return $issues;
+    }
+
+    /**
      * Set times in the given issues.
      *
      * @param OutputInterface $output
@@ -227,18 +291,20 @@ class ReportProject extends BaseCommand
      */
     protected function getConfiguration(InputInterface $input)
     {
-        $from           = Carbon::parse($input->getOption('from') ?: '01-01-1977');
-        $to             = $input->getOption('to') ? Carbon::parse($input->getOption('to')) : Carbon::now();
-        $closed         = $input->getOption('closed') === null ? $this->config['closed'] : $input->getOption('closed');
-        $milestone      = $input->getOption('milestone') === null ? $this->config['milestone'] : $input->getOption('milestone');
-        $projectName    = $input->getArgument('project') ?: $this->config['project'];
-        $columns        = array_merge($input->getOption('columns') ?: $this->config['columns'], ['times']);
-        $user           = $input->getOption('user') ?: false;
-        $questionHelper = $this->getHelper('question');
-        $file           = $input->getOption('file');
-        $outputOption   = $input->getOption('output') === null ? $this->config['output'] : $input->getOption('output');
-        $includeLabels  = $input->getOption('include_labels') === null ? $this->config['includeLabels'] : $input->getOption('include_labels');
-        $excludeLabels  = $input->getOption('exclude_labels') === null ? $this->config['excludeLabels'] : $input->getOption('exclude_labels');
+        $from            = Carbon::parse($input->getOption('from') ?: '01-01-1977');
+        $to              = $input->getOption('to') ? Carbon::parse($input->getOption('to')) : Carbon::now();
+        $closed          = $input->getOption('closed') === null ? $this->config['closed'] : $input->getOption('closed');
+        $milestone       = $input->getOption('milestone') === null ? $this->config['milestone'] : $input->getOption('milestone');
+        $projectName     = $input->getArgument('project') ?: $this->config['project'];
+        $columns         = array_merge($input->getOption('columns') ?: $this->config['columns'], ['times']);
+        $user            = $input->getOption('user') ?: false;
+        $questionHelper  = $this->getHelper('question');
+        $file            = $input->getOption('file');
+        $outputOption    = $input->getOption('output') === null ? $this->config['output'] : $input->getOption('output');
+        $includeLabels   = $input->getOption('include_labels') === null ? $this->config['includeLabels'] : $input->getOption('include_labels');
+        $excludeLabels   = $input->getOption('exclude_labels') === null ? $this->config['excludeLabels'] : $input->getOption('exclude_labels');
+        $includeByLabels = $input->getOption('include_by_labels') === null ? $this->config['includeByLabels'] : $input->getOption('include_by_labels');
+        $excludeByLabels = $input->getOption('exclude_by_labels') === null ? $this->config['excludeByLabels'] : $input->getOption('exclude_by_labels');
 
         return [
             $from,
@@ -252,7 +318,9 @@ class ReportProject extends BaseCommand
             $milestone,
             $outputOption,
             $includeLabels,
-            $excludeLabels
+            $excludeLabels,
+            $includeByLabels,
+            $excludeByLabels
         ];
     }
 
@@ -276,18 +344,41 @@ class ReportProject extends BaseCommand
         return $issues;
     }
 
+    /**
+     * @param Collection $issues
+     * @param array $exclude
+     *
+     * @return Collection
+     */
+    protected function filterIssuesByLabels(Collection $issues, array $exclude)
+    {
+        if (count($exclude) > 0) {
+            $issues = $issues->filter(function ($issue) use ($exclude) {
+                return collect($issue->labels)->filter(function ($label) use ($exclude) {
+                        return in_array($label, $exclude);
+                    })->count() == 0;
+            });
+        }
+
+        return $issues;
+    }
 
     /**
      * Get params for querying issues. Is sued to filter out issues in the first place.
      *
      * @param bool $closed
      * @param string $milestone
+     * @param array $labels
      *
      * @return array
      */
-    protected function getParams($closed, $milestone)
+    protected function getParams($closed, $milestone, array $labels)
     {
         $params = [];
+
+        if ($labels) {
+            $params['labels'] = implode(',', $labels);
+        }
 
         if ($closed == false) {
             $params['state'] = 'opened';

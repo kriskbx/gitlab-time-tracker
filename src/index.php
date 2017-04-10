@@ -15,36 +15,9 @@ if (file_exists($autoloadGlobal)) {
     exit(1);
 }
 
-// Parse config
-$configFile = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.gitlab-time.yml';
-$configDir  = dirname($configFile);
-
-if ( ! file_exists($configDir)) {
-    mkdir($configDir, 0755, true);
-}
-if ( ! file_exists($configFile)) {
-    touch($configFile);
-}
-
-try {
-    $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents($configFile));
-} catch (Exception $e) {
-    echo "Invalid config file '{$configFile}'.\n";
-    exit(1);
-}
-
-$config['configFile']    = $configFile;
-$config['url']           = @$config['url'] ?: 'http://gitlab.com/api/v4/';
-$config['token']         = @$config['token'] ?: false;
-$config['project']       = @$config['project'] ?: false;
-$config['closed']        = @$config['closed'] ?: false;
-$config['milestone']     = @$config['milestone'] ?: null;
-$config['output']        = @$config['output'] ?: null;
-$config['hoursPerDay']   = @$config['hoursPerDay'] ?: 8;
-$config['columns']       = @$config['columns'] ?: ['iid', 'title', 'estimation'];
-$config['dateFormat']    = @$config['dateFormat'] ?: 'd.m.Y H:i';
-$config['excludeLabels'] = @$config['excludeLabels'] ?: [];
-$config['includeLabels'] = @$config['includeLabels'] ?: [];
+// Config
+$config = new \kriskbx\gtt\Config\Config();
+$configFile = \kriskbx\gtt\Config\Config::getFile();
 
 // Add some Collection magic
 include 'Collection/macros.php';
