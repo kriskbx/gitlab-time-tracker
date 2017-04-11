@@ -24,6 +24,11 @@ abstract class AbstractOutput implements \kriskbx\gtt\Output\OutputInterface
     protected $totalTime = 0;
 
     /**
+     * @var int
+     */
+    protected $totalEstimate = 0;
+
+    /**
      * @var InputInterface
      */
     protected $input;
@@ -78,7 +83,9 @@ abstract class AbstractOutput implements \kriskbx\gtt\Output\OutputInterface
      */
     protected function addToTotal(Issue $issue)
     {
-        $issue->getTimes()->each(function ($times, $user) {
+        $this->totalEstimate += @$issue->getEstimation()->getTimeEstimate() ?: 0;
+
+        collect($issue->getTimes())->each(function ($times, $user) {
             if ( ! @$this->totalTimeByUser[$user]) {
                 $this->totalTimeByUser[$user] = 0;
             }

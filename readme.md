@@ -51,7 +51,7 @@ gtt report:month ["2017-03"] ["namespace/project"]
 gtt report:day ["2017-03-01"] ["namespace/project"]
 
 # timeframe
-git report --from="2017-03-01" --to="2017-04-01"
+gtt report --from="2017-03-01" --to="2017-04-01"
 
 # include closed issues
 gtt report --closed=true

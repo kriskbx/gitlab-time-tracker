@@ -66,7 +66,8 @@ class MarkdownOutput extends AbstractOutput
      */
     protected function total()
     {
-        $subString = "* **Total:** " . Time::humanReadable($this->totalTime) . "\n";
+        $subString = "* **Total spent:** " . Time::humanReadable($this->totalTime) . "\n";
+        $subString .= "* **Total estimated:** " . Time::humanReadable($this->totalEstimate) . "\n";
 
         collect($this->totalTimeByUser)->each(function ($time, $user) use (&$subString) {
             $subString .= "* **{$user}:** " . Time::humanReadable($time) . "\n";

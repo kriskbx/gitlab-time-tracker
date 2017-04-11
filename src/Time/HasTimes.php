@@ -3,7 +3,9 @@
 namespace kriskbx\gtt\Time;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use kriskbx\gtt\Collection\TimesCollection;
+use kriskbx\gtt\Estimation;
 use kriskbx\gtt\Time;
 
 trait HasTimes

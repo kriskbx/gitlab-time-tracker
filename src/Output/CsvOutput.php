@@ -3,15 +3,10 @@
 
 namespace kriskbx\gtt\Output;
 
-
 use Illuminate\Support\Collection;
 use kriskbx\gtt\Issue;
-use kriskbx\gtt\Time;
 use League\Csv\Writer;
 use SplTempFileObject;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class CsvOutput extends AbstractOutput
 {

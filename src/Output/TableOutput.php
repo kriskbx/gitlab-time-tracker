@@ -62,7 +62,7 @@ class TableOutput extends AbstractOutput
         // WE NEED SPACES
         $this->output->writeln('');
         $this->output->writeln('');
-        $this->output->writeln($title);
+        $this->output->writeln("<fg=black;bg=blue>  {$title}  </>");
         $this->output->writeln('');
 
         $this->total();
@@ -126,7 +126,8 @@ class TableOutput extends AbstractOutput
      */
     protected function total()
     {
-        $string = "* <fg=blue>Total:</> " . Time::humanReadable($this->totalTime) . "\n";
+        $string = "* <fg=blue>Total spent:</> " . Time::humanReadable($this->totalTime) . "\n";
+        $string .= "* <fg=blue>Total estimate:</> " . Time::humanReadable($this->totalEstimate) . "\n\n";
 
         collect($this->totalTimeByUser)->each(function ($time, $user) use (&$string) {
             $string .= "* <fg=blue>{$user}:</> " . Time::humanReadable($time) . "\n";
