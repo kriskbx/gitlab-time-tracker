@@ -6,6 +6,7 @@ namespace kriskbx\gtt\Config;
 
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
+use kriskbx\gtt\Time;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -131,6 +132,7 @@ class Config implements \ArrayAccess, Arrayable
             'hoursPerDay'     => @$this->config['hoursPerDay'] ?: 8,
             'columns'         => @$this->config['columns'] ?: ['iid', 'title', 'estimation'],
             'dateFormat'      => @$this->config['dateFormat'] ?: 'd.m.Y H:i',
+            'timeFormat'      => @$this->config['timeFormat'] ?: Time::TIME_FORMAT,
             'excludeByLabels' => @$this->config['excludeByLabels'] ?: [],
             'includeByLabels' => @$this->config['includeByLabels'] ?: [],
             'excludeLabels'   => @$this->config['excludeLabels'] ?: [],

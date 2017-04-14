@@ -16,6 +16,12 @@ class Time implements ArrayAccess, Arrayable
     protected $date;
     private $hoursPerDay;
 
+    const TIME_FORMAT = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]';
+    /**
+     * @var string
+     */
+    private $timeFormat;
+
     /**
      * Time constructor.
      *
@@ -23,9 +29,15 @@ class Time implements ArrayAccess, Arrayable
      * @param mixed $input
      * @param string $user
      * @param int $hoursPerDay
+     * @param string $timeFormat
      */
-    public function __construct($date = null, $input = null, $user = null, $hoursPerDay = 8)
-    {
+    public function __construct(
+        $date = null,
+        $input = null,
+        $user = null,
+        $hoursPerDay = 8,
+        $timeFormat = self::TIME_FORMAT
+    ) {
         if ($date) {
             $this->date = Carbon::parse($date);
         }
@@ -38,6 +50,7 @@ class Time implements ArrayAccess, Arrayable
 
         $this->user        = $user;
         $this->hoursPerDay = $hoursPerDay;
+        $this->timeFormat  = $timeFormat;
     }
 
     /**
@@ -99,7 +112,7 @@ class Time implements ArrayAccess, Arrayable
      */
     public function getHumanReadable()
     {
-        return self::humanReadable($this->seconds, $this->hoursPerDay);
+        return self::humanReadable($this->seconds, $this->hoursPerDay, $this->timeFormat);
     }
 
     /**
@@ -115,11 +128,15 @@ class Time implements ArrayAccess, Arrayable
      *
      * @param int $seconds
      * @param int $hoursPerDay
+     * @param string $format
      *
      * @return string
      */
-    static public function humanReadable($seconds, $hoursPerDay = 8)
-    {
+    static public function humanReadable(
+        $seconds,
+        $hoursPerDay = 8,
+        $format = self::TIME_FORMAT
+    ) {
         $sign    = $seconds < 0 ? '-' : '';
         $seconds = abs($seconds);
 
@@ -135,12 +152,31 @@ class Time implements ArrayAccess, Arrayable
         $remainingSeconds = $minuteSeconds % $secondsInAMinute;
         $seconds          = ceil($remainingSeconds);
 
-        $string = $days ? (int)$days . 'd ' : '';
-        $string .= $hours ? (int)$hours . 'h ' : '';
-        $string .= $minutes ? (int)$minutes . 'm ' : '';
-        $string .= $seconds ? (int)$seconds . 's' : '';
+        $inserts = compact('sign', 'days', 'hours', 'minutes', 'seconds');
+        foreach ($inserts as $key => $insert) {
+            if ($key == 'sign') {
+                continue;
+            }
 
-        return $sign . trim($string);
+            $inserts[ucfirst($key)] = str_pad($insert, 2, '0', STR_PAD_LEFT);
+        }
+
+        // extract and replace conditionals from format
+        if (preg_match_all('/(\[\%([^\>\]]*)\>([^\]]*)\])/i', $format, $matches, PREG_SET_ORDER, 0)) {
+            foreach ($matches as $match) {
+                $insert = @$inserts[$match[2]] ? @$inserts[$match[2]] . $match[3] : '';
+                $format = str_replace($match[0], $insert, $format);
+            }
+        }
+
+        // extract and replace default format things
+        if (preg_match_all('/(\[\%([^\]]*)\])/i', $format, $matches, PREG_SET_ORDER, 0)) {
+            foreach ($matches as $match) {
+                $format = str_replace($match[0], @$inserts[$match[2]], $format);
+            }
+        }
+
+        return trim($format);
     }
 
     /**

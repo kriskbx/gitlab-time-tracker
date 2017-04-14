@@ -46,7 +46,7 @@ class MarkdownOutput extends AbstractOutput
             $this->contents .= "\n| " . $issue->toString($params) . " |";
         });
 
-        $this->total();
+        $this->total($params);
 
         $this->write($this->contents, $this->file);
 
@@ -63,14 +63,19 @@ class MarkdownOutput extends AbstractOutput
 
     /**
      * Set total times.
+     *
+     * @param array $params
      */
-    protected function total()
+    protected function total(array $params)
     {
-        $subString = "* **Total spent:** " . Time::humanReadable($this->totalTime) . "\n";
-        $subString .= "* **Total estimated:** " . Time::humanReadable($this->totalEstimate) . "\n";
+        $subString = "* **Total spent:** " .
+                     Time::humanReadable($this->totalTime, @$params['hoursPerDay'], @$params['timeFormat']) . "\n";
+        $subString .= "* **Total estimated:** " .
+                      Time::humanReadable($this->totalEstimate, @$params['hoursPerDay'], @$params['timeFormat']) . "\n";
 
-        collect($this->totalTimeByUser)->each(function ($time, $user) use (&$subString) {
-            $subString .= "* **{$user}:** " . Time::humanReadable($time) . "\n";
+        collect($this->totalTimeByUser)->each(function ($time, $user) use (&$subString, $params) {
+            $subString .= "* **{$user}:** " .
+                          Time::humanReadable($time, @$params['hoursPerDay'], @$params['timeFormat']) . "\n";
         });
 
         $this->contents = $subString . "\n\n" . $this->contents;

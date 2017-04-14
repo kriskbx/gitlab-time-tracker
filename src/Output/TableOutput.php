@@ -65,7 +65,7 @@ class TableOutput extends AbstractOutput
         $this->output->writeln("<fg=black;bg=blue>  {$title}  </>");
         $this->output->writeln('');
 
-        $this->total();
+        $this->total($params);
         $this->table->render();
 
         $this->output->writeln('');
@@ -123,14 +123,19 @@ class TableOutput extends AbstractOutput
 
     /**
      * Print out total stats.
+     *
+     * @param array $params
      */
-    protected function total()
+    protected function total(array $params)
     {
-        $string = "* <fg=blue>Total spent:</> " . Time::humanReadable($this->totalTime) . "\n";
-        $string .= "* <fg=blue>Total estimate:</> " . Time::humanReadable($this->totalEstimate) . "\n\n";
+        $string = "* <fg=blue>Total spent:</> " .
+                  Time::humanReadable($this->totalTime, @$params['hoursPerDay'], @$params['timeFormat']) . "\n";
+        $string .= "* <fg=blue>Total estimate:</> " .
+                   Time::humanReadable($this->totalEstimate, @$params['hoursPerDay'], @$params['timeFormat']) . "\n\n";
 
-        collect($this->totalTimeByUser)->each(function ($time, $user) use (&$string) {
-            $string .= "* <fg=blue>{$user}:</> " . Time::humanReadable($time) . "\n";
+        collect($this->totalTimeByUser)->each(function ($time, $user) use (&$string, $params) {
+            $string .= "* <fg=blue>{$user}:</> "
+                       . Time::humanReadable($time, @$params['hoursPerDay'], @$params['timeFormat']) . "\n";
         });
 
         $this->output->write($string . "\n");

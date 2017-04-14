@@ -58,7 +58,7 @@ class TimesCollection extends Collection
     {
         $totalTime = Time::humanReadable($times->reduce(function ($carry, Time $item) {
             return $carry + (int)$item->getSeconds();
-        }));
+        }), @$params['hoursPerDay'], @$params['timeFormat']);
 
         return "{$params['beforeHeadline']}$user: {$totalTime}{$params['afterHeadline']}{$params['break']}";
     }

@@ -76,6 +76,7 @@ class BaseCommand extends Command
              ->addOption('columns', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                  'Include the given columns in the report')
              ->addOption('date_format', null, InputOption::VALUE_REQUIRED, 'Date format')
+             ->addOption('time_format', null, InputOption::VALUE_REQUIRED, 'Time format')
              ->addOption('user', null, InputOption::VALUE_OPTIONAL, 'Filter times by the given user', null)
              ->addOption('milestone', null, InputOption::VALUE_OPTIONAL, 'Filter times by the given milestone', null)
              ->addOption('output', null, InputOption::VALUE_OPTIONAL,
@@ -112,6 +113,9 @@ class BaseCommand extends Command
         }
         if ($input->getOption('date_format')) {
             $arguments['--date_format'] = $input->getOption('date_format');
+        }
+        if ($input->getOption('time_format')) {
+            $arguments['--time_format'] = $input->getOption('time_format');
         }
         if ($input->getOption('user')) {
             $arguments['--user'] = $input->getOption('user');

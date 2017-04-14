@@ -65,6 +65,9 @@ gtt report --milestone=milestone_name
 # overwrite the default date format or the date format stored in your config
 gtt report --date_format="d.m.Y H:i:s"
 
+# overwrite the default time format
+gtt report --time_format="[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+
 # overwrite the default columns or the columns stored in your config
 gtt report --columns=iid --columns=title --columns=estimation
 
@@ -113,7 +116,8 @@ milestone: milestone_name
 hoursPerDay: 8
 
 # columns to include in the report
-# available columns: id, iid, title, project_id, description, labels, milestone, assignee, author, closed, updated_at, created_at, state
+# available columns: id, iid, title, project_id, description, labels, milestone,
+# assignee, author, closed, updated_at, created_at, state
 columns:
 - iid
 - title
@@ -121,6 +125,15 @@ columns:
 
 # date format
 dateFormat: Y-m-d H:i:s
+
+# time format
+# [%sign], [%days], [%hours], [%minutes], [%seconds] 
+# -> prints out the raw data
+# [%days>string], [%hours>string], [%minutes>string], [%seconds>string] 
+# -> is a conditional and prints out the data and appends the given string if the data is greater than zero
+# [%Days], [%Hours], [%Minutes], ...
+# -> uppercase adds leading zeros.
+timeFormat: [%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]
 
 # default output
 output: markdown

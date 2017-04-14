@@ -135,13 +135,13 @@ trait HasTimes
      * @param Carbon $from
      * @param Carbon $to
      * @param string $user
-     *
-     * @throws \Exception
+     * @param int $hoursPerDay
+     * @param string $timeFormat
      */
-    public function setTimes(Carbon $from, Carbon $to, $user)
+    public function setTimes(Carbon $from, Carbon $to, $user, $hoursPerDay = 8, $timeFormat = Time::TIME_FORMAT)
     {
         // Get time stats
-        $this->setTimeStats();
+        $this->setTimeStats($hoursPerDay, $timeFormat);
 
         // Get comments
         $comments = collect([]);
@@ -170,14 +170,14 @@ trait HasTimes
         });
 
         // Replace each comment with a Time object
-        $comments = $comments->map(function ($comment) use ($to, $from, $user) {
+        $comments = $comments->map(function ($comment) use ($to, $from, $user, $timeFormat, $hoursPerDay) {
             // Filter out time that has not been spent by the given user
             if ($user && $user != $comment->author->username) {
                 return false;
             }
 
             // Create time object
-            $time = new Time($comment->created_at, null, $comment->author->username);
+            $time = new Time($comment->created_at, null, $comment->author->username, $hoursPerDay, $timeFormat);
 
             // Filter out time that's not within the given from/to period
             if ( ! $time->getDate()->greaterThanOrEqualTo($from) || ! $time->getDate()->lessThanOrEqualTo($to)) {

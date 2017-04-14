@@ -19,9 +19,9 @@ class Estimation implements Arrayable, \ArrayAccess
 
     protected $totalTimeSpent;
 
-    protected $humanTimeEstimate;
+    protected $hoursPerDay;
 
-    protected $humanTotalTimeSpent;
+    protected $timeFormat;
 
     /**
      * @return mixed
@@ -44,7 +44,7 @@ class Estimation implements Arrayable, \ArrayAccess
      */
     public function getHumanTimeEstimate()
     {
-        return $this->humanTimeEstimate;
+        return Time::humanReadable($this->timeEstimate, $this->hoursPerDay, $this->timeFormat);
     }
 
     /**
@@ -52,7 +52,7 @@ class Estimation implements Arrayable, \ArrayAccess
      */
     public function getHumanTotalTimeSpent()
     {
-        return $this->humanTotalTimeSpent;
+        return Time::humanReadable($this->totalTimeSpent, $this->hoursPerDay, $this->timeFormat);
     }
 
     /**
@@ -60,15 +60,15 @@ class Estimation implements Arrayable, \ArrayAccess
      *
      * @param $timeEstimate
      * @param $totalTimeSpent
-     * @param $humanTimeEstimate
-     * @param $humanTotalTimeSpent
+     * @param int $hoursPerDay
+     * @param string $timeFormat
      */
-    public function __construct($timeEstimate, $totalTimeSpent, $humanTimeEstimate, $humanTotalTimeSpent)
+    public function __construct($timeEstimate, $totalTimeSpent, $hoursPerDay = 8, $timeFormat = Time::TIME_FORMAT)
     {
-        $this->timeEstimate        = $timeEstimate;
-        $this->totalTimeSpent      = $totalTimeSpent;
-        $this->humanTimeEstimate   = $humanTimeEstimate;
-        $this->humanTotalTimeSpent = $humanTotalTimeSpent;
+        $this->timeEstimate   = $timeEstimate;
+        $this->totalTimeSpent = $totalTimeSpent;
+        $this->hoursPerDay    = $hoursPerDay;
+        $this->timeFormat     = $timeFormat;
     }
 
     /**
@@ -95,7 +95,7 @@ class Estimation implements Arrayable, \ArrayAccess
      */
     protected function displayEstimation()
     {
-        return $this->humanTimeEstimate . ' / ' . $this->humanTotalTimeSpent;
+        return $this->getHumanTimeEstimate() . ' / ' . $this->getHumanTotalTimeSpent();
     }
 
     /**
@@ -110,8 +110,8 @@ class Estimation implements Arrayable, \ArrayAccess
         return new static(
             @$data['time_estimate'],
             @$data['total_time_spent'],
-            @$data['human_time_estimate'],
-            @$data['human_total_time_spent']
+            @$data['hours_per_day'],
+            @$data['time_format']
         );
     }
 }

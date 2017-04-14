@@ -10,6 +10,7 @@ use kriskbx\gtt\Issue;
 use kriskbx\gtt\MergeRequest;
 use kriskbx\gtt\Output\TableOutput;
 use kriskbx\gtt\Project;
+use kriskbx\gtt\Time;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -72,7 +73,8 @@ class ReportProject extends BaseCommand
             $includeLabels,
             $excludeLabels,
             $includeByLabels,
-            $excludeByLabels
+            $excludeByLabels,
+            $timeFormat
             ) = $this->getConfiguration($input);
 
         // Get project
@@ -106,7 +108,8 @@ class ReportProject extends BaseCommand
         }
 
         // Set time records in issues
-        $issues        = $this->setTimesInIssues($output, $issues, $from, $to, $user);
+        $issues = $this->setTimesInIssues($output, $issues, $from, $to, $user, $this->config['hoursPerDay'],
+            $timeFormat);
 //        $mergeRequests = $this->setTimesInIssues($output, $mergeRequests, $from, $to, $user);
 
         // Put everything out there!
@@ -250,22 +253,30 @@ class ReportProject extends BaseCommand
      *
      * @param OutputInterface $output
      * @param Collection $issues
-     * @param string $user
      * @param Carbon $from
      * @param Carbon $to
      *
-     * @return Collection
+     * @param string $user
+     * @param int $hoursPerDay
+     * @param string $timeFormat
      *
-     * @throws \Exception
+     * @return Collection
      */
-    protected function setTimesInIssues(OutputInterface $output, Collection $issues, Carbon $from, Carbon $to, $user)
-    {
+    protected function setTimesInIssues(
+        OutputInterface $output,
+        Collection $issues,
+        Carbon $from,
+        Carbon $to,
+        $user,
+        $hoursPerDay = 8,
+        $timeFormat = Time::TIME_FORMAT
+    ) {
         $progress = new ProgressBar($output, $issues->count());
         $progress->setFormat('* Processing issues... %current%/%max% [%bar%] %percent:3s%% | <fg=green>%remaining%</>');
 
         // Add times to each Issue
-        $issues = $issues->map(function (Issue $issue) use ($from, $to, $user, &$progress) {
-            $issue->setTimes($from, $to, $user);
+        $issues = $issues->map(function (Issue $issue) use ($from, $to, $user, &$progress, $hoursPerDay, $timeFormat) {
+            $issue->setTimes($from, $to, $user, $hoursPerDay, $timeFormat);
 
             $progress->advance();
 
@@ -305,6 +316,7 @@ class ReportProject extends BaseCommand
         $excludeLabels   = $input->getOption('exclude_labels') === null ? $this->config['excludeLabels'] : $input->getOption('exclude_labels');
         $includeByLabels = $input->getOption('include_by_labels') === null ? $this->config['includeByLabels'] : $input->getOption('include_by_labels');
         $excludeByLabels = $input->getOption('exclude_by_labels') === null ? $this->config['excludeByLabels'] : $input->getOption('exclude_by_labels');
+        $timeFormat      = $this->config['timeFormat'] = $input->getOption('time_format') === null ? $this->config['timeFormat'] : $input->getOption('time_format');
 
         return [
             $from,
@@ -320,7 +332,8 @@ class ReportProject extends BaseCommand
             $includeLabels,
             $excludeLabels,
             $includeByLabels,
-            $excludeByLabels
+            $excludeByLabels,
+            $timeFormat
         ];
     }
 

@@ -161,13 +161,28 @@ class Issue extends \Gitlab\Model\Issue implements \ArrayAccess, Arrayable, Time
         return $this->id;
     }
 
+    public function getEstimate()
+    {
+        return $this->estimation->getHumanTimeEstimate() ?: 'N/A';
+    }
+
+    public function getTimeSpent()
+    {
+        return $this->estimation->getHumanTotalTimeSpent();
+    }
+
     /**
      * Set time stats (estimated, spent)
+     *
+     * @param int $hoursPerDay
+     * @param string $timeFormat
      */
-    public function setTimeStats()
+    public function setTimeStats($hoursPerDay = 8, $timeFormat = Time::TIME_FORMAT)
     {
-        $stats            = (new IssueTimeStats($this->client))->getTimeStats($this->project_id, $this->iid);
-        $this->estimation = Estimation::fromArray($stats);
+        $stats                  = (new IssueTimeStats($this->client))->getTimeStats($this->project_id, $this->iid);
+        $stats['hours_per_day'] = $hoursPerDay;
+        $stats['time_format']   = $timeFormat;
+        $this->estimation       = Estimation::fromArray($stats);
     }
 
     /**
