@@ -127,16 +127,23 @@ columns:
 dateFormat: Y-m-d H:i:s
 
 # time format
+#
 # [%sign], [%days], [%hours], [%minutes], [%seconds] 
-# -> prints out the raw data+
+# -> prints out the raw data
+#
 # [%days>string], [%hours>string], [%minutes>string], [%seconds>string] 
 # -> is a conditional and prints out the data and appends the given string
 #    if the data is greater than zero
+#
 # [%Days], [%Hours], [%Minutes], ...
-# -> uppercase adds leading zeros.
-# [%days_overall], [%hours_overall], [%minutes_overall], [%seconds_overall]
+# -> uppercase adds leading zeros
+#
+# [%days_overall], [%hours_overall], [%minutes_overall], ...
 # -> instead of printing out the second-/minute-/hour-/day-part of the time
 #    this prints the complete time in seconds/minutes/hours/days
+#
+# [%days_overall_comma], [%hours_overall_comma], [%minutes_overall_comma] 
+# -> use a comma instead of a dot for those float values
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
 # default output

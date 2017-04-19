@@ -142,23 +142,27 @@ class Time implements ArrayAccess, Arrayable
         $secondsInAnHour  = 60 * $secondsInAMinute;
         $secondsInADay    = $hoursPerDay * $secondsInAnHour;
 
-        $days        = floor($inputSeconds / $secondsInADay);
-        $days_overall = $inputSeconds / $secondsInADay;
+        $days               = floor($inputSeconds / $secondsInADay);
+        $days_overall       = $inputSeconds / $secondsInADay;
+        $days_overall_comma = str_replace('.', ',', (string)$days_overall);
 
-        $hourSeconds  = $inputSeconds % $secondsInADay;
-        $hours        = floor($hourSeconds / $secondsInAnHour);
-        $hours_overall = $inputSeconds / $secondsInAnHour;
+        $hourSeconds         = $inputSeconds % $secondsInADay;
+        $hours               = floor($hourSeconds / $secondsInAnHour);
+        $hours_overall       = $inputSeconds / $secondsInAnHour;
+        $hours_overall_comma = str_replace('.', ',', (string)$hours_overall);
 
-        $minuteSeconds  = $hourSeconds % $secondsInAnHour;
-        $minutes        = floor($minuteSeconds / $secondsInAMinute);
-        $minutes_overall = $inputSeconds / $secondsInAMinute;
+        $minuteSeconds         = $hourSeconds % $secondsInAnHour;
+        $minutes               = floor($minuteSeconds / $secondsInAMinute);
+        $minutes_overall       = $inputSeconds / $secondsInAMinute;
+        $minutes_overall_comma = str_replace('.', ',', (string)$minutes_overall);
 
         $remainingSeconds = $minuteSeconds % $secondsInAMinute;
         $seconds          = ceil($remainingSeconds);
-        $seconds_overall   = $inputSeconds;
+        $seconds_overall  = $inputSeconds;
 
         $inserts = compact('sign', 'days', 'hours', 'minutes', 'seconds', 'days_overall', 'hours_overall',
-            'minutes_overall', 'seconds_overall');
+            'minutes_overall', 'seconds_overall', 'days_overall_comma', 'hours_overall_comma',
+            'minutes_overall_comma');
 
         foreach ($inserts as $key => $insert) {
             if ($key == 'sign') {
