@@ -14,13 +14,11 @@ class Time implements ArrayAccess, Arrayable
     protected $seconds;
     protected $user;
     protected $date;
+
     private $hoursPerDay;
+    private $timeFormat;
 
     const TIME_FORMAT = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]';
-    /**
-     * @var string
-     */
-    private $timeFormat;
 
     /**
      * Time constructor.
@@ -126,33 +124,42 @@ class Time implements ArrayAccess, Arrayable
     /**
      * Seconds to human readable string.
      *
-     * @param int $seconds
+     * @param int $inputSeconds
      * @param int $hoursPerDay
      * @param string $format
      *
      * @return string
      */
     static public function humanReadable(
-        $seconds,
+        $inputSeconds,
         $hoursPerDay = 8,
         $format = self::TIME_FORMAT
     ) {
-        $sign    = $seconds < 0 ? '-' : '';
-        $seconds = abs($seconds);
+        $sign         = $inputSeconds < 0 ? '-' : '';
+        $inputSeconds = abs($inputSeconds);
 
         $secondsInAMinute = 60;
         $secondsInAnHour  = 60 * $secondsInAMinute;
         $secondsInADay    = $hoursPerDay * $secondsInAnHour;
 
-        $days             = floor($seconds / $secondsInADay);
-        $hourSeconds      = $seconds % $secondsInADay;
-        $hours            = floor($hourSeconds / $secondsInAnHour);
-        $minuteSeconds    = $hourSeconds % $secondsInAnHour;
-        $minutes          = floor($minuteSeconds / $secondsInAMinute);
+        $days        = floor($inputSeconds / $secondsInADay);
+        $days_overall = $inputSeconds / $secondsInADay;
+
+        $hourSeconds  = $inputSeconds % $secondsInADay;
+        $hours        = floor($hourSeconds / $secondsInAnHour);
+        $hours_overall = $inputSeconds / $secondsInAnHour;
+
+        $minuteSeconds  = $hourSeconds % $secondsInAnHour;
+        $minutes        = floor($minuteSeconds / $secondsInAMinute);
+        $minutes_overall = $inputSeconds / $secondsInAMinute;
+
         $remainingSeconds = $minuteSeconds % $secondsInAMinute;
         $seconds          = ceil($remainingSeconds);
+        $seconds_overall   = $inputSeconds;
 
-        $inserts = compact('sign', 'days', 'hours', 'minutes', 'seconds');
+        $inserts = compact('sign', 'days', 'hours', 'minutes', 'seconds', 'days_overall', 'hours_overall',
+            'minutes_overall', 'seconds_overall');
+
         foreach ($inserts as $key => $insert) {
             if ($key == 'sign') {
                 continue;

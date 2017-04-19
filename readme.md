@@ -117,7 +117,7 @@ hoursPerDay: 8
 
 # columns to include in the report
 # available columns: id, iid, title, project_id, description, labels, milestone,
-# assignee, author, closed, updated_at, created_at, state
+# assignee, author, closed, updated_at, created_at, state, estimate, time_spent
 columns:
 - iid
 - title
@@ -128,12 +128,16 @@ dateFormat: Y-m-d H:i:s
 
 # time format
 # [%sign], [%days], [%hours], [%minutes], [%seconds] 
-# -> prints out the raw data
+# -> prints out the raw data+
 # [%days>string], [%hours>string], [%minutes>string], [%seconds>string] 
-# -> is a conditional and prints out the data and appends the given string if the data is greater than zero
+# -> is a conditional and prints out the data and appends the given string
+#    if the data is greater than zero
 # [%Days], [%Hours], [%Minutes], ...
 # -> uppercase adds leading zeros.
-timeFormat: [%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]
+# [%days_overall], [%hours_overall], [%minutes_overall], [%seconds_overall]
+# -> instead of printing out the second-/minute-/hour-/day-part of the time
+#    this prints the complete time in seconds/minutes/hours/days
+timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
 # default output
 output: markdown
