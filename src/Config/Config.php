@@ -4,6 +4,7 @@
 namespace kriskbx\gtt\Config;
 
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use kriskbx\gtt\Time;
@@ -123,14 +124,16 @@ class Config implements \ArrayAccess, Arrayable
     {
         $this->config = array_merge($this->config, [
             'configFile'      => static::getFile(),
+            'from'            => Carbon::parse('1977-01-01'),
+            'to'              => Carbon::now(),
             'url'             => @$this->config['url'] ?: 'http://gitlab.com/api/v4/',
             'token'           => @$this->config['token'] ?: false,
-            'project'         => @$this->config['project'] ?: false,
+            'projectName'     => @$this->config['project'] ?: false,
             'closed'          => @$this->config['closed'] ?: false,
             'milestone'       => @$this->config['milestone'] ?: null,
             'output'          => @$this->config['output'] ?: null,
             'hoursPerDay'     => @$this->config['hoursPerDay'] ?: 8,
-            'columns'         => @$this->config['columns'] ?: ['iid', 'title', 'estimation'],
+            'columns'         => @$this->config['columns'] ?: ['iid', 'title', 'estimation', 'times'],
             'dateFormat'      => @$this->config['dateFormat'] ?: 'd.m.Y H:i',
             'timeFormat'      => @$this->config['timeFormat'] ?: Time::TIME_FORMAT,
             'excludeByLabels' => @$this->config['excludeByLabels'] ?: [],
