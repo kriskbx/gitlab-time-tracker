@@ -6,38 +6,22 @@
 
 ### requirements
 
-* **php >= 7.0** (5.6 won't work)
-
 ### installation
 
-#### using composer
-
-Make sure composer is [installed globally](https://getcomposer.org/doc/00-intro.md#globally) and `~/.composer/vendor/bin` is in your [PATH](http://subinsb.com/install-run-composer-binaries-globally). Then simply run:
-
-```
-composer global require kriskbx/gitlab-time-tracker
-```
-
-#### using docker
-
-> coming soon
-
 ### commands
-
-#### login
-
-Login to gitlab.com or your own GitLab instance using a private token.
-
-```
-gtt login
-```
 
 #### edit configuration
 
 Edit the global configuration file. [Available options](#options)
 
 ```
+# edit/create the global configuration file, stored in your home directory
 gtt edit
+
+# edit/create a local configuration file in the current directory
+# if a local configuration file is present, it is used instead of
+# the global one
+gtt edit --local
 ```
 
 #### reports
@@ -179,6 +163,10 @@ There's no API for querying time results, so I have to fetch all the comments an
 #### GitLab will probably ship some of these features sooner or later
 
 Yeah, I'm aware of that. For now (March 2017) GitLabs time tracking is a mess and this tool makes it way better.
+
+#### This was a php project once?
+
+Yeah, I decided to rewrite everything in node coz I wanted to improve my node and es6 skills.
 
 #### why php? why not ruby/node/go/python/erlang?
 
