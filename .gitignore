@@ -1,4 +1,4 @@
 /.idea/
-/vendor/
+/node_modules
+.gtt.json
 .DS_STORE
-.gitlab-time.yml
