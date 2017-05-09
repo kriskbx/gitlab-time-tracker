@@ -4,7 +4,7 @@ const Base = require('./base');
 const Color = require('colors');
 
 const format = {
-    headline: h => `\n\n${h.bold.underline}\n\n`,
+    headline: h => `\n${h.bold.underline}\n`,
     warning: w => w.yellow
 };
 
@@ -20,18 +20,12 @@ class table extends Base {
     makeStats() {
         this.headline('TIME STATS');
 
-        let first = true;
+        let stats = '';
 
-        _.each(this.stats, (time, name) => {
-            if (first) {
-                first = false;
-            } else {
-                this.write('\n');
-            }
+        _.each(this.stats, (time, name) => stats += `\n* ${name.red}: ${time}`);
+        _.each(this.users, (time, name) => stats += `\n* ${name.red}: ${time}`);
 
-            this.write(`* ${name.red}: ${time}`)
-        });
-        _.each(this.users, (time, name) => this.write(`\n* ${name.red}: ${time}`));
+        this.write(stats.substr(1));
     }
 
     makeIssues() {

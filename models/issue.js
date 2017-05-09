@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const moment = require('moment');
 
 const hasTimes = require('./hasTimes');
@@ -35,6 +36,9 @@ class issue extends hasTimes {
     }
 
     get labels() {
+        let labels = _.difference(this.data.labels, this.config.get('excludeLabels'));
+        let include = this.config.get('includeLabels');
+        return include.length > 0 ? _.intersection(labels, include) : labels;
     }
 
     get milestone() {

@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const fs = require('fs');
 const program = require('commander');
 
 const Cli = require('./include/cli');
@@ -6,7 +7,8 @@ const Config = require('./include/file-config');
 const Report = require('./models/report');
 
 const Output = {
-    table: require('./output/table')
+    table: require('./output/table'),
+    csv: require('./output/csv')
 };
 
 // this collects options
@@ -28,7 +30,7 @@ program
     .option('-q --query <query>', 'query the given data types: issues, merge_requests', collect, null)
     .option('-r --report <report>', 'include in the report: stats, issues, merge_requests, records', collect, null)
     .option('-o --output <output>', 'use the given output', collect, null)
-    .option('-l --file <file>', 'save report to the given file', collect, null)
+    .option('-l --file <file>', 'save report to the given file')
     .option('--include_by_labels <labels>', 'only include issues that have the given labels', collect, null)
     .option('--exclude_by_labels <labels>', 'exclude issues that have the given labels', collect, null)
     .option('--include_labels <labels>', 'only include the given labels in the report', collect, null)
@@ -41,6 +43,7 @@ program
     .option('--issue_columns <columns>', 'include the given columns in the issue part of the report', collect, null)
     .option('--merge_request_columns <columns>', 'include the given columns in the merge request part of the report', collect, null)
     .option('--user_columns', 'include user columns in the report')
+    .option('--quiet', 'only output report')
     .parse(process.argv);
 
 // init helpers
@@ -71,7 +74,10 @@ config
     .set('mergeRequestColumns', program.merge_request_columns)
     .set('noHeadlines', program.no_headlines)
     .set('noWarnings', program.no_warnings)
+    .set('quiet', program.quiet)
     .set('userColumns', program.user_columns);
+
+Cli.quiet = config.get('quiet');
 
 // warnings
 if (config.get('iids').length > 1 && config.get('query').length > 1) {
@@ -87,11 +93,27 @@ if (!Output[config.get('output')]) {
     Cli.error(`The output ${config.get('output')} doesn't exist`);
 }
 
+// create report
 let report = new Report(config), output;
 
-Cli.list(`${Cli.look}  Resolving project "${config.get('project')}"`);
-report
-    .project()
+// file prompt
+new Promise(resolve => {
+    if (config.get('file') && fs.existsSync(config.get('file'))) {
+        Cli.ask(`The file "${config.get('file')}" already exists. Overwrite?`)
+            .then(() => resolve())
+            .catch(error => Cli.error(`can't write file.`, error));
+    } else {
+        resolve();
+    }
+})
+
+// get project
+    .then(() => {
+        Cli.list(`${Cli.look}  Resolving project "${config.get('project')}"`);
+        return report.project();
+    })
+
+    // get members
     .then(() => new Promise((resolve, reject) => {
         if (!config.get('userColumns')) return resolve();
 
@@ -165,7 +187,11 @@ report
 
     // print report
     .then(() => new Promise(resolve => {
-        output.toStdOut();
+        if (config.get('file')) {
+            output.toFile(config.get('file'));
+        } else {
+            output.toStdOut();
+        }
         resolve();
     }))
     .catch(error => Cli.x(`could not print report.`, error))

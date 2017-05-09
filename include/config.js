@@ -28,6 +28,7 @@ const defaults = {
     report: ['stats', 'issues', 'merge_requests', 'records'],
     noHeadlines: false,
     noWarnings: false,
+    quiet: false,
     _perPage: 100,
     _parallel: 10
 };

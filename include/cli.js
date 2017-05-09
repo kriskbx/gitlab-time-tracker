@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const colors = require('colors');
+const prompt = require('prompt');
 const spinner = require('node-spinner')();
 const cursor = require('cli-cursor');
 const progress = require('progress');
@@ -39,10 +40,44 @@ class cli {
     }
 
     /**
+     * ask
+     * @param message
+     * @returns {Promise}
+     */
+    static ask(message) {
+        return new Promise((resolve, reject) => {
+            prompt.start();
+
+            let question = {
+                name: 'yesno',
+                message: message,
+                validator: /y[es]*|n[o]?/,
+                warning: 'Must respond yes or no',
+                default: 'yes'
+            };
+
+            prompt.get(question, function (error, result) {
+                if (error || result.yesno === 'no' || result.yesno === 'n') return reject(error);
+
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * print
+     * @param string
+     */
+    static out(string) {
+        if (cli.quiet) return;
+        process.stdout.write(string);
+    }
+
+    /**
      * print done message
      */
     static done() {
-        console.log(`\n${cli.party}  Finished!`.green);
+        cli.out(`\n${cli.party}  Finished!\n`.green);
     }
 
     /**
@@ -50,7 +85,7 @@ class cli {
      * @param message
      */
     static warn(message) {
-        console.log(` Warning: ${message} `.bgWhite.black);
+        cli.out(` Warning: ${message} `.bgWhite.black);
     }
 
     /**
@@ -62,6 +97,8 @@ class cli {
     static bar(message, total) {
         cli.resolve(false);
 
+        if (cli.quiet) return cli.promise();
+
         this.active = {
             started: new Date(),
             message: `\r${message}... `.bold.grey,
@@ -72,8 +109,8 @@ class cli {
                 renderThrottle: 100
             }),
             interval: setInterval(() => {
-                if (!this.active.bar || this.active.bar.complete) return clearInterval(this.active.interval);
-                this.tick(0);
+                if (!cli.active.bar || cli.active.bar.complete) return clearInterval(cli.active.interval);
+                cli.tick(0);
             }, 1000)
         };
 
@@ -86,19 +123,19 @@ class cli {
      * @param amount
      */
     static tick(amount = 0) {
-        if (!this.active.bar || !this.active.started) return;
+        if (!cli.active.bar || !cli.active.started) return;
 
         let left;
 
-        if(this.active.bar.curr > 0) {
-            let elapsed = Math.ceil((new Date() - this.active.started) / 1000);
-            left = ((elapsed / this.active.bar.curr) * (this.active.bar.total - this.active.bar.curr)) / 60;
+        if (cli.active.bar.curr > 0) {
+            let elapsed = Math.ceil((new Date() - cli.active.started) / 1000);
+            left = ((elapsed / cli.active.bar.curr) * (cli.active.bar.total - cli.active.bar.curr)) / 60;
             left = left < 1 ? `<1` : Math.ceil(left);
         } else {
             left = 0;
         }
 
-        this.active.bar.tick(amount, {
+        cli.active.bar.tick(amount, {
             minutes: left
         });
     }
@@ -107,7 +144,7 @@ class cli {
      * advance an existing bar
      */
     static advance() {
-        this.tick(1);
+        cli.tick(1);
     }
 
     /**
@@ -120,7 +157,7 @@ class cli {
 
         this.active = {message: `\r${message}... `.bold.grey};
         this.active.interval = setInterval(() => {
-            process.stdout.write(this.active.message + spinner.next().bold.blue);
+            cli.out(cli.active.message + spinner.next().bold.blue);
         }, 100);
 
         return cli.promise();
@@ -132,7 +169,7 @@ class cli {
      */
     static mark() {
         cli.resolve();
-        process.stdout.write(`${this.active.message}` + `✓\n`.green);
+        cli.out(`${cli.active.message}` + `✓\n`.green);
 
         return cli.promise();
     }
@@ -145,7 +182,7 @@ class cli {
      */
     static x(message = false, error = false) {
         cli.resolve();
-        process.stdout.write(`${this.active.message}` + `✗\n`.red);
+        cli.out(`${cli.active.message}` + `✗\n`.red);
 
         if (message) cli.error(message, error);
         return cli.promise();
@@ -156,7 +193,7 @@ class cli {
      */
     static resolve(show = true) {
         cursor.toggle(show);
-        if (this.active && this.active.interval) clearInterval(this.active.interval);
+        if (cli.active && cli.active.interval) clearInterval(cli.active.interval);
     }
 
     /**
@@ -168,7 +205,7 @@ class cli {
     static error(message, error) {
         cli.resolve();
 
-        console.log(` Error: ${message} `.bgRed.white);
+        cli.out(` Error: ${message} `.bgRed.white + '\n');
         if (error) console.log(error);
 
         process.exit(1);

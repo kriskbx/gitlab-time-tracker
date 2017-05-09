@@ -1,9 +1,11 @@
 const _ = require('underscore');
+const fs = require('fs');
 const moment = require('moment');
 
 const defaultFormats = {
-    headline: h => `\n${h}\n\n`,
-    warning: w => w
+    headline: h => `${h}\n`,
+    warning: w => w,
+    write: w => `\n${w}`
 };
 
 /**
@@ -51,7 +53,7 @@ class base {
      * @returns {base}
      */
     write(string) {
-        this.out += string;
+        this.out += this.formats.write(string);
         return this;
     }
 
@@ -86,8 +88,8 @@ class base {
     /**
      * render to file
      */
-    toFile() {
-
+    toFile(file) {
+        fs.writeFileSync(file, this.out);
     }
 
     /**

@@ -8,7 +8,7 @@
     "gtt": "gtt.js"
   },
   "author": "kriskbx",
-  "license": "GPL V2",
+  "license": "GPL-2.0",
   "dependencies": {
     "async": "^2.4.0",
     "camelcase": "^4.1.0",
@@ -16,11 +16,13 @@
     "cli-table": "^0.3.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "csv-string": "^2.3.2",
     "got": "^6.7.1",
     "moment": "^2.18.1",
     "node-spinner": "^0.0.4",
     "open": "^0.0.5",
     "progress": "^2.0.0",
+    "prompt": "^1.0.0",
     "read-yaml": "^1.1.0",
     "underscore": "^1.8.3"
   }

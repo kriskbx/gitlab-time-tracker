@@ -165,8 +165,7 @@ issueColumns:
 
 # merge request columns to include in the report
 # available columns: id, iid, title, project_id, description, labels, milestone,
-# assignee, author, closed, updated_at, created_at, state, spent, total_spent,
-# total_estimate
+# assignee, author, updated_at, created_at, state, spent, total_spent, total_estimate
 #
 # you can include time spent by a specific user by adding a column that follows 
 # this convention: time_username
