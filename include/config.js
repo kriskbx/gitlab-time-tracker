@@ -1,28 +1,44 @@
 const moment = require('moment');
 
+const Time = require('./../models/time');
+
 const dates = ['from', 'to'];
 const defaults = {
     url: 'https://gitlab.com/api/v4',
     token: false,
     project: false,
+    from: "1977-01-01",
+    to: moment().format(),
     iids: false,
     closed: false,
     milestone: false,
     hoursPerDay: 8,
-    columns: ['iid', 'title', 'estimation', 'times'],
-    dateFormat: 'Y-m-d H:i:s',
+    issueColumns: ['iid', 'title', 'spent', 'total_estimate'],
+    mergeRequestColumns: ['iid', 'title', 'spent', 'total_estimate'],
+    recordColumns: ['user', 'date', 'type', 'iid', 'time'],
+    userColumns: false,
+    dateFormat: 'DD.MM.YYYY HH:mm:ss',
     timeFormat: '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]',
-    output: 'markdown',
+    output: 'table',
     excludeByLabels: false,
     includeByLabels: false,
     includeLabels: false,
     excludeLabels: false,
     query: ['issues', 'merge_requests'],
+    report: ['stats', 'issues', 'merge_requests', 'records'],
+    noHeadlines: false,
+    noWarnings: false,
     _perPage: 100,
-    _parallel: 4
+    _parallel: 10
 };
 
+/**
+ * basic config
+ */
 class config {
+    /**
+     * construct
+     */
     constructor() {
         this.data = defaults;
     }
@@ -53,6 +69,15 @@ class config {
         if (!dates.includes(key)) return this.data[key];
 
         return moment(this.data[key]);
+    }
+
+    /**
+     * get a human readable version of the given time
+     * @param input
+     * @returns {string}
+     */
+    toHumanReadable(input) {
+        return Time.toHumanReadable(input, this.get('hoursPerDay'), this.get('timeFormat'));
     }
 }
 

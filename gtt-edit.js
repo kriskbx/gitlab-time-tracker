@@ -6,8 +6,11 @@ const Config = require('./include/file-config');
 let config = new Config(__dirname);
 
 program
-    .command('gtt edit')
-    .option('-l, --local', 'edit the local configuration file', false)
+    .option('-l, --local', 'edit the local configuration file')
     .parse(process.argv);
 
-open(program.local ? config.local : config.global) ;
+if (program.local) {
+    config.assertLocalConfig();
+}
+
+open(program.local ? config.local : config.global);

@@ -1,4 +1,4 @@
 /.idea/
 /node_modules
-.gtt.json
+.gtt.yml
 .DS_STORE

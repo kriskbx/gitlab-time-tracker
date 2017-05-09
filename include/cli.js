@@ -5,19 +5,44 @@ const cursor = require('cli-cursor');
 const progress = require('progress');
 spinner.set('|/-\\');
 
+/**
+ * cli helper
+ */
 class cli {
-    /**
-     * pass arguments to cli helper
-     * @param args
-     */
     constructor(args) {
         this.args = args;
         this.data = [];
     }
 
+    /*
+     * emojis
+     */
+    static get look() {
+        return '🔍';
+    }
+
+    static get fetch() {
+        return '📦';
+    }
+
+    static get process() {
+        return '⚙';
+    }
+
+    static get output() {
+        return '📃';
+    }
+
+    static get party() {
+        return '🥑';
+        // return '🍺';
+    }
+
+    /**
+     * print done message
+     */
     static done() {
-        console.log();
-        console.log(`🍺 finished!`.green);
+        console.log(`\n${cli.party}  Finished!`.green);
     }
 
     /**
@@ -37,28 +62,52 @@ class cli {
     static bar(message, total) {
         cli.resolve(false);
 
-        let options = {
-            total,
-            clear: true,
-            width: 40,
-            renderThrottle: 100
-        };
-
         this.active = {
+            started: new Date(),
             message: `\r${message}... `.bold.grey,
-            bar: new progress(`${message} (:current/:total) [:bar] :percent - :etas left`, options)
+            bar: new progress(`${message} (:current/:total) [:bar] :percent - :minutesm left`, {
+                total,
+                clear: true,
+                width: 40,
+                renderThrottle: 100
+            }),
+            interval: setInterval(() => {
+                if (!this.active.bar || this.active.bar.complete) return clearInterval(this.active.interval);
+                this.tick(0);
+            }, 1000)
         };
 
-        this.active.bar.tick(0);
+        this.tick();
         return cli.promise();
+    }
+
+    /**
+     * bar tick
+     * @param amount
+     */
+    static tick(amount = 0) {
+        if (!this.active.bar || !this.active.started) return;
+
+        let left;
+
+        if(this.active.bar.curr > 0) {
+            let elapsed = Math.ceil((new Date() - this.active.started) / 1000);
+            left = ((elapsed / this.active.bar.curr) * (this.active.bar.total - this.active.bar.curr)) / 60;
+            left = left < 1 ? `<1` : Math.ceil(left);
+        } else {
+            left = 0;
+        }
+
+        this.active.bar.tick(amount, {
+            minutes: left
+        });
     }
 
     /**
      * advance an existing bar
      */
     static advance() {
-        if (!this.active.bar) return;
-        this.active.bar.tick(1);
+        this.tick(1);
     }
 
     /**
@@ -82,9 +131,9 @@ class cli {
      * @returns {*}
      */
     static mark() {
+        cli.resolve();
         process.stdout.write(`${this.active.message}` + `✓\n`.green);
 
-        cli.resolve();
         return cli.promise();
     }
 
@@ -95,9 +144,9 @@ class cli {
      * @returns {*}
      */
     static x(message = false, error = false) {
+        cli.resolve();
         process.stdout.write(`${this.active.message}` + `✗\n`.red);
 
-        cli.resolve();
         if (message) cli.error(message, error);
         return cli.promise();
     }
@@ -108,7 +157,6 @@ class cli {
     static resolve(show = true) {
         cursor.toggle(show);
         if (this.active && this.active.interval) clearInterval(this.active.interval);
-        if (this.active) this.active = false;
     }
 
     /**
@@ -123,7 +171,7 @@ class cli {
         console.log(` Error: ${message} `.bgRed.white);
         if (error) console.log(error);
 
-        return cli.promise();
+        process.exit(1);
     }
 
     /**

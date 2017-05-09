@@ -1,7 +1,14 @@
 const got = require('got');
 const async = require('async');
 
+/**
+ * base model
+ */
 class base {
+    /**
+     * construct
+     * @param config
+     */
     constructor(config) {
         this.config = config;
 
@@ -17,7 +24,7 @@ class base {
      * @param path
      * @param page
      * @param perPage
-     * @returns {*}
+     * @returns {Promise}
      */
     get(path, page = 1, perPage = this._perPage) {
         path += (path.includes('?') ? '&' : '?') + `private_token=${this.token}`;
@@ -41,17 +48,17 @@ class base {
      */
     all(path, perPage = this._perPage, runners = this._parallel) {
         return new Promise((resolve, reject) => {
-            let set = new Set();
+            let collect = [];
 
             this.get(path, 1, perPage).then(response => {
-                response.body.forEach(item => set.add(item));
+                response.body.forEach(item => collect.push(item));
                 let pages = parseInt(response.headers['x-total-pages']);
 
-                if (pages === 1) return resolve(set);
+                if (pages === 1) return resolve(collect);
 
                 let tasks = base.createGetTasks(path, pages, 2, perPage);
-                this.getParallel(tasks, set, runners).then(() => {
-                    resolve(Array.from(set));
+                this.getParallel(tasks, collect, runners).then(() => {
+                    resolve(collect);
                 }).catch(error => reject(error));
             }).catch(err => reject(err));
         });
@@ -77,14 +84,14 @@ class base {
      * make multiple get requests by the given tasks and apply the
      * data to the given set
      * @param tasks
-     * @param set
+     * @param collect
      * @param runners
      * @returns {Promise}
      */
-    getParallel(tasks, set = new Set(), runners = this._parallel) {
+    getParallel(tasks, collect = [], runners = this._parallel) {
         return this.parallel(tasks, (task, done) => {
             this.get(task.path, task.page, task.perPage).then((response) => {
-                response.body.forEach(item => set.add(item));
+                response.body.forEach(item => collect.push(item));
                 done();
             }).catch(error => done(error));
         }, runners);

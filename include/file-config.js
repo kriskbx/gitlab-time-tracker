@@ -1,11 +1,19 @@
 const fs = require('fs');
 const config = require('./config');
+const yaml = require('read-yaml');
 
 const globalConfigDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.gtt';
-const globalConfigFile = globalConfigDir + '/config.json';
-const localConfigFile = '/.gtt.json';
+const globalConfigFile = globalConfigDir + '/config.yml';
+const localConfigFile = '/.gtt.yml';
 
+/**
+ * file config with local and global configuration files
+ */
 class fileConfig extends config {
+    /**
+     * construct
+     * @param workDir
+     */
     constructor(workDir) {
         super();
         this.assertGlobalConfig();
@@ -13,20 +21,28 @@ class fileConfig extends config {
         this.data = Object.assign(this.data, this.localExists() ? this.parseLocal() : this.parseGlobal());
     }
 
+    /**
+     * parse the global config
+     * @returns {Object}
+     */
     parseGlobal() {
         try {
-            return JSON.parse(fs.readFileSync(globalConfigFile, 'utf8'));
+            return yaml.sync(this.global, {});
         } catch (e) {
-            console.log(`Error parsing configuration: "${globalConfigFile}"`);
+            console.log(`Error parsing configuration: "${this.global}"`);
             process.exit(1);
         }
     }
 
+    /**
+     * parse the local config
+     * @returns {Object}
+     */
     parseLocal() {
         try {
-            return fs.existsSync(this.workDir + localConfigFile) ? JSON.parse(fs.readFileSync(this.workDir + localConfigFile), 'utf8') : {};
+            return yaml.sync(this.local, {});
         } catch (e) {
-            console.log(`Error parsing configuration: "${this.workDir + localConfigFile}"`);
+            console.log(`Error parsing configuration: "${this.local}"`);
             process.exit(1);
         }
     }
@@ -37,11 +53,11 @@ class fileConfig extends config {
 
     assertGlobalConfig() {
         if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0644', true);
-        if (!fs.existsSync(this.global)) fs.appendFileSync(this.global, '{}');
+        if (!fs.existsSync(this.global)) fs.appendFileSync(this.global, '');
     }
 
     assertLocalConfig() {
-        if (!this.localExists()) fs.appendFileSync(this.local, '{}');
+        if (!this.localExists()) fs.appendFileSync(this.local, '');
     }
 
     get globalDir() {

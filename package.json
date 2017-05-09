@@ -1,15 +1,19 @@
 {
   "name": "gitlab-time-tracker",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A CLI that makes working with GitLabs time tracking feature more enjoyable",
   "main": "gtt.js",
   "scripts": {},
+  "bin": {
+    "gtt": "gtt.js"
+  },
   "author": "kriskbx",
-  "license": "MIT",
+  "license": "GPL V2",
   "dependencies": {
     "async": "^2.4.0",
     "camelcase": "^4.1.0",
     "cli-cursor": "^2.1.0",
+    "cli-table": "^0.3.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "got": "^6.7.1",
@@ -17,6 +21,7 @@
     "node-spinner": "^0.0.4",
     "open": "^0.0.5",
     "progress": "^2.0.0",
+    "read-yaml": "^1.1.0",
     "underscore": "^1.8.3"
   }
 }

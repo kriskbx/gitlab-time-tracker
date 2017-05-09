@@ -4,7 +4,11 @@ const moment = require('moment');
 const Base = require('./base');
 const Issue = require('./issue');
 const MergeRequest = require('./mergeRequest');
+const Project = require('./project');
 
+/**
+ * report model
+ */
 class report extends Base {
     /**
      * get params for querying issues and merge requests
@@ -34,11 +38,11 @@ class report extends Base {
 
     /**
      * query and set the project
-     * @returns {*}
+     * @returns {Promise}
      */
     project() {
         let promise = this.get(`projects/${encodeURIComponent(this.config.get('project'))}`);
-        promise.then(project => this.project = project.body);
+        promise.then(project => this.project = new Project(this.config, project.body));
 
         return promise;
     }
@@ -49,7 +53,7 @@ class report extends Base {
      */
     mergeRequests() {
         let promise = this.all(`projects/${this.project.id}/merge_requests${this.params()}`);
-        promise.then(mergeRequests => this.mergeRequests = Array.from(mergeRequests));
+        promise.then(mergeRequests => this.mergeRequests = mergeRequests);
 
         return promise;
     }
@@ -60,7 +64,7 @@ class report extends Base {
      */
     issues() {
         let promise = this.all(`projects/${this.project.id}/issues${this.params()}`);
-        promise.then(issues => this.issues = Array.from(issues));
+        promise.then(issues => this.issues = issues);
 
         return promise;
     }
@@ -73,16 +77,21 @@ class report extends Base {
      * @returns {*|Promise}
      */
     process(input, model, advance = false) {
-        let collect = new Set();
+        let collect = [];
 
-        let promise = this.parallel(input.reverse(), (item, done) => {
+        let promise = this.parallel(this[input], (item, done) => {
             // filter out things that are too old
-            if (moment(item.updated_at).isBefore(this.config.get('from'))) return done();
+            if (moment(item.updated_at).isBefore(this.config.get('from'))) {
+                if (advance) advance();
+                return done();
+            }
 
-            // collect items and query times
-            collect.add(item = new model(this.config, item));
+            // collect items, query times & stats
+            collect.push(item = new model(this.config, item));
             item.notes()
                 .then(() => item.times())
+                .catch(error => done(error))
+                .then(() => item.stats())
                 .catch(error => done(error))
                 .then(() => {
                     if (advance) advance();
@@ -90,27 +99,26 @@ class report extends Base {
                 });
         });
 
-        promise.then(() => {
-            input = Array.from(collect).reverse();
-        });
-
+        promise.then(() => this[input] = collect);
         return promise;
     }
 
     /**
      * process issues
-     * @returns {Promise|*}
+     * @param advance
+     * @returns {Promise}
      */
     processIssues(advance = false) {
-        return this.process(this.issues, Issue, advance);
+        return this.process('issues', Issue, advance);
     }
 
     /**
      * process merge requests
      * @param advance
+     * @return {Promise}
      */
     processMergeRequests(advance = false) {
-        return this.process(this.mergeRequests, MergeRequest, advance);
+        return this.process('mergeRequests', MergeRequest, advance);
     }
 }
 
