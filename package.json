@@ -1,6 +1,6 @@
 {
   "name": "gitlab-time-tracker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI that makes working with GitLabs time tracking feature more enjoyable",
   "main": "gtt.js",
   "scripts": {},

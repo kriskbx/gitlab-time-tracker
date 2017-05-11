@@ -53,7 +53,7 @@ class report extends Base {
      */
     mergeRequests() {
         let promise = this.all(`projects/${this.project.id}/merge_requests${this.params()}`);
-        promise.then(mergeRequests => this.mergeRequests = mergeRequests);
+        promise.then(mergeRequests => this.mergeRequests = report.filter(mergeRequests));
 
         return promise;
     }
@@ -64,9 +64,18 @@ class report extends Base {
      */
     issues() {
         let promise = this.all(`projects/${this.project.id}/issues${this.params()}`);
-        promise.then(issues => this.issues = issues);
+        promise.then(issues => this.issues = report.filter(issues));
 
         return promise;
+    }
+
+    /**
+     * filter empty
+     * @param issues
+     * @returns {Array}
+     */
+    static filter(issues) {
+        return issues.filter(issue => issue.times.length > 0);
     }
 
     /**
