@@ -11,6 +11,17 @@ const Project = require('./project');
  */
 class report extends Base {
     /**
+     * constructor.
+     * @param config
+     */
+    constructor(config) {
+        super(config);
+
+        this.issues = [];
+        this.mergeRequests = [];
+    }
+
+    /**
      * get params for querying issues and merge requests
      * @returns {string}
      */
@@ -40,7 +51,7 @@ class report extends Base {
      * query and set the project
      * @returns {Promise}
      */
-    project() {
+    getProject() {
         let promise = this.get(`projects/${encodeURIComponent(this.config.get('project'))}`);
         promise.then(project => this.project = new Project(this.config, project.body));
 
@@ -51,9 +62,9 @@ class report extends Base {
      * query and set merge requests
      * @returns {Promise}
      */
-    mergeRequests() {
+    getMergeRequests() {
         let promise = this.all(`projects/${this.project.id}/merge_requests${this.params()}`);
-        promise.then(mergeRequests => this.mergeRequests = report.filter(mergeRequests));
+        promise.then(mergeRequests => this.mergeRequests = mergeRequests);
 
         return promise;
     }
@@ -62,9 +73,9 @@ class report extends Base {
      * query and set issues
      * @returns {Promise}
      */
-    issues() {
+    getIssues() {
         let promise = this.all(`projects/${this.project.id}/issues${this.params()}`);
-        promise.then(issues => this.issues = report.filter(issues));
+        promise.then(issues => this.issues = issues);
 
         return promise;
     }
@@ -75,7 +86,7 @@ class report extends Base {
      * @returns {Array}
      */
     static filter(issues) {
-        return issues.filter(issue => issue.times.length > 0);
+        return issues.filter(issue => issue.times && issue.times.length > 0);
     }
 
     /**
@@ -108,7 +119,7 @@ class report extends Base {
                 });
         });
 
-        promise.then(() => this[input] = collect);
+        promise.then(() => this[input] = report.filter(collect));
         return promise;
     }
 

@@ -110,7 +110,7 @@ new Promise(resolve => {
 // get project
     .then(() => {
         Cli.list(`${Cli.look}  Resolving project "${config.get('project')}"`);
-        return report.project();
+        return report.getProject();
     })
 
     // get members
@@ -135,7 +135,7 @@ new Promise(resolve => {
         if (!config.get('query').includes('issues')) return resolve();
 
         Cli.list(`${Cli.fetch}  Fetching issues`);
-        report.issues()
+        report.getIssues()
             .then(() => Cli.mark())
             .catch(error => Cli.x(`could not fetch issues.`, error))
             .then(() => resolve());
@@ -146,7 +146,7 @@ new Promise(resolve => {
         if (!config.get('query').includes('merge_requests')) return resolve();
 
         Cli.list(`${Cli.fetch}  Fetching merge requests`);
-        report.mergeRequests()
+        report.getMergeRequests()
             .then(() => Cli.mark())
             .catch(error => Cli.x(`could not fetch merge requests.`, error))
             .then(() => resolve());
@@ -176,6 +176,8 @@ new Promise(resolve => {
 
     // make report
     .then(() => new Promise(resolve => {
+        if (report.issues.length === 0 && report.mergeRequests.length === 0) Cli.error('No issues or merge requests matched your criteria.');
+
         Cli.list(`${Cli.output}  Making report`);
 
         output = new Output[config.get('output')](config, report);
