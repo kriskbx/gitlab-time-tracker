@@ -1,4 +1,6 @@
 const _ = require('underscore');
+const fs = require('fs');
+const path = require('path');
 const Csv = require('csv-string');
 
 const Base = require('./base');
@@ -43,15 +45,47 @@ class csv extends Base {
         this.csvRecords = Csv.stringify(times);
     }
 
+    toFile(file) {
+        let fileName = path.basename(file);
+        let extName = path.extname(file);
+
+        if (this.config.get('report').includes('stats')) {
+            fs.writeFileSync(file.replace(fileName, fileName.replace(extName, `.stats${extName}`)), this.csvStats);
+        }
+
+        if (this.config.get('report').includes('issues')) {
+            fs.writeFileSync(file.replace(fileName, fileName.replace(extName, `.issues${extName}`)), this.csvIssues);
+        }
+
+        if (this.config.get('report').includes('merge_requests')) {
+            fs.writeFileSync(file.replace(fileName, fileName.replace(extName, `.mergeRequests${extName}`)), this.csvMergeRequests);
+        }
+
+        if (this.config.get('report').includes('records')) {
+            fs.writeFileSync(file.replace(fileName, fileName.replace(extName, `.records${extName}`)), this.csvRecords);
+        }
+    }
+
     toStdOut() {
-        this.headline('STATS');
-        this.write(this.csvStats);
-        this.headline('ISSUES');
-        this.write(this.csvIssues);
-        this.headline('MERGE REQUESTS');
-        this.write(this.csvMergeRequests);
-        this.headline('TIME RECORDS');
-        this.write(this.csvRecords);
+        if (this.config.get('report').includes('state')) {
+            this.headline('STATS');
+            this.write(this.csvStats);
+        }
+
+        if (this.config.get('report').includes('issues')) {
+            this.headline('ISSUES');
+            this.write(this.csvIssues);
+        }
+
+        if (this.config.get('report').includes('merge_requests')) {
+            this.headline('MERGE REQUESTS');
+            this.write(this.csvMergeRequests);
+        }
+
+        if (this.config.get('report').includes('records')) {
+            this.headline('TIME RECORDS');
+            this.write(this.csvRecords);
+        }
 
         super.toStdOut();
     }

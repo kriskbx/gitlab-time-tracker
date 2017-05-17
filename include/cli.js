@@ -85,7 +85,7 @@ class cli {
      * @param message
      */
     static warn(message) {
-        cli.out(` Warning: ${message} `.bgWhite.black);
+        cli.out(` Warning: ${message} `.bgWhite.black + "\n");
     }
 
     /**
