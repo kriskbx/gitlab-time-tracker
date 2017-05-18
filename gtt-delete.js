@@ -1,5 +1,6 @@
 const program = require('commander');
 
+const Frame = require('./models/frame');
 const Config = require('./include/file-config');
 const Cli = require('./include/cli');
 const Fs = require('./include/filesystem');
@@ -17,4 +18,7 @@ if (
 )
     Cli.error('No record found.');
 
-Fs.open(Fs.join(config.frameDir, id.replace('.json', '') + '.json'));
+let file = Fs.join(config.frameDir, id.replace('.json', '') + '.json');
+let frame = Frame.fromFile(config, file).stopMe();
+Fs.remove(file);
+console.log(`Deleting record ${frame.id.magenta}`);

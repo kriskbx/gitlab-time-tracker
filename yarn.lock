@@ -107,6 +107,19 @@ eyes@0.1.x:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
 
+find-in-files@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/find-in-files/-/find-in-files-0.4.0.tgz#9cd4b67a3459c54381f56ce2f1d69316ad7bb011"
+  dependencies:
+    find "^0.1.5"
+    q "^1.0.1"
+
+find@^0.1.5:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/find/-/find-0.1.7.tgz#c86c87af1ab18f222bbe38dec86cbc760d16a6fb"
+  dependencies:
+    traverse-chain "~0.1.0"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
@@ -145,6 +158,10 @@ got@^6.7.1:
 "graceful-readlink@>= 1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
+
+hashids@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/hashids/-/hashids-1.1.1.tgz#3c36fcc5b3ba1a96a8fa67a632eb7877c41c6d3e"
 
 i@0.3.x:
   version "0.3.5"
@@ -281,6 +298,10 @@ prompt@^1.0.0:
     utile "0.3.x"
     winston "2.1.x"
 
+q@^1.0.1:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/q/-/q-1.5.0.tgz#dd01bac9d06d30e6f219aecb8253ee9ebdc308f1"
+
 read-yaml@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/read-yaml/-/read-yaml-1.1.0.tgz#0d273ac0c95be92230dc0d4c4c4f5b8960a336d6"
@@ -330,6 +351,10 @@ stack-trace@0.0.x:
 timed-out@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
+
+traverse-chain@~0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/traverse-chain/-/traverse-chain-0.1.0.tgz#61dbc2d53b69ff6091a12a168fd7d433107e40f1"
 
 underscore@^1.8.3:
   version "1.8.3"

@@ -108,7 +108,7 @@ class report extends Base {
 
             // collect items, query times & stats
             collect.push(item = new model(this.config, item));
-            item.notes()
+            item.getNotes()
                 .then(() => item.times())
                 .catch(error => done(error))
                 .then(() => item.stats())

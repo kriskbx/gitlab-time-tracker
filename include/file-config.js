@@ -1,9 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 const config = require('./config');
 const yaml = require('read-yaml');
 
 const globalConfigDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.gtt';
 const globalConfigFile = globalConfigDir + '/config.yml';
+const frameDir = globalConfigDir + '/frames';
 const localConfigFile = '/.gtt.yml';
 
 /**
@@ -48,16 +50,31 @@ class fileConfig extends config {
     }
 
     localExists() {
-        return fs.existsSync(this.local);
+        if (fs.existsSync(this.local)) return true;
+
+        let workDir = this.workDir;
+        while (workDir) {
+            workDir = path.dirname(workDir);
+            if (workDir === '/') workDir = '';
+            if (fs.existsSync(workDir + localConfigFile)) {
+                this.workDir = workDir;
+                return true;
+            }
+        }
     }
 
     assertGlobalConfig() {
         if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0644', true);
+        if (!fs.existsSync(this.frameDir)) fs.mkdirSync(this.frameDir, '0744', true);
         if (!fs.existsSync(this.global)) fs.appendFileSync(this.global, '');
     }
 
     assertLocalConfig() {
         if (!this.localExists()) fs.appendFileSync(this.local, '');
+    }
+
+    get frameDir() {
+        return frameDir;
     }
 
     get globalDir() {

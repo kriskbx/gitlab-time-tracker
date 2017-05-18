@@ -1,5 +1,6 @@
 const got = require('got');
 const async = require('async');
+const querystring = require('querystring');
 
 /**
  * base model
@@ -17,6 +18,25 @@ class base {
 
         this._perPage = this.config ? this.config.get('_perPage') : 100;
         this._parallel = this.config ? this.config.get('_parallel') : 4;
+    }
+
+    /**
+     * query the given path
+     * @param path
+     * @param data
+     * @returns {*}
+     */
+    post(path, data) {
+        data.private_token = this.token;
+
+        return got(`${this.url}${path}`, {
+            query: querystring.stringify(data),
+            method: 'POST',
+            json: true,
+            headers: {
+                'PRIVATE-TOKEN': this.token
+            }
+        });
     }
 
     /**

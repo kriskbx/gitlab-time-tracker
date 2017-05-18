@@ -176,9 +176,10 @@ new Promise(resolve => {
 
     // make report
     .then(() => new Promise(resolve => {
-        if (report.issues.length === 0 && report.mergeRequests.length === 0) Cli.error('No issues or merge requests matched your criteria.');
-        Cli.list(`${Cli.output}  Making report`);
+        if (report.issues.length === 0 && report.mergeRequests.length === 0)
+            Cli.error('No issues or merge requests matched your criteria.');
 
+        Cli.list(`${Cli.output}  Making report`);
         output = new Output[config.get('output')](config, report);
         output.make();
         Cli.mark();

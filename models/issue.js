@@ -12,6 +12,13 @@ class issue extends hasTimes {
         this.data = data;
     }
 
+    make(project, id) {
+        let promise = this.get(`projects/${encodeURIComponent(project)}/issues/${id}`);
+        promise.then(issue => this.data = issue.body);
+
+        return promise;
+    }
+
     /*
      * properties
      */

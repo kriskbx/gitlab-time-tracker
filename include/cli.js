@@ -205,7 +205,7 @@ class cli {
     static error(message, error) {
         cli.resolve();
 
-        cli.out(` Error: ${message} `.bgRed.white + '\n');
+        cli.out(`Error: ${message.red}` + '\n');
         if (error) console.log(error);
 
         process.exit(1);

@@ -4,7 +4,22 @@
 
 ![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
 
-### upgrading from 0.*
+### requirements
+
+* nodejs version > 6
+* npm or yarn
+
+### installation
+
+```
+# using yarn
+yarn global add gitlab-time-tracker --prefix /usr/local
+
+# using npm
+npm install -g gitlab-time-tracker
+```
+
+#### upgrading from 0.*
 
 I built gtt originally in PHP because I'm a PHP dev and I chose the language I'm most familiar 
 with to create a quick and dirty prototype. After some consideration I rebuilt everything from 
@@ -27,18 +42,41 @@ gtt edit
 # with total time spent. please update your config accordingly
 ```
 
-### requirements
-
-* nodejs version > 6
-
-### installation
-
-```
-# using yarn
-yarn global add gitlab-time-tracker --prefix /usr/local
-```
-
 ### commands
+
+#### time tracking
+
+Time tracking enables you to track and monitor your time locally. When you're done,
+you can sync time records to GitLab and create "time spent comments" automatically. 
+
+```
+# start LOCAL time monitoring for the given project and id. if you 
+# configured a project in your config you can omit the project
+gtt start "kriskbx/example-project" 15
+gtt start 15
+
+# stop LOCAL time monitoring
+gtt stop
+
+# cancel LOCAL time monitoring and discard the record
+gtt cancel
+
+# log LOCAL time records
+gtt log
+
+# edit a LOCAL time record by it's id. you can omit the id
+# to edit the last time record recorded
+gtt edit 2xZkV5LNM
+gtt edit
+
+# delete a LOCAL time record by it's id. you can omit the id
+# to delete the last time record recorded
+gtt delete 2xZkV5LNM
+gtt delete
+
+# sync LOCAL time records to GitLab and create "time spent comments"
+gtt sync
+```
 
 #### edit configuration
 
@@ -46,22 +84,31 @@ Edit the configuration file. [Available options](#options)
 
 ```
 # edit/create the global configuration file, stored in your home directory
-gtt edit
+gtt config
 
-# edit/create a local configuration file (.gtt.yml) in the current directory
-# if a local configuration file is present, it is used instead of the global one.
+# edit/create a local configuration file (.gtt.yml) in the current directory.
+# if a local configuration file is present, it's used instead of the global one.
 # so you can use gtt on a per project basis. make sure to add .gtt.yml to your 
 # gitignore file if using a local configuration
-gtt edit --local
+gtt config --local
 ```
 
 #### reports
 
-Get a report for your project.
+Get a report for your project from GitLab.
+
+> This command pulls data from GitLab and is not using your LOCAL time records.
 
 ```
-# available report commands
+# you can omit the project if stored on your config.
+# you can pass multiple ids too
 gtt report ["namespace/project"] [issue_id]
+gtt report "kriskbx/example-project"
+gtt report "kriskbx/example-project" 145
+gtt report "kriskbx/example-project" 145 209 45 54
+gtt report
+gtt report 145
+gtt report 123 345 123
 
 # timeframe
 gtt report --from="2017-03-01" --to="2017-04-01"
@@ -123,10 +170,6 @@ gtt report --exclude_labels=bug --exclude_labels=feature
 gtt report --output=markdown --file=filename.md
 gtt report --output=csv --file=filename.csv
 ```
-
-#### time tracking
-
-> coming soon
 
 ### configuration options
 
