@@ -7,7 +7,7 @@ const defaults = {
     url: 'https://gitlab.com/api/v4',
     token: false,
     project: false,
-    from: "1977-01-01",
+    from: "1970-01-01",
     to: moment().format(),
     iids: false,
     closed: false,
