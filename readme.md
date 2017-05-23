@@ -55,6 +55,9 @@ you can sync time records to GitLab and create "time spent comments" automatical
 gtt start "kriskbx/example-project" 15
 gtt start 15
 
+# status
+gtt status
+
 # stop LOCAL time monitoring
 gtt stop
 
