@@ -5,7 +5,7 @@ const Base = require('./base');
 const Time = require('./time');
 
 const regex = /added (.*) of time spent/i;
-const subRegex = /substracted (.*) of time spent/i;
+const subRegex = /subtracted (.*) of time spent/i;
 
 /**
  * base model for models that have times
