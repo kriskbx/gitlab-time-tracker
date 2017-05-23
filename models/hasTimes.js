@@ -6,6 +6,7 @@ const Time = require('./time');
 
 const regex = /added (.*) of time spent/i;
 const subRegex = /subtracted (.*) of time spent/i;
+const removeRegex = /Removed time spent/i;
 
 /**
  * base model for models that have times
@@ -53,8 +54,14 @@ class hasTimes extends Base {
         let timeSpent = 0;
         let timeUsers = {};
 
+        // sort by created at
+        this.notes.sort((a, b) => {
+            if (a.created_at === b.created_at) return 0;
+            return moment(a.created_at).isBefore(b.created_at) ? -1 : 1;
+        });
+
         let promise = this.parallel(this.notes, (note, done) => {
-            let created = moment(note.created_at), match, subMatch;
+            let created = moment(note.created_at), match, subMatch, removeMatch;
 
             if (
                 // filter out user notes
@@ -64,11 +71,13 @@ class hasTimes extends Base {
             // filter out times that are not in the given time frame
             !(created.isSameOrAfter(this.config.get('from')) && created.isSameOrBefore(this.config.get('to'))) ||
             // filter out notes that are no time things
-            !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body))
+            !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body)) && !(removeMatch = removeRegex.exec(note.body))
             ) return done();
 
             if (!timeUsers[note.author.username]) timeUsers[note.author.username] = 0;
-            let time = new Time(match ? match[1] : `-${subMatch[1]}`, note, this, this.config);
+
+            let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent, this.config.get('hoursPerDay'))}`);
+            let time = new Time(timeString, note, this, this.config);
 
             timeSpent += time.seconds;
             timeUsers[note.author.username] += time.seconds;

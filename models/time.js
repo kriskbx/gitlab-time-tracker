@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const moment = require('moment');
 
+const defaultTimeFormat = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]';
 const mappings = ['complete', 'sign', 'days', 'hours', 'minutes', 'seconds'];
 const regex = /^(?:([-])\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
@@ -31,6 +32,10 @@ class time {
     /*
      * properties
      */
+    static get defaultTimeFormat() {
+        return defaultTimeFormat;
+    }
+
     get user() {
         return this.data.author.username;
     }
@@ -50,7 +55,6 @@ class time {
     get time() {
         return time.toHumanReadable(this.seconds, this._hoursPerDay, this._timeFormat);
     }
-
 
     get _timeFormat() {
         return this.config && this.config.get('timeFormat') ? this.config.get('timeFormat') : '';
@@ -85,7 +89,7 @@ class time {
      * @param format
      * @returns {string}
      */
-    static toHumanReadable(input, hoursPerDay = 8, format = '') {
+    static toHumanReadable(input, hoursPerDay = 8, format = time.defaultTimeFormat) {
         let sign = parseInt(input) < 0 ? '-' : '', output = format, match;
         input = Math.abs(input);
 

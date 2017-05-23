@@ -18,7 +18,7 @@ const defaults = {
     recordColumns: ['user', 'date', 'type', 'iid', 'time'],
     userColumns: false,
     dateFormat: 'DD.MM.YYYY HH:mm:ss',
-    timeFormat: '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]',
+    timeFormat: Time.defaultTimeFormat,
     output: 'table',
     excludeByLabels: false,
     includeByLabels: false,
