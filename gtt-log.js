@@ -33,7 +33,9 @@ Fs.readDir(config.frameDir).forEach(file => {
 
 _.each(frames, (frames, date) => {
     console.log(`${moment(date).format('MMMM Do YYYY')} (${toHumanReadable(times[date])})`.green);
-    frames.forEach(frame => {
-        console.log(`  ${frame.id}  ${moment(frame.start).format('hh:mm').green} to ${moment(frame.stop).format('hh:mm').green}\t${toHumanReadable(frame.duration)}\t${frame.project.magenta}\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
-    });
+    frames
+        .sort((a, b) => moment(a.start).isBefore(moment(b.start)) ? -1 : 1)
+        .forEach(frame => {
+            console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('hh:mm').green}\t${toHumanReadable(frame.duration)}\t${frame.project.magenta}\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
+        });
 });

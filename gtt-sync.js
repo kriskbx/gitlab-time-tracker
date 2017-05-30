@@ -38,22 +38,23 @@ function createTime(frame, time) {
     });
 }
 
-Cli.bar(`${Cli.process} Syncing time records...`, frames.length);
+// filter out frames, that don't need an update
+frames.filter(frame => {
+    return !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0));
+});
+
+Cli.bar(`${Cli.process}  Syncing time records...`, frames.length);
 
 frames.forEach((frame, done) => {
-    // filter out frames, that don't need an update
-    if (Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0)) {
-        Cli.advance();
-        return done();
-    }
-
     new Promise(resolve => resolve())
 
     // set resource if it isn't already set
         .then(() => new Promise((resolve, reject) => {
-            if (resources[frame.resource.type][frame.resource.id]) return resolve();
+            if (resources[frame.resource.type][frame.resource.id] !== undefined
+                && resources[frame.resource.type][frame.resource.id].data.project_id) return resolve();
             resources[frame.resource.type][frame.resource.id] = new classes[frame.resource.type](config, {});
-            resources[frame.resource.type][frame.resource.id].make(frame.project, frame.resource.id)
+            resources[frame.resource.type][frame.resource.id]
+                .make(frame.project, frame.resource.id)
                 .then(() => resolve())
                 .catch(error => reject(error));
         }))
@@ -63,7 +64,8 @@ frames.forEach((frame, done) => {
         .then(() => new Promise((resolve, reject) => {
             let notes;
             if ((notes = resources[frame.resource.type][frame.resource.id].notes) && notes.length > 0) return;
-            resources[frame.resource.type][frame.resource.id].getNotes()
+            resources[frame.resource.type][frame.resource.id]
+                .getNotes()
                 .then(() => resolve())
                 .catch(error => reject(error));
         }))
