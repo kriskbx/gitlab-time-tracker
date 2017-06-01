@@ -175,6 +175,7 @@ gtt report --show_without_times
 # choose a different output than a stdout table
 gtt report --output=markdown --file=filename.md
 gtt report --output=csv --file=filename.csv
+gtt report --output=pdf --file=filename.pdf
 ```
 
 ### configuration options
@@ -257,7 +258,7 @@ dateFormat: DD.MM.YYYY HH:mm:ss
 # -> use a comma instead of a dot for those float values
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
-# default output, available: csv, table, markdown
+# default output, available: csv, table, markdown, pdf
 output: markdown
 
 # exclude issues and merge requests that have the following labels
