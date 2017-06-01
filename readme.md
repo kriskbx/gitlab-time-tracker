@@ -169,6 +169,9 @@ gtt report --include_labels=pending --include_labels=approved
 # exclude the given labels from the results
 gtt report --exclude_labels=bug --exclude_labels=feature
 
+# include issues and merge requests in the report hat have no time records
+gtt report --show_without_times
+
 # choose a different output than a stdout table (json coming soon)
 gtt report --output=markdown --file=filename.md
 gtt report --output=csv --file=filename.csv
@@ -291,6 +294,9 @@ noHeadlines: true
 
 # hide warnings in report
 noWarnings: true
+
+# include issues and merge requests in the report hat have no time records
+showWithoutTimes: true
 
 # change number of concurrent connections. 
 # handle with care, we don't want to spam GitLabs API too much

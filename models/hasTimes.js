@@ -69,7 +69,7 @@ class hasTimes extends Base {
             // only include times by the configured user
             (this.config.get('user') && this.config.get('user') !== note.author.username) ||
             // filter out times that are not in the given time frame
-            !(created.isSameOrAfter(this.config.get('from')) && created.isSameOrBefore(this.config.get('to'))) ||
+            !(created.isSameOrAfter(moment(this.config.get('from'))) && created.isSameOrBefore(moment(this.config.get('to')))) ||
             // filter out notes that are no time things
             !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body)) && !(removeMatch = removeRegex.exec(note.body))
             ) return done();

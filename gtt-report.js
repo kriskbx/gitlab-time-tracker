@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const fs = require('fs');
 const program = require('commander');
+const moment = require('moment');
 
 const Cli = require('./include/cli');
 const Config = require('./include/file-config');
@@ -44,6 +45,7 @@ program
     .option('--merge_request_columns <columns>', 'include the given columns in the merge request part of the report', collect, null)
     .option('--user_columns', 'include user columns in the report')
     .option('--quiet', 'only output report')
+    .option('--show_without_times', 'show issues/merge requests without time records')
     .parse(process.argv);
 
 // init helpers
@@ -75,6 +77,7 @@ config
     .set('noHeadlines', program.no_headlines)
     .set('noWarnings', program.no_warnings)
     .set('quiet', program.quiet)
+    .set('showWithoutTimes', program.show_without_times)
     .set('userColumns', program.user_columns);
 
 Cli.quiet = config.get('quiet');
@@ -91,6 +94,12 @@ if ((config.get('report').includes('merge_requests') && !config.get('query').inc
 }
 if (!Output[config.get('output')]) {
     Cli.error(`The output ${config.get('output')} doesn't exist`);
+}
+if (!config.get('from').isValid()) {
+    Cli.error(`FROM is not in a valid ISO date format.`);
+}
+if (!config.get('to').isValid()) {
+    Cli.error(`TO is not a in valid ISO date format.`);
 }
 
 // create report

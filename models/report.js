@@ -86,7 +86,7 @@ class report extends Base {
      * @returns {Array}
      */
     static filter(issues) {
-        return issues.filter(issue => issue.times && issue.times.length > 0);
+        return issues.filter(issue => (this.config.get('showWithoutTimes') || issue.times && issue.times.length > 0));
     }
 
     /**

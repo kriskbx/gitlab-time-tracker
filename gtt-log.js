@@ -36,6 +36,6 @@ _.each(frames, (frames, date) => {
     frames
         .sort((a, b) => moment(a.start).isBefore(moment(b.start)) ? -1 : 1)
         .forEach(frame => {
-            console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('hh:mm').green}\t${toHumanReadable(frame.duration)}\t${frame.project.magenta}\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
+            console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t${frame.project.magenta}\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
         });
 });
