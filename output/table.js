@@ -34,7 +34,7 @@ class table extends Base {
         if (this.report.issues.length === 0)
             return this.warning('No issues found');
 
-        let issues = new Table({head: this.config.get('issueColumns')});
+        let issues = new Table({head: this.config.get('issueColumns').map(c => c.replace('_', ' '))});
         this.report.issues.forEach(issue => issues.push(this.prepare(issue, this.config.get('issueColumns'))));
         this.write(issues.toString());
     }
@@ -45,14 +45,14 @@ class table extends Base {
         if (this.report.mergeRequests.length === 0)
             return this.warning('No merge requests found');
 
-        let mergeRequests = new Table({head: this.config.get('mergeRequestColumns')});
+        let mergeRequests = new Table({head: this.config.get('mergeRequestColumns').map(c => c.replace('_', ' '))});
         this.report.mergeRequests.forEach(mergeRequest => mergeRequests.push(this.prepare(mergeRequest, this.config.get('mergeRequestColumns'))));
         this.write(mergeRequests.toString());
     }
 
     makeRecords() {
         this.headline('TIME RECORDS');
-        let times = new Table({head: this.config.get('recordColumns')});
+        let times = new Table({head: this.config.get('recordColumns').map(c => c.replace('_', ' '))});
         this.times.forEach(time => times.push(this.prepare(time, this.config.get('recordColumns'))));
         this.write(times.toString());
     }

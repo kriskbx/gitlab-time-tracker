@@ -34,7 +34,7 @@ class markdown extends Base {
         if (this.report.issues.length === 0)
             return this.warning('No issues found');
 
-        let issues = [this.config.get('issueColumns')];
+        let issues = [this.config.get('issueColumns').map(c => c.replace('_', ' '))];
         this.report.issues.forEach(issue => issues.push(this.prepare(issue, this.config.get('issueColumns'))));
 
         this.write(Table(issues));
@@ -46,7 +46,7 @@ class markdown extends Base {
         if (this.report.mergeRequests.length === 0)
             return this.warning('No merge requests found');
 
-        let mergeRequests = [this.config.get('mergeRequestColumns')];
+        let mergeRequests = [this.config.get('mergeRequestColumns').map(c => c.replace('_', ' '))];
         this.report.mergeRequests.forEach(mergeRequest => mergeRequests.push(this.prepare(mergeRequest, this.config.get('mergeRequestColumns'))));
 
         this.write(Table(mergeRequests));
@@ -55,7 +55,7 @@ class markdown extends Base {
     makeRecords() {
         this.headline('TIME RECORDS');
 
-        let times = [this.config.get('recordColumns')];
+        let times = [this.config.get('recordColumns').map(c => c.replace('_', ' '))];
         this.times.forEach(time => times.push(this.prepare(time, this.config.get('recordColumns'))));
 
         this.write(Table(times));

@@ -263,6 +263,10 @@ body th {
     padding: 0;
 }
 
+body td {
+    word-break: break-all;
+}
+
 body h1,
 body h2,
 body h3,
@@ -389,11 +393,11 @@ body::after {
     content: "";
 }
 
-body>*:first-child {
+body > *:first-child {
     margin-top: 0 !important;
 }
 
-body>*:last-child {
+body > *:last-child {
     margin-bottom: 0 !important;
 }
 
@@ -438,11 +442,11 @@ body blockquote {
     border-left: 0.25em solid #dfe2e5;
 }
 
-body blockquote>:first-child {
+body blockquote > :first-child {
     margin-top: 0;
 }
 
-body blockquote>:last-child {
+body blockquote > :last-child {
     margin-bottom: 0;
 }
 
@@ -543,11 +547,11 @@ body ol ul {
     margin-bottom: 0;
 }
 
-body li>p {
+body li > p {
     margin-top: 16px;
 }
 
-body li+li {
+body li + li {
     margin-top: 0.25em;
 }
 
@@ -606,7 +610,7 @@ body code {
     padding-bottom: 0.2em;
     margin: 0;
     font-size: 85%;
-    background-color: rgba(27,31,35,0.05);
+    background-color: rgba(27, 31, 35, 0.05);
     border-radius: 3px;
 }
 
@@ -620,7 +624,7 @@ body pre {
     word-wrap: normal;
 }
 
-body pre>code {
+body pre > code {
     padding: 0;
     margin: 0;
     font-size: 100%;
@@ -685,7 +689,7 @@ body kbd {
     box-shadow: inset 0 -1px 0 #959da5;
 }
 
-body :checked+.radio-label {
+body :checked + .radio-label {
     position: relative;
     z-index: 1;
     border-color: #0366d6;
@@ -695,7 +699,7 @@ body .task-list-item {
     list-style-type: none;
 }
 
-body .task-list-item+.task-list-item {
+body .task-list-item + .task-list-item {
     margin-top: 3px;
 }
 
