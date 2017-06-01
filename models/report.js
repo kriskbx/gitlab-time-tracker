@@ -85,8 +85,8 @@ class report extends Base {
      * @param issues
      * @returns {Array}
      */
-    static filter(issues) {
-        return issues.filter(issue => (this.config.get('showWithoutTimes') || issue.times && issue.times.length > 0));
+    filter(issues) {
+        return issues.filter(issue => this.config.get('showWithoutTimes') || (issue.times && issue.times.length > 0));
     }
 
     /**
@@ -101,7 +101,7 @@ class report extends Base {
 
         let promise = this.parallel(this[input], (item, done) => {
             // filter out things that are too old
-            if (moment(item.updated_at).isBefore(this.config.get('from'))) {
+            if (!this.config.get('showWithoutTimes') && moment(item.updated_at).isBefore(this.config.get('from'))) {
                 if (advance) advance();
                 return done();
             }
@@ -119,7 +119,7 @@ class report extends Base {
                 });
         });
 
-        promise.then(() => this[input] = report.filter(collect));
+        promise.then(() => this[input] = this.filter(collect));
         return promise;
     }
 

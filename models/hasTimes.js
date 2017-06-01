@@ -12,6 +12,11 @@ const removeRegex = /Removed time spent/i;
  * base model for models that have times
  */
 class hasTimes extends Base {
+    constructor(config) {
+        super(config);
+        this.times = [];
+    }
+
     /**
      * create time
      * @param time
