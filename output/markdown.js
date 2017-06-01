@@ -5,13 +5,13 @@ const Base = require('./base');
 
 const format = {
     headline: h => `\n### ${h}\n`,
-    warning: w => `> ${w}`
+    warning: w => `${w}`
 };
 
 /**
  * stdout table output
  */
-class table extends Base {
+class markdown extends Base {
     constructor(config, report) {
         super(config, report);
         this.format = format;
@@ -62,4 +62,4 @@ class table extends Base {
     }
 }
 
-module.exports = table;
+module.exports = markdown;

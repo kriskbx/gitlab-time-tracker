@@ -88,8 +88,9 @@ class base {
     /**
      * render to file
      */
-    toFile(file) {
+    toFile(file, resolve) {
         fs.writeFileSync(file, this.out);
+        resolve();
     }
 
     /**

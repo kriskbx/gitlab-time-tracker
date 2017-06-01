@@ -20,6 +20,7 @@
     "find-in-files": "^0.4.0",
     "got": "^6.7.1",
     "hashids": "^1.1.1",
+    "markdown-pdf": "^8.0.0",
     "markdown-table": "^1.1.0",
     "moment": "^2.18.1",
     "node-spinner": "^0.0.4",

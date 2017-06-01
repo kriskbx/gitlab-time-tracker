@@ -10,6 +10,7 @@ const Report = require('./models/report');
 const Output = {
     table: require('./output/table'),
     csv: require('./output/csv'),
+    pdf: require('./output/pdf'),
     markdown: require('./output/markdown')
 };
 
@@ -199,14 +200,16 @@ new Promise(resolve => {
 
     // print report
     .then(() => new Promise(resolve => {
+        Cli.list(`${Cli.print}  Printing report`);
         if (config.get('file')) {
-            output.toFile(config.get('file'));
+            output.toFile(config.get('file'), resolve);
         } else {
             output.toStdOut();
+            resolve();
         }
-        resolve();
     }))
     .catch(error => Cli.x(`could not print report.`, error))
+    .then(() => Cli.mark())
 
     // time for a beer
     .then(() => Cli.done());

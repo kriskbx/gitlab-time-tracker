@@ -45,7 +45,7 @@ class csv extends Base {
         this.csvRecords = Csv.stringify(times);
     }
 
-    toFile(file) {
+    toFile(file, resolve) {
         let fileName = path.basename(file);
         let extName = path.extname(file);
 
@@ -64,6 +64,8 @@ class csv extends Base {
         if (this.config.get('report').includes('records')) {
             fs.writeFileSync(file.replace(fileName, fileName.replace(extName, `.records${extName}`)), this.csvRecords);
         }
+
+        resolve();
     }
 
     toStdOut() {

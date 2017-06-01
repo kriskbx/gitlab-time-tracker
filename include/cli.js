@@ -18,6 +18,10 @@ class cli {
     /*
      * emojis
      */
+    static get print() {
+        return '🖨';
+    }
+
     static get look() {
         return '🔍';
     }
@@ -27,7 +31,7 @@ class cli {
     }
 
     static get process() {
-        return '⚙';
+        return '⚙️';
     }
 
     static get output() {
