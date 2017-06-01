@@ -9,7 +9,8 @@ const Report = require('./models/report');
 
 const Output = {
     table: require('./output/table'),
-    csv: require('./output/csv')
+    csv: require('./output/csv'),
+    markdown: require('./output/markdown')
 };
 
 // this collects options

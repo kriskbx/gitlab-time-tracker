@@ -172,7 +172,7 @@ gtt report --exclude_labels=bug --exclude_labels=feature
 # include issues and merge requests in the report hat have no time records
 gtt report --show_without_times
 
-# choose a different output than a stdout table (json coming soon)
+# choose a different output than a stdout table
 gtt report --output=markdown --file=filename.md
 gtt report --output=csv --file=filename.csv
 ```
@@ -257,7 +257,7 @@ dateFormat: DD.MM.YYYY HH:mm:ss
 # -> use a comma instead of a dot for those float values
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
-# default output
+# default output, available: csv, table, markdown
 output: markdown
 
 # exclude issues and merge requests that have the following labels
