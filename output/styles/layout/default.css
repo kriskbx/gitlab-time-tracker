@@ -256,7 +256,6 @@ body hr::after {
 body table {
     border-spacing: 0;
     border-collapse: collapse;
-    table-layout:fixed
 }
 
 body td,
@@ -570,9 +569,10 @@ body dl dd {
 }
 
 body table {
-    display: block;
     width: 100%;
-    overflow: auto;
+    display: block;
+    overflow: hidden;
+    table-layout: fixed;
 }
 
 body table th {
