@@ -1,9 +1,9 @@
 # gtt
 
-> A command line interface that makes working with GitLabs time tracking feature more enjoyable.
-
 [![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
+
+> A command line interface that makes working with GitLabs time tracking feature more enjoyable.
 
 ![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
 
