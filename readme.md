@@ -5,6 +5,10 @@
 
 > A command line interface that makes working with GitLabs time tracking feature more enjoyable.
 
+gtt monitors the time you spent on an issue or merge request locally and syncs it to GitLab. 
+It also allows you to create time tracking reports in various formats from time tracking data
+stored on GitLab.
+
 ![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
 
 ### requirements
@@ -48,6 +52,8 @@ gtt edit
 ### commands
 
 #### time tracking
+
+
 
 Time tracking enables you to track and monitor your time locally. When you're done,
 you can sync time records to GitLab and create "time spent comments" automatically. 

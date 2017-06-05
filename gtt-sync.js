@@ -43,6 +43,8 @@ frames.filter(frame => {
     return !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0));
 });
 
+if(frames.length === 0) process.exit(0);
+
 Cli.bar(`${Cli.process}  Syncing time records...`, frames.length);
 
 frames.forEach((frame, done) => {
