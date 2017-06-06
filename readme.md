@@ -11,12 +11,14 @@ stored on GitLab.
 
 ![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
 
-### requirements
+## requirements
 
-* nodejs version > 6
-* npm or yarn
+* [node.js](https://nodejs.org/en/download) version > 6
+* [npm](https://github.com/npm/npm) or [yarn](https://yarnpkg.com/en/docs/install)
 
-### installation
+## installation
+
+Install the gtt command line interface:
 
 ```
 # using yarn
@@ -26,18 +28,37 @@ yarn global add gitlab-time-tracker --prefix /usr/local
 npm install -g gitlab-time-tracker
 ```
 
+Run the config command to create a config file and open it in your default editor.
+If nothing happens, open the file manually: `~/.gtt/config.yml`
+
+```
+gtt config
+```
+
+Add your GitLab API url and your [GitLab API personal token](https://gitlab.com/profile/personal_access_tokens) 
+to the config file and save it afterwards:
+
+```
+url: https://gitlab.com/api/v4/
+token: 01234567891011
+```
+
 #### upgrading from 0.*
 
 I built gtt originally in PHP because I'm a PHP dev and I chose the language I'm most familiar 
 with to create a quick and dirty prototype. After some consideration I rebuilt everything from 
-scratch for nodejs. Follow these steps to upgrade:
+scratch for node.js. Follow these steps to upgrade:
 
 ```
 # 1. remove the old version entirely
 composer global remove kriskbx/gitlab-time-tracker
 
 # 2. install the new version
-yarn global add gitlab-time-tracker
+# using yarn
+yarn global add gitlab-time-tracker --prefix /usr/local
+
+# using npm
+npm install -g gitlab-time-tracker
 
 # 3. edit your configuration and update the date format
 # format options: http://momentjs.com/docs/#/displaying/format/
@@ -49,11 +70,9 @@ gtt edit
 # with total time spent. please update your config accordingly
 ```
 
-### commands
+## commands
 
 #### time tracking
-
-
 
 Time tracking enables you to track and monitor your time locally. When you're done,
 you can sync time records to GitLab and create "time spent comments" automatically. 
@@ -187,7 +206,7 @@ gtt report --output=csv --file=filename.csv
 gtt report --output=pdf --file=filename.pdf
 ```
 
-### configuration options
+#### configuration options
 
 Here's a sample configuration file including all available options:
 
@@ -316,7 +335,7 @@ _parallel: 4
 _perPage: 100
 ```
 
-### use as a library
+## use as a library
 
 ```
 # install as dependency
@@ -357,7 +376,7 @@ report.mergeRequests.forEach(mergeRequest => {
 
 ```
 
-### faqs
+## faqs
 
 #### What is the difference between 'total spent' and 'spent'?
 
@@ -365,6 +384,6 @@ report.mergeRequests.forEach(mergeRequest => {
 It can include times outside the queried time frame. `spent` on the other hand
 is the total amount of time spent in the given time frame.
 
-### license
+## license
 
 GPL v2
