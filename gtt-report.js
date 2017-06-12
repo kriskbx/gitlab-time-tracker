@@ -97,6 +97,9 @@ if ((config.get('report').includes('merge_requests') && !config.get('query').inc
 if (!Output[config.get('output')]) {
     Cli.error(`The output ${config.get('output')} doesn't exist`);
 }
+if (config.get('output') === 'pdf' && !config.get('file')) {
+    Cli.error(`Cannot output a pdf to stdout`);
+}
 if (!config.get('from').isValid()) {
     Cli.error(`FROM is not in a valid ISO date format.`);
 }

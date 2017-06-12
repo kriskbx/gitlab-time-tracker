@@ -31,11 +31,13 @@ Fs.readDir(config.frameDir).forEach(file => {
     times[date] += Math.ceil(frame.duration);
 });
 
-_.each(frames, (frames, date) => {
+Object.keys(frames).sort().forEach(date => {
+    if (!frames.hasOwnProperty(date)) return;
+
     console.log(`${moment(date).format('MMMM Do YYYY')} (${toHumanReadable(times[date])})`.green);
-    frames
+    frames[date]
         .sort((a, b) => moment(a.start).isBefore(moment(b.start)) ? -1 : 1)
         .forEach(frame => {
-            console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t${frame.project.magenta}\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
+            console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t\t${frame.project.magenta}\t\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
         });
 });
