@@ -48,6 +48,7 @@ program
     .option('--user_columns', 'include user columns in the report')
     .option('--quiet', 'only output report')
     .option('--show_without_times', 'show issues/merge requests without time records')
+    .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .parse(process.argv);
 
 // init helpers
@@ -80,7 +81,8 @@ config
     .set('noWarnings', program.no_warnings)
     .set('quiet', program.quiet)
     .set('showWithoutTimes', program.show_without_times)
-    .set('userColumns', program.user_columns);
+    .set('userColumns', program.user_columns)
+    .set('proxy', program.proxy);
 
 Cli.quiet = config.get('quiet');
 

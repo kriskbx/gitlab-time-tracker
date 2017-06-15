@@ -1,6 +1,6 @@
-const got = require('got');
+const request = require('request-promise-native');
+const url = require('url');
 const async = require('async');
-const querystring = require('querystring');
 
 /**
  * base model
@@ -18,6 +18,7 @@ class base {
 
         this._perPage = this.config ? this.config.get('_perPage') : 100;
         this._parallel = this.config ? this.config.get('_parallel') : 4;
+        this._proxy = this.config && this.config.get('proxy') ? this.config.get('proxy') : undefined;
     }
 
     /**
@@ -29,10 +30,11 @@ class base {
     post(path, data) {
         data.private_token = this.token;
 
-        return got(`${this.url}${path}`, {
-            query: querystring.stringify(data),
-            method: 'POST',
+        return request.post(`${this.url}${path}`, {
             json: true,
+            body: data,
+            proxy: this._proxy,
+            resolveWithFullResponse: true,
             headers: {
                 'PRIVATE-TOKEN': this.token
             }
@@ -50,8 +52,10 @@ class base {
         path += (path.includes('?') ? '&' : '?') + `private_token=${this.token}`;
         path += `&page=${page}&per_page=${perPage}`;
 
-        return got(`${this.url}${path}`, {
+        return request(`${this.url}${path}`, {
             json: true,
+            proxy: this._proxy,
+            resolveWithFullResponse: true,
             headers: {
                 'PRIVATE-TOKEN': this.token
             }

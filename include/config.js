@@ -6,6 +6,7 @@ const dates = ['from', 'to'];
 const defaults = {
     url: 'https://gitlab.com/api/v4',
     token: false,
+    proxy: false,
     project: false,
     from: "1970-01-01",
     to: moment().format(),

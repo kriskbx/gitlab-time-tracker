@@ -8,10 +8,14 @@ const MergeRequest = require('./models/mergeRequest');
 const Config = require('./include/file-config');
 const Cli = require('./include/cli');
 
-program.parse(process.argv);
+program
+    .option('-p --proxy <proxy>', 'use a proxy server with the given url')
+    .parse(process.argv);
 
 let config = new Config(process.cwd());
 let frames = new FrameCollection(config);
+
+config.set('proxy', program.proxy);
 
 let classes = {
     issue: Issue,
@@ -43,7 +47,7 @@ frames.filter(frame => {
     return !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0));
 });
 
-if(frames.length === 0) process.exit(0);
+if (frames.length === 0) process.exit(0);
 
 Cli.bar(`${Cli.process}  Syncing time records...`, frames.length);
 

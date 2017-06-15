@@ -18,7 +18,6 @@
     "commander": "^2.9.0",
     "csv-string": "^2.3.2",
     "find-in-files": "^0.4.0",
-    "got": "^6.7.1",
     "hashids": "^1.1.1",
     "markdown-pdf": "^8.0.0",
     "markdown-table": "^1.1.0",
@@ -28,6 +27,8 @@
     "progress": "^2.0.0",
     "prompt": "^1.0.0",
     "read-yaml": "^1.1.0",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
     "underscore": "^1.8.3"
   }
 }

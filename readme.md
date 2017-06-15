@@ -200,6 +200,9 @@ gtt report --exclude_labels=bug --exclude_labels=feature
 # include issues and merge requests in the report hat have no time records
 gtt report --show_without_times
 
+# use a proxy server
+gtt report --proxy="http://localhost:8080"
+
 # choose a different output than a stdout table
 gtt report --output=markdown --file=filename.md
 gtt report --output=csv --file=filename.csv
@@ -216,6 +219,9 @@ url: http://gitlab.com/api/v4/
 
 # your api token
 token: abcdefghijklmnopqrst
+
+# use a proxy server (defaults to false)
+proxy: http://localhost:8080
 
 # default project
 project: namespace/projectname
