@@ -52,52 +52,51 @@ if (frames.length === 0) process.exit(0);
 Cli.bar(`${Cli.process}  Syncing time records...`, frames.length);
 
 frames.forEach((frame, done) => {
-    new Promise(resolve => resolve())
+    if (resources[frame.resource.type][frame.resource.id] !== undefined
+        && resources[frame.resource.type][frame.resource.id].data.project_id) return done();
 
-    // set resource if it isn't already set
-        .then(() => new Promise((resolve, reject) => {
-            if (resources[frame.resource.type][frame.resource.id] !== undefined
-                && resources[frame.resource.type][frame.resource.id].data.project_id) return resolve();
-            resources[frame.resource.type][frame.resource.id] = new classes[frame.resource.type](config, {});
-            resources[frame.resource.type][frame.resource.id]
-                .make(frame.project, frame.resource.id)
-                .then(() => resolve())
-                .catch(error => reject(error));
-        }))
-        .catch(error => Cli.x(`Could not resolve issue/merge_request ${frame.resource.id} on "${frame.project}"`, error))
+    resources[frame.resource.type][frame.resource.id] = new classes[frame.resource.type](config, {});
+    resources[frame.resource.type][frame.resource.id]
+        .make(frame.project, frame.resource.id)
+        .then(() => done())
+        .catch(error => Cli.x(`Could not resolve issue/merge_request ${frame.resource.id} on "${frame.project}"`, error));
+})
+
+    .then(() => frames.forEach((frame, done) => {
+        new Promise(resolve => resolve())
 
         // set notes if not already set
-        .then(() => new Promise((resolve, reject) => {
-            let notes;
-            if ((notes = resources[frame.resource.type][frame.resource.id].notes) && notes.length > 0) return;
-            resources[frame.resource.type][frame.resource.id]
-                .getNotes()
-                .then(() => resolve())
-                .catch(error => reject(error));
-        }))
-        .catch(error => Cli.x(`Could not get notes from "${frame.project}"`, error))
+            .then(() => new Promise((resolve, reject) => {
+                let notes;
+                if ((notes = resources[frame.resource.type][frame.resource.id].notes) && notes.length > 0) return;
+                resources[frame.resource.type][frame.resource.id]
+                    .getNotes()
+                    .then(() => resolve())
+                    .catch(error => reject(error));
+            }))
+            .catch(error => Cli.x(`Could not get notes from "${frame.project}"`, error))
 
-        // create note if completely missing
-        .then(() => new Promise((resolve, reject) => {
-            if (frame.notes.length > 0) return resolve();
-            createTime(frame, frame.duration)
-                .then(() => {
-                    Cli.advance();
-                    done();
-                })
-                .catch(error => reject(error))
-        }))
-        .catch(error => Cli.error('Could not create time spent.', error))
+            // create note if completely missing
+            .then(() => new Promise((resolve, reject) => {
+                if (frame.notes.length > 0) return resolve();
+                createTime(frame, frame.duration)
+                    .then(() => {
+                        Cli.advance();
+                        done();
+                    })
+                    .catch(error => reject(error))
+            }))
+            .catch(error => Cli.error('Could not create time spent.', error))
 
-        // check for mismatches and update times
-        .then(() => new Promise((resolve, reject) => {
-            let diff = Math.ceil(frame.duration) - parseInt(_.reduce(frame.notes, (n, m) => (n + m.time), 0));
-            createTime(frame, diff)
-                .then(() => {
-                    Cli.advance();
-                    done();
-                })
-                .catch(error => reject(error))
-        }))
-        .catch(error => Cli.error('Could not create time spent.', error))
-});
+            // check for mismatches and update times
+            .then(() => new Promise((resolve, reject) => {
+                let diff = Math.ceil(frame.duration) - parseInt(_.reduce(frame.notes, (n, m) => (n + m.time), 0));
+                createTime(frame, diff)
+                    .then(() => {
+                        Cli.advance();
+                        done();
+                    })
+                    .catch(error => reject(error))
+            }))
+            .catch(error => Cli.error('Could not create time spent.', error))
+    }));
