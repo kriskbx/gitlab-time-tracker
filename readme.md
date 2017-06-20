@@ -1,138 +1,179 @@
-# gtt
+# gtt 
 
-[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
-[![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
+[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg)](https://www.npmjs.com/package/gitlab-time-tracker)
 
-> A command line interface that makes working with GitLabs time tracking feature more enjoyable.
+> A command line interface for GitLabs time tracking feature.
 
 gtt monitors the time you spent on an issue or merge request locally and syncs it to GitLab. 
-It also allows you to create time tracking reports in various formats from time tracking data
+It also allows you to create reports in various formats from time tracking data
 stored on GitLab.
 
-![preview](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview.gif)
+## contents
+
+* [requirements](#requirements)
+* [installation](#installation)
+* [updating](#updating)
+* [commands](#commands)
+    * [I) configuration](#i-configuration)
+    * [II) time tracking](#ii-time-tracking)
+    * [III) reports](#iii-reports)
+* [configuration](#configuration)
+    * [config file](#config-file)
+    * [time format](#time-format)
+* [how to use gtt as a library](#how-to-use-gtt-as-a-library)
+* [faqs](#faqs)
+* [contributing](#contributing)
+* [buy me a beer 🍺](#buy-me-a-beer)
+* [license](#license)
 
 ## requirements
 
-* [node.js](https://nodejs.org/en/download) version > 6
+* [node.js](https://nodejs.org/en/download) version >= 6
 * [npm](https://github.com/npm/npm) or [yarn](https://yarnpkg.com/en/docs/install)
 
 ## installation
 
-Install the gtt command line interface:
+Install the gtt command line interface using yarn:
 
-```
-# using yarn
+```shell
 yarn global add gitlab-time-tracker --prefix /usr/local
+```
 
-# using npm
+... or using npm:
+
+```shell
 npm install -g gitlab-time-tracker
 ```
 
 Run the config command to create a config file and open it in your default editor.
 If nothing happens, open the file manually: `~/.gtt/config.yml`
 
-```
+```shell
 gtt config
 ```
 
 Add your GitLab API url and your [GitLab API personal token](https://gitlab.com/profile/personal_access_tokens) 
 to the config file and save it afterwards:
 
-```
+```yaml
 url: https://gitlab.com/api/v4/
 token: 01234567891011
 ```
 
-#### upgrading from 0.*
+## updating
 
-I built gtt originally in PHP because I'm a PHP dev and I chose the language I'm most familiar 
-with to create a quick and dirty prototype. After some consideration I rebuilt everything from 
-scratch for node.js. Follow these steps to upgrade:
+Update gtt via yarn:
 
+```shell
+yarn global upgrade gitlab-time-tracker
 ```
-# 1. remove the old version entirely
-composer global remove kriskbx/gitlab-time-tracker
 
-# 2. install the new version
-# using yarn
-yarn global add gitlab-time-tracker --prefix /usr/local
+... or npm:
 
-# using npm
+```shell
 npm install -g gitlab-time-tracker
-
-# 3. edit your configuration and update the date format
-# format options: http://momentjs.com/docs/#/displaying/format/
-gtt edit
-
-# 4. the columns option is now split into 3 options for different parts of
-# the report: issueColumns, mergeRequestColumns and recordColumns
-# there's also a userColumns option that adds a column for each user
-# with total time spent. please update your config accordingly
 ```
 
 ## commands
 
-#### time tracking
+### I) configuration
 
-Time tracking enables you to track and monitor your time locally. When you're done,
-you can sync time records to GitLab and create "time spent comments" automatically. 
+*[Click here](#configuration-options) for a complete list of configuration options.*
 
-```
-# start LOCAL time monitoring for the given project and id. if you 
-# configured a project in your config you can omit the project
-gtt start "kriskbx/example-project" 15
-gtt start 15
+**Edit/create the global configuration file, stored in your home directory:**
 
-# status
-gtt status
-
-# stop LOCAL time monitoring
-gtt stop
-
-# cancel LOCAL time monitoring and discard the record
-gtt cancel
-
-# log LOCAL time records
-gtt log
-
-# edit a LOCAL time record by it's id. you can omit the id
-# to edit the last time record recorded
-gtt edit 2xZkV5LNM
-gtt edit
-
-# delete a LOCAL time record by it's id. you can omit the id
-# to delete the last time record recorded
-gtt delete 2xZkV5LNM
-gtt delete
-
-# sync LOCAL time records to GitLab and create "time spent comments"
-gtt sync
-```
-
-#### edit configuration
-
-Edit the configuration file. [Available options](#options)
-
-```
-# edit/create the global configuration file, stored in your home directory
+```shell
 gtt config
+```
 
-# edit/create a local configuration file (.gtt.yml) in the current directory.
-# if a local configuration file is present, it's used instead of the global one.
-# so you can use gtt on a per project basis. make sure to add .gtt.yml to your 
-# gitignore file if using a local configuration
+**Edit/create a local configuration file `.gtt.yml` in the current working directory:**
+
+```shell
 gtt config --local
 ```
 
-#### reports
+If a local configuration file is present it's used instead of the global one.
+So you can use gtt on a per project basis. Make sure to add .gtt.yml to your 
+gitignore file if using a local configuration.
 
-Get a report for your project from GitLab.
+### II) time tracking
 
-> This command pulls data from GitLab and is not using your LOCAL time records.
+Time tracking enables you to monitor the time you spent on an issue or merge request locally.
+When you're done, you can sync these time records to GitLab: gtt adds the time spent to the given 
+issue or merge request and automagically keeps everything in sync with your local data.
+ 
+Did you forgot to stop time monitoring locally and accidentally synced it to GitLab? 
+No worries, just edit the local record and run sync again.
 
+**Start local time monitoring for the given project and id:**
+
+```shell
+gtt start "kriskbx/example-project" 15
+gtt start 15
 ```
-# you can omit the project if stored on your config.
-# you can pass multiple ids too
+
+If you configured a project in your config you can omit the project.
+
+**Show the current time monitoring status:**
+
+```shell
+gtt status
+```
+
+**Stop local time monitoring and save as a new time record:**
+
+```shell
+gtt stop
+```
+
+**Cancel local time monitoring and discard the time record:**
+
+```shell
+gtt cancel
+```
+
+**Show a list of all local time records (including their ids and meta data):**
+
+```shell
+gtt log
+```
+
+**Edit a local time record by the given id:**
+
+```shell
+gtt edit 2XZkV5LNM
+gtt edit
+```
+
+You can omit the id to edit the last added time record.
+
+**Delete a local time record by the given id:**
+
+```shell
+gtt delete 2XZkV5LNM
+gtt delete
+```
+
+You can omit the id to delete the last added time record.
+
+**Sync local time records with time tracking data on Gitlab:**
+
+```shell
+gtt sync
+gtt sync --proxy="http://localhost:8888"
+```
+
+You can pass an url to the proxy option if you want to use a proxy server.
+
+### III) reports
+
+Get a report for the time tracking data stored on GitLab. If you want to include your local data make sure to sync it
+before running the report command. The report command has a lot of options to filter data and output, make sure to 
+read through the docs before using it.
+
+#### Get a report
+
+```shell
 gtt report ["namespace/project"] [issue_id]
 gtt report "kriskbx/example-project"
 gtt report "kriskbx/example-project" 145
@@ -140,213 +181,421 @@ gtt report "kriskbx/example-project" 145 209 45 54
 gtt report
 gtt report 145
 gtt report 123 345 123
+```
 
-# timeframe
-gtt report --from="2017-03-01" --to="2017-04-01"
+If you configured a project in your config file you can omit it. By passing a or multiple ids you can limit the
+report to the given issues or merge requests. *Note: if you're passing a or multiple ids, gtt will fetch issues
+with these ids by default. If you want to fetch merge requests you can change the query type using the
+`--query` option.*
 
-# include closed issues/merge_requests
-gtt report --closed=true
+#### Choose an output for your report
 
-# limit to a user
-gtt report --user=username
-
-# limit to a milestone
-gtt report --milestone=milestone_name
-
-# query only one data type: issues, merge_requests
-gtt report --query=merge_requests
-
-# limit the parts included in the report: stats, issues, merge_requests, records
-gtt report --report=stats --report=records
-
-# hide headlines in the report
-gtt report --no_headlines
-
-# hide warnings in the report
-gtt report --no_warnings
-
-# set date format
-# format options: http://momentjs.com/docs/#/displaying/format/
-gtt report --date_format="DD.MM.YYYY HH:mm:ss"
-
-# set time format
-# for options, see configuration
-gtt report --time_format="[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
-
-# set columns for time records list
-gtt report --record_columns=user --record_columns=date --record_columns=time
-
-# set columns for issue list
-gtt report --issue_columns=iid --issue_columns=title --issue_columns=time_username
-
-# set columns for merge request list
-gtt report --merge_request_columns=iid --merge_request_columns=title --merge_request_columns=time_username
-
-# add time columns for all available users to issues and merge requests
-gtt report --user_columns
-
-# only include issues and merge requests that have the following labels
-gtt report --include_by_labels=critical --include_by_labels=important
-
-# exclude issues and merge requests that have the following labels
-gtt report --exclude_by_labels=wont-fix --exclude_by_labels=ignore
-
-# only include the given labels in the results
-gtt report --include_labels=pending --include_labels=approved
-
-# exclude the given labels from the results
-gtt report --exclude_labels=bug --exclude_labels=feature
-
-# include issues and merge requests in the report hat have no time records
-gtt report --show_without_times
-
-# use a proxy server
-gtt report --proxy="http://localhost:8080"
-
-# choose a different output than a stdout table
-gtt report --output=markdown --file=filename.md
-gtt report --output=csv --file=filename.csv
+```shell
+gtt report --output=table
+gtt report --output=markdown
+gtt report --output=csv
 gtt report --output=pdf --file=filename.pdf
 ```
 
-#### configuration options
+Defaults to `table`. `csv` and `markdown` can be printed to stdout, `pdf` needs the file parameter.
+
+#### Print the output to a file
+
+```shell
+gtt report --file=filename.txt
+```
+
+#### Only get time records from the given time frame
+
+```shell
+gtt report --from="2017-03-01" --to="2017-04-01"
+```
+
+*Note: `--from` defaults to 1970-01-01, `--to` defaults to now. Make sure to use an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) compatible time/date format.*
+
+#### Include closed issues/merge requests
+
+```shell
+gtt report --closed
+```
+
+#### Limit to the given user
+
+```shell
+gtt report --user=username
+```
+
+#### Limit to the given milestone
+
+```shell
+gtt report --milestone=milestone_name
+```
+
+#### Limit issues and merge requests to the given labels 
+
+```shell
+gtt report --include_by_labels=critical --include_by_labels=important
+```
+
+#### Exclude issues and merge requests that have the given labels
+
+```shell
+gtt report --exclude_by_labels=wont-fix --exclude_by_labels=ignore
+```
+
+#### Limit the query to the given data type
+
+```shell
+gtt report --query=issues
+gtt report --query=merge_requests
+```
+
+#### Include issues and merge requests in the report that have no time records
+
+```shell
+gtt report --show_without_times
+```
+
+#### Limit the parts in the final report
+
+```shell
+gtt report --report=stats --report=issues
+```
+
+*Note: These parts are available: `stats`, `issues`, `merge_requests`, `records`*
+
+#### Hide headlines in the report
+
+```shell
+gtt report --no_headlines
+```
+
+#### Hide warnings in the report
+
+```shell
+gtt report --no_warnings
+```
+
+#### Set date format for the report
+
+```shell
+gtt report --date_format="DD.MM.YYYY HH:mm:ss"
+```
+
+*Note: [Click here](http://momentjs.com/docs/#/displaying/format/) for a further documentation on the date format.*
+
+#### Set time format for the report
+
+```shell
+gtt report --time_format="[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+```
+
+*Note: [Click here](#time-format) for a further documentation on the time format.*
+
+#### Set columns included in the time record table
+
+```shell
+gtt report --record_columns=user --record_columns=date --record_columns=time
+```
+
+*Note: Available columns to choose from: `user`, `date`, `type`, `iid`, `time`*
+
+#### Set columns included in the issue table
+
+```shell
+gtt report --issue_columns=iid --issue_columns=title --issue_columns=time_username
+```
+
+*Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`,
+`description`, `labels`, `milestone`, `assignee`, `author`, `closed`,
+`updated_at`, `created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
+
+*You can also include columns that show the total time spent by a specific user 
+by following this convention: `time_username`*
+
+#### Set columns included in the merge request table
+
+```shell
+gtt report --merge_request_columns=iid --merge_request_columns=title --merge_request_columns=time_username
+```
+
+*Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`,
+`description`, `labels`, `milestone`, `assignee`, `author`, `updated_at`,
+`created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
+
+*You can also include columns that show the total time spent by a specific user 
+by following this convention: `time_username`*
+
+#### Add columns for each project member to issue and merge request table, including their total time spent
+
+```shell
+gtt report --user_columns
+```
+
+#### Only include the given labels in the report
+
+```shell
+gtt report --include_labels=pending --include_labels=approved
+```
+
+#### Exclude the given labels from the report
+
+```shell
+gtt report --exclude_labels=bug --exclude_labels=feature
+```
+
+#### Use a proxy server
+
+```shell
+gtt report --proxy="http://localhost:8080"
+```
+
+## configuration
+
+The configuration uses the [yaml file format](http://www.yaml.org/spec/1.2/spec.html). 
+[Click here](#i-configuration) for more information how to edit and create a config file.
+
+### Config File
 
 Here's a sample configuration file including all available options:
 
-```
-# url to the gitlab api. make sure there's a trailing slash
+```yaml
+# Url to the gitlab api
+# Make sure there's a trailing slash
+# [required]
 url: http://gitlab.com/api/v4/
 
-# your api token
+# GitLab personal api token
+# [required]
 token: abcdefghijklmnopqrst
 
-# use a proxy server (defaults to false)
+# Use a proxy server
+# defaults to false
 proxy: http://localhost:8080
 
-# default project
+# Project
+# defaults to false
 project: namespace/projectname
 
-# include closed by default
+# Include closed issues and merge requests
+# defaults to false
 closed: true
 
-# default milestone to filter issues by
+# Limit to the given milestone
+# defaults to false
 milestone: milestone_name
 
-# hours per day
+# Exclude issues and merge requests that have the given labels
+# defaults to an empty array
+excludeByLabels:
+- wont-fix
+- ignore
+
+# Limit issues and merge requests to the given labels
+# defaults to an empty array
+includeByLabels:
+- critical
+- important
+
+# Limit the query to the given data type
+# available: issues, merge_requests
+# defaults to [issues, merge_requests]
+query:
+- issues
+
+# Limit the parts in the final report
+# available: stats, issues, merge_requests, records
+# defaults to [stats, issues, merge_requests, records]
+report:
+- stats
+- records
+
+# Hide headlines in the report
+# defaults to false
+noHeadlines: true
+
+# Hide warnings in the report
+# defaults to false
+noWarnings: true
+
+# Include issues and merge requests in the report that have no time records
+# defaults to false
+showWithoutTimes: true
+
+# Hours per day
+# defaults to 8
 hoursPerDay: 8
 
-# issue columns to include in the report
-# available columns: id, iid, title, project_id, description, labels, milestone,
-# assignee, author, closed, updated_at, created_at, state, spent, total_spent, 
-# total_estimate
-#
-# you can include time spent by a specific user by adding a column that follows 
-# this convention: time_username
+# Include the given columns in the issue table
+# See --issue_columns option for more information
+# defaults to iid, title, spent, total_estimate
 issueColumns:
 - iid
 - title
 - estimation
 
-# merge request columns to include in the report
-# available columns: id, iid, title, project_id, description, labels, milestone,
-# assignee, author, updated_at, created_at, state, spent, total_spent, total_estimate
-#
-# you can include time spent by a specific user by adding a column that follows 
-# this convention: time_username
+# Include the given columns in the merge request table
+# See --merge_request_columns option for more information
+# defaults to iid, title, spent, total_estimate
 mergeRequestColumns:
 - iid
 - title
 - estimation
 
-# columns of time records to include in the report
-# available columns: user, date, type, iid, time
+# Include the given columns in the time record table
+# See --record_columns option for more information
+# defaults to user, date, type, iid, time
 recordColumns:
 - user
 - iid
 - time
 
-# add time columns for all available users to issues and merge requests
+# Add columns for each project member to issue and
+# merge request table, including their total time spent
+# defaults to true
 userColumns: true
 
-# date format
-# format options: http://momentjs.com/docs/#/displaying/format/
+# Date format
+# Click here for format options: http://momentjs.com/docs/#/displaying/format/
+# defaults to DD.MM.YYYY HH:mm:ss
 dateFormat: DD.MM.YYYY HH:mm:ss
 
-# time format
-#
-# [%sign], [%days], [%hours], [%minutes], [%seconds] 
-# -> prints out the raw data
-#
-# [%days>string], [%hours>string], [%minutes>string], [%seconds>string] 
-# -> is a conditional and prints out the data and appends the given string
-#    if the data is greater than zero
-#
-# [%Days], [%Hours], [%Minutes], ...
-# -> uppercase adds leading zeros
-#
-# [%days_overall], [%hours_overall], [%minutes_overall], ...
-# -> instead of printing out the second-/minute-/hour-/day-part of the time
-#    this prints the complete time in seconds/minutes/hours/days
-#
-# [%days_overall_comma], [%hours_overall_comma], [%minutes_overall_comma] 
-# -> use a comma instead of a dot for those float values
+# Time format
+# See time format configuration below
+# defaults to "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
-# default output, available: csv, table, markdown, pdf
+# Output type
+# Available: csv, table, markdown, pdf
+# defaults to table
 output: markdown
 
-# exclude issues and merge requests that have the following labels
-excludeByLabels:
-- wont-fix
-- ignore
-
-# only include issues and merge request that have the following labels
-includeByLabels:
-- critical
-- important
-
-# exclude the following labels in the results
+# Exclude the given labels from the report
+# defaults to an empty array
 excludeLabels:
 - bug
 - feature
 
-# only include the following labels in the result
+# Only include the given labels in the report
+# defaults to an empty array
 includeLabels:
 - pending
 - approved
 
-# query only the given data types: issues, merge_requests
-query:
-- issues
+# Change number of concurrent connections/http queries
+# Note: Handle with care, we don't want to spam GitLabs API too much
+# defaults to 10
+_parallel: 20
 
-# include the given parts in the report: stats, issues, merge_requests, records
-report:
-- stats
-- records
-
-# hide headlines in report
-noHeadlines: true
-
-# hide warnings in report
-noWarnings: true
-
-# include issues and merge requests in the report hat have no time records
-showWithoutTimes: true
-
-# change number of concurrent connections. 
-# handle with care, we don't want to spam GitLabs API too much
-_parallel: 4
-
-# change rows per page (max. 100)
+# Change rows per page (max. 100)
+# defaults to 100
 _perPage: 100
 ```
 
-## use as a library
+### Time format
 
+##### `[%sign]`, `[%days]`, `[%hours]`, `[%minutes]`, `[%seconds]`
+
+Prints out the raw data.
+ 
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%days]d [%hours]h [%minutes]m [%seconds]s"
 ```
-# install as dependency
+
+**Example outputs:**
+
+```shell
+0d 0h 30m 15s
+-1d 10h 15m 0s
+```
+ 
+##### `[%days>string]`, `[%hours>string]`, `[%minutes>string]`, `[%seconds>string]`
+
+This is a conditional: it prints out the raw data and appends the given string if the
+data is greater than zero.
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+```
+
+**Example outputs:**
+
+```shell
+30m 15s
+-1d 10h 15m
+```
+
+##### `[%Days]`, `[%Hours]`, `[%Minutes]`, `[%Seconds]`, `[%Days>string]`, `[%Hours>string]`, `[%Minutes>string]`, `[%Seconds>string]`
+
+First letter uppercase adds leading zeros.
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%Days]:[%Hours]:[%Minutes]:[%Seconds]"
+```
+
+**Example outputs:**
+
+```shell
+00:00:30:15
+-01:10:15:00
+```
+
+##### `[%days_overall]`, `[%hours_overall]`, `[%minutes_overall]`, `[%seconds_overall]`
+
+Instead of printing out the second-, minute-, hour-, day-part of the duration this
+prints the complete time in either seconds, minutes, hours or days.
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%minutes_overall]"
+```
+
+**Example outputs:**
+
+```shell
+30.25
+1095
+```
+
+##### `[%days_overall_comma]`, `[%hours_overall_comma]`, `[%minutes_overall_comma]`, `[%seconds_overall_comma]`
+
+Use a comma for float values instead of a point. (Useful for some european countries)
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%minutes_overall]"
+```
+
+**Example outputs:**
+
+```shell
+30,25
+1095
+```
+
+## how to use gtt as a library
+
+Add as a dependency using yarn:
+
+```shell
 yarn add gitlab-time-tracker
 ```
+
+... or using npm:
+
+```shell
+npm install --save gitlab-time-tracker
+```
+
+Use it in your project:
 
 ```
 // require modules
@@ -389,6 +638,27 @@ report.mergeRequests.forEach(mergeRequest => {
 `total spent` is the total amount of time spent in all issues after filtering.
 It can include times outside the queried time frame. `spent` on the other hand
 is the total amount of time spent in the given time frame.
+
+## contributing
+
+I would love to integrate unit testing in this project, but unfortunately my knowledge of 
+testing in the JavaScript/Node.js world is very limited. (I'm actually a PHP dev) 
+So this would be a very helpful thing to contribute but of course all contributions are very welcome.
+
+* Please work in your own branch, e.g. `integrate-awesome-feature`, `fix-awful-bug`, `improve-this-crappy-docs`
+* Create a pull request to the `dev` branch
+*
+
+## buy me a beer
+
+gtt is an open source project, developed and maintained in my free time.
+
+If you enjoy using gtt you can support the project by [contributing](#contributing) to the code base, 
+sharing it to your colleagues and co-workers or monetarily by donating via PayPal. 
+Every type of support is very helpful and thank you very much if you consider contributing 
+or already have done so. 💜
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DN9YVDKFGC6V6)
 
 ## license
 
