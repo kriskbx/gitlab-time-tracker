@@ -105,11 +105,20 @@ issue or merge request and automagically keeps everything in sync with your loca
 Did you forgot to stop time monitoring locally and accidentally synced it to GitLab? 
 No worries, just edit the local record and run sync again.
 
-**Start local time monitoring for the given project and id:**
+**Start local time monitoring for the given project and issue id:**
 
 ```shell
 gtt start "kriskbx/example-project" 15
 gtt start 15
+```
+
+If you configured a project in your config you can omit the project.
+
+**Start local time monitoring for a merge request:**
+
+```shell
+gtt start --type=merge_request "kriskbx/example-project" 15
+gtt start --type=merge_request 15
 ```
 
 If you configured a project in your config you can omit the project.
