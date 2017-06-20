@@ -649,14 +649,12 @@ So this would be a very helpful thing to contribute but of course all contributi
 
 ## buy me a beer
 
-gtt is an open source project, developed and maintained in my free time.
+gtt is an open source project, developed and maintained completely in my free time.
 
 If you enjoy using gtt you can support the project by [contributing](#contributing) to the code base, 
-sharing it to your colleagues and co-workers or monetarily by donating via PayPal. 
-Every type of support is very helpful and thank you very much if you consider supporting the project 
+sharing it to your colleagues and co-workers or monetarily by [donating via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DN9YVDKFGC6V6). 
+Every type of support is helpful and thank you very much if you consider supporting the project 
 or already have done so. 💜
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DN9YVDKFGC6V6)
 
 ## license
 
