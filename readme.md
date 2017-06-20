@@ -597,7 +597,7 @@ npm install --save gitlab-time-tracker
 
 Use it in your project:
 
-```
+```js
 // require modules
 const Config = require('gitlab-time-tracker/include/config');
 const Report = require('gitlab-time-tracker/model/report');
@@ -628,7 +628,6 @@ report.mergeRequests.forEach(mergeRequest => {
     console.log(mergeRequests.times);
     console.log(issue.times[0].user);
 });
-
 ```
 
 ## faqs
@@ -647,7 +646,6 @@ So this would be a very helpful thing to contribute but of course all contributi
 
 * Please work in your own branch, e.g. `integrate-awesome-feature`, `fix-awful-bug`, `improve-this-crappy-docs`
 * Create a pull request to the `dev` branch
-*
 
 ## buy me a beer
 
@@ -655,7 +653,7 @@ gtt is an open source project, developed and maintained in my free time.
 
 If you enjoy using gtt you can support the project by [contributing](#contributing) to the code base, 
 sharing it to your colleagues and co-workers or monetarily by donating via PayPal. 
-Every type of support is very helpful and thank you very much if you consider contributing 
+Every type of support is very helpful and thank you very much if you consider supporting the project 
 or already have done so. 💜
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DN9YVDKFGC6V6)
