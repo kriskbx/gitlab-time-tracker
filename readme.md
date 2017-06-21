@@ -78,7 +78,7 @@ npm install -g gitlab-time-tracker
 
 ### I) configuration
 
-*[Click here](#configuration-options) for a complete list of configuration options.*
+*[Click here](#configuration) for a complete list of configuration options.*
 
 **Edit/create the global configuration file, stored in your home directory:**
 
