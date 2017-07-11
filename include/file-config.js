@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config');
 const yaml = require('read-yaml');
-const Hashids = require('hashids');
-const hashids = new Hashids();
+const hash = require('hash-sum');
 
 const globalConfigDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.gtt';
 const globalConfigFile = globalConfigDir + '/config.yml';
@@ -82,16 +81,16 @@ class fileConfig extends config {
     }
 
     _cacheGet(key) {
-        let file = this.cacheDir + '/' + hashids.encode(key);
+        let file = this.cacheDir + '/' + hash(key);
         if (!fs.existsSync(file)) return false;
 
         return JSON.parse(fs.readFileSync(file));
     }
 
     _cacheSet(key, value) {
-        let file = this.cacheDir + '/' + hashids.encode(key);
+        let file = this.cacheDir + '/' + hash(key);
         if (fs.existsSync(file)) fs.unlinkSync(file);
-        fs.appendFileSync(file, JSON.stringify(value));
+        fs.appendFile(file, JSON.stringify(value), () => {});
 
         return value;
     }
