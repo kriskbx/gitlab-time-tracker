@@ -6,6 +6,8 @@ const moment = require('moment');
 const Cli = require('./include/cli');
 const Config = require('./include/file-config');
 const Report = require('./models/report');
+const Owner = require('./models/owner');
+const ReportCollection = require('./models/reportCollection');
 
 const Output = {
     table: require('./output/table'),
@@ -31,9 +33,11 @@ program
     .option('-u --user <user>', 'only query times from the given user')
     .option('-m --milestone <milestone>', 'include issues from the given milestone')
     .option('-q --query <query>', 'query the given data types: issues, merge_requests', collect, null)
+    .option('-e --type <type>', 'specify the query type: project, user, group')
     .option('-r --report <report>', 'include in the report: stats, issues, merge_requests, records', collect, null)
     .option('-o --output <output>', 'use the given output', collect, null)
     .option('-l --file <file>', 'save report to the given file')
+    .option('--subgroups', 'include sub groups')
     .option('--include_by_labels <labels>', 'only include issues that have the given labels', collect, null)
     .option('--exclude_by_labels <labels>', 'exclude issues that have the given labels', collect, null)
     .option('--include_labels <labels>', 'only include the given labels in the report', collect, null)
@@ -82,7 +86,9 @@ config
     .set('quiet', program.quiet)
     .set('showWithoutTimes', program.show_without_times)
     .set('userColumns', program.user_columns)
-    .set('proxy', program.proxy);
+    .set('proxy', program.proxy)
+    .set('type', program.type)
+    .set('subgroups', program.subgroups);
 
 Cli.quiet = config.get('quiet');
 
@@ -109,8 +115,10 @@ if (!config.get('to').isValid()) {
     Cli.error(`TO is not a in valid ISO date format.`);
 }
 
-// create report
-let report = new Report(config), output;
+// create stuff
+let reports = new ReportCollection(config),
+    master = new Report(config),
+    output;
 
 // file prompt
 new Promise(resolve => {
@@ -123,37 +131,75 @@ new Promise(resolve => {
     }
 })
 
-// get project
-    .then(() => {
-        Cli.list(`${Cli.look}  Resolving project "${config.get('project')}"`);
-        return report.getProject();
-    })
-
-    // get members
+// get project(s)
     .then(() => new Promise((resolve, reject) => {
+        Cli.list(`${Cli.look}  Resolving "${config.get('project')}"`);
+        let owner = new Owner(config);
+
+        switch (config.get('type')) {
+            case 'project':
+                let report = new Report(config);
+                reports.push(report);
+                report.getProject()
+                    .then(() => resolve())
+                    .catch(e => reject(e));
+                break;
+
+            case 'group':
+                owner.getGroup()
+                    .then(() => {
+                        if (!config.get('subgroups')) return new Promise(r => r());
+                        return owner.getSubGroups();
+                    })
+                    .then(() => owner.getProjectsByGroup()
+                        .then(() => {
+                            owner.projects.forEach(project => {
+                                reports.push(new Report(config, project));
+                            });
+                            Cli.out(`\r${Cli.look}  Selected projects: ${owner.listProjects()}\n`);
+                            resolve();
+                        }))
+                    .catch(e => reject(e));
+                break;
+        }
+    }))
+
+    // get members and user columns
+    .then(() => new Promise(resolve => {
         if (!config.get('userColumns')) return resolve();
 
-        report.project.members()
-            .then(() => {
-                let columns = report.project.users.map(user => `time_${user}`);
+        reports
+            .forEach((report, done) => {
+                report.project.members()
+                    .then(() => {
+                        let columns = report.project.users.map(user => `time_${user}`);
 
-                config.set('issueColumns', _.uniq(config.get('issueColumns').concat(columns)));
-                config.set('mergeRequestColumns', _.uniq(config.get('mergeRequestColumns').concat(columns)));
-                resolve();
+                        config.set('issueColumns', _.uniq(config.get('issueColumns').concat(columns)));
+                        config.set('mergeRequestColumns', _.uniq(config.get('mergeRequestColumns').concat(columns)));
+
+                        done();
+                    })
+                    .catch(error => done(error));
             })
-            .catch(error => reject(error));
+            .catch(error => Cli.x(`could not fetch project.`, error))
+            .then(() => resolve());
     }))
     .then(() => Cli.mark())
-    .catch(error => Cli.x(`could not fetch project.`, error))
+    .catch(error => Cli.x(`Could not resolve "${config.get('project')}"`, error))
 
     // get issues
     .then(() => new Promise(resolve => {
         if (!config.get('query').includes('issues')) return resolve();
 
         Cli.list(`${Cli.fetch}  Fetching issues`);
-        report.getIssues()
-            .then(() => Cli.mark())
+
+        reports
+            .forEach((report, done) => {
+                report.getIssues()
+                    .then(() => done());
+            })
             .catch(error => Cli.x(`could not fetch issues.`, error))
+            .then(() => Cli.mark())
             .then(() => resolve());
     }))
 
@@ -162,18 +208,38 @@ new Promise(resolve => {
         if (!config.get('query').includes('merge_requests')) return resolve();
 
         Cli.list(`${Cli.fetch}  Fetching merge requests`);
-        report.getMergeRequests()
-            .then(() => Cli.mark())
+
+        reports
+            .forEach((report, done) => {
+                report.getMergeRequests()
+                    .catch(error => done(error))
+                    .then(() => done());
+            })
             .catch(error => Cli.x(`could not fetch merge requests.`, error))
+            .then(() => Cli.mark())
+            .then(() => resolve());
+    }))
+
+    // merge reports
+    .then(() => new Promise(resolve => {
+        Cli.list(`${Cli.merge}  Merging reports`);
+
+        reports
+            .forEach((report, done) => {
+                master.merge(report);
+                done();
+            })
+            .catch(error => Cli.x(`could not merge reports.`, error))
+            .then(() => Cli.mark())
             .then(() => resolve());
     }))
 
     // process issues
     .then(() => new Promise(resolve => {
-        if (!config.get('query').includes('issues') || report.issues.length === 0) return resolve();
+        if (!config.get('query').includes('issues') || master.issues.length === 0) return resolve();
 
-        Cli.bar(`${Cli.process}️  Processing issues`, report.issues.length);
-        report.processIssues(() => Cli.advance())
+        Cli.bar(`${Cli.process}️  Processing issues`, master.issues.length);
+        master.processIssues(() => Cli.advance())
             .then(() => Cli.mark())
             .catch(error => Cli.x(`could not process issues.`, error))
             .then(() => resolve());
@@ -181,10 +247,10 @@ new Promise(resolve => {
 
     // process merge requests
     .then(() => new Promise(resolve => {
-        if (!config.get('query').includes('merge_requests') || report.mergeRequests.length === 0) return resolve();
+        if (!config.get('query').includes('merge_requests') || master.mergeRequests.length === 0) return resolve();
 
-        Cli.bar(`${Cli.process}️️  Processing merge requests`, report.mergeRequests.length);
-        report.processMergeRequests(() => Cli.advance())
+        Cli.bar(`${Cli.process}️️  Processing merge requests`, master.mergeRequests.length);
+        master.processMergeRequests(() => Cli.advance())
             .then(() => Cli.mark())
             .catch(error => Cli.x(`could not process merge requests.`, error))
             .then(() => resolve());
@@ -192,11 +258,11 @@ new Promise(resolve => {
 
     // make report
     .then(() => new Promise(resolve => {
-        if (report.issues.length === 0 && report.mergeRequests.length === 0)
+        if (master.issues.length === 0 && master.mergeRequests.length === 0)
             Cli.error('No issues or merge requests matched your criteria.');
 
         Cli.list(`${Cli.output}  Making report`);
-        output = new Output[config.get('output')](config, report);
+        output = new Output[config.get('output')](config, master);
         output.make();
         Cli.mark();
         resolve();

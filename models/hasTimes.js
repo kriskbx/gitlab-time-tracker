@@ -69,7 +69,7 @@ class hasTimes extends Base {
             let created = moment(note.created_at), match, subMatch, removeMatch;
 
             if (
-                // filter out user notes
+            // filter out user notes
             !note.system ||
             // only include times by the configured user
             (this.config.get('user') && this.config.get('user') !== note.author.username) ||
@@ -87,6 +87,7 @@ class hasTimes extends Base {
             timeSpent += time.seconds;
             timeUsers[note.author.username] += time.seconds;
 
+            time.project_namespace = this.project_namespace;
             times.push(time);
 
             done();

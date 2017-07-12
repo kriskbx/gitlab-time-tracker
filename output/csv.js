@@ -16,6 +16,14 @@ class csv extends Base {
             stats[0].push(name);
             stats[1].push(time);
         });
+
+        if (this.projects.length > 1) {
+            _.each(this.projects, (time, name) => {
+                stats[0].push(name);
+                stats[1].push(time);
+            });
+        }
+
         _.each(this.users, (time, name) => {
             stats[0].push(name);
             stats[1].push(time);

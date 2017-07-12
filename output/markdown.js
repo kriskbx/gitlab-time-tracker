@@ -23,6 +23,13 @@ class markdown extends Base {
         let stats = '';
 
         _.each(this.stats, (time, name) => stats += `\n* **${name}**: ${time}`);
+        stats += `\n`;
+
+        if (this.projects.length > 1) {
+            _.each(this.projects, (time, name) => stats += `\n* **${name.red}**: ${time}`);
+            stats += `\n`;
+        }
+
         _.each(this.users, (time, name) => stats += `\n* **${name}**: ${time}`);
 
         this.write(stats.substr(1));

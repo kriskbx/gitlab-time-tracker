@@ -38,6 +38,10 @@ class cli {
         return '📃';
     }
 
+    static get merge() {
+        return '📎';
+    }
+
     static get party() {
         return '🥑';
         // return '🍺';

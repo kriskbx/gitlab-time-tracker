@@ -48,6 +48,10 @@ class time {
         return this.data.noteable_type;
     }
 
+    get project_id() {
+        return this.parent.data.project_id;
+    }
+
     get iid() {
         return this.parent.iid;
     }

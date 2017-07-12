@@ -13,9 +13,13 @@ class report extends Base {
     /**
      * constructor.
      * @param config
+     * @param project
      */
-    constructor(config) {
+    constructor(config, project) {
         super(config);
+
+        this.projects = {};
+        this.setProject(project);
 
         this.issues = [];
         this.mergeRequests = [];
@@ -48,12 +52,23 @@ class report extends Base {
     }
 
     /**
+     * set the project by the given data
+     * @param project
+     */
+    setProject(project) {
+        if (!project) return;
+
+        this.projects[project.id] = project.path_with_namespace;
+        this.project = new Project(this.config, project)
+    }
+
+    /**
      * query and set the project
      * @returns {Promise}
      */
     getProject() {
         let promise = this.get(`projects/${encodeURIComponent(this.config.get('project'))}`);
-        promise.then(project => this.project = new Project(this.config, project.body));
+        promise.then(project => this.setProject(project));
 
         return promise;
     }
@@ -108,6 +123,8 @@ class report extends Base {
 
             // collect items, query times & stats
             collect.push(item = new model(this.config, item));
+            item.project_namespace = this.projects[item.project_id];
+
             item.getNotes()
                 .then(() => item.getTimes())
                 .catch(error => done(error))
@@ -121,6 +138,18 @@ class report extends Base {
 
         promise.then(() => this[input] = this.filter(collect));
         return promise;
+    }
+
+    /**
+     * merge another report into this report
+     * @param report
+     */
+    merge(report) {
+        this.issues = this.issues.concat(report.issues);
+        this.mergeRequests = this.mergeRequests.concat(report.mergeRequests);
+        if (!this.members) this.members = [];
+        this.members = this.members.concat(report.members ? report.members : []);
+        this.projects = Object.assign(this.projects, report.projects);
     }
 
     /**

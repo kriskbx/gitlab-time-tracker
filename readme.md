@@ -197,6 +197,17 @@ report to the given issues or merge requests. *Note: if you're passing a or mult
 with these ids by default. If you want to fetch merge requests you can change the query type using the
 `--query` option.*
 
+#### Query groups and subgroups
+
+```shell
+gtt report ["namespace"] --type=group
+gtt report example-group --type=group
+gtt report example-group --type=group --subgroups
+```
+
+Query all projects from the given group and combine the data into a single report. The option `--subgroups`
+includes subgroups.
+
 #### Choose an output for your report
 
 ```shell
@@ -307,7 +318,7 @@ gtt report --time_format="[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 gtt report --record_columns=user --record_columns=date --record_columns=time
 ```
 
-*Note: Available columns to choose from: `user`, `date`, `type`, `iid`, `time`*
+*Note: Available columns to choose from: `user`, `date`, `type`, `iid`, `project_id`, `project_namespace`, `time`*
 
 #### Set columns included in the issue table
 
@@ -315,9 +326,9 @@ gtt report --record_columns=user --record_columns=date --record_columns=time
 gtt report --issue_columns=iid --issue_columns=title --issue_columns=time_username
 ```
 
-*Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`,
-`description`, `labels`, `milestone`, `assignee`, `author`, `closed`,
-`updated_at`, `created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
+*Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`, 
+`project_namespace`, `description`, `labels`, `milestone`, `assignee`, `author`,
+`closed`, `updated_at`, `created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
 
 *You can also include columns that show the total time spent by a specific user 
 by following this convention: `time_username`*
@@ -329,8 +340,8 @@ gtt report --merge_request_columns=iid --merge_request_columns=title --merge_req
 ```
 
 *Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`,
-`description`, `labels`, `milestone`, `assignee`, `author`, `updated_at`,
-`created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
+`project_namespace`, `description`, `labels`, `milestone`, `assignee`, `author`,
+`updated_at`, `created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
 
 *You can also include columns that show the total time spent by a specific user 
 by following this convention: `time_username`*

@@ -101,13 +101,17 @@ class base {
         let totalSpent = 0;
         let spent = 0;
         let users = {};
+        let projects = {};
         let times = [];
 
         this.report.issues.forEach(issue => {
             issue.times.forEach(time => {
                 if (!users[time.user]) users[time.user] = 0;
+                if (!projects[time.project_namespace]) projects[time.project_namespace] = 0;
 
                 users[time.user] += time.seconds;
+                projects[time.project_namespace] += time.seconds;
+
                 spent += time.seconds;
                 times.push(time);
             });
@@ -118,6 +122,7 @@ class base {
 
         this.times = times;
         this.users = _.mapObject(users, user => this.config.toHumanReadable(user));
+        this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project));
         this.stats = {
             'total estimate': this.config.toHumanReadable(totalEstimate),
             'total spent': this.config.toHumanReadable(totalSpent),

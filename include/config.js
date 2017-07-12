@@ -4,6 +4,8 @@ const Time = require('./../models/time');
 
 const dates = ['from', 'to'];
 const defaults = {
+    type: 'project',
+    subgroups: false,
     url: 'https://gitlab.com/api/v4',
     token: false,
     proxy: false,
