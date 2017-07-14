@@ -1,7 +1,6 @@
 const _ = require('underscore');
 
 const Base = require('./base');
-const Color = require('colors');
 
 /**
  * owner model
@@ -15,14 +14,6 @@ class owner extends Base {
     }
 
     /**
-     * list projects
-     * @returns {string|*}
-     */
-    listProjects() {
-        return this.projects.map(p => p.path_with_namespace.bold.blue).join(',');
-    }
-
-    /**
      * query and set the group
      * @returns {Promise}
      */
@@ -30,7 +21,7 @@ class owner extends Base {
         return new Promise((resolve, reject) => {
             this.get(`groups/?search=${encodeURIComponent(this.config.get('project'))}`)
                 .then(group => {
-                    if (group.body.length === 0) return reject();
+                    if (group.body.length === 0) return reject('Group not found');
                     let filtered = group.body.filter(u => u.path === this.config.get('project'));
                     if (filtered.length === 0) return reject();
                     this.groups = this.groups.concat(filtered);

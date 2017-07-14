@@ -68,7 +68,7 @@ class report extends Base {
      */
     getProject() {
         let promise = this.get(`projects/${encodeURIComponent(this.config.get('project'))}`);
-        promise.then(project => this.setProject(project));
+        promise.then(project => this.setProject(project.body));
 
         return promise;
     }

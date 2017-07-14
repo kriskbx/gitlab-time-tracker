@@ -214,7 +214,7 @@ class cli {
         cli.resolve();
 
         cli.out(`Error: ${message.red}` + '\n');
-        if (error) console.log(error);
+        if (error && cli.verbose) console.log(error);
 
         process.exit(1);
     }
@@ -238,7 +238,10 @@ class cli {
 
         if (this.data.project) return this.data.project;
 
-        return this.data.project = this.args.splice(0, 1).toString();
+        let projects = _.uniq(_.filter(this.args, arg => !parseInt(arg)));
+        this.args = _.difference(this.args, projects);
+
+        return this.data.project = projects;
     }
 
     /**

@@ -208,6 +208,17 @@ gtt report example-group --type=group --subgroups
 Query all projects from the given group and combine the data into a single report. The option `--subgroups`
 includes subgroups.
 
+#### Query multiple projects or groups and combine the data in one report
+
+```shell
+gtt report ["namespace/project"] ["namespace/project"] ...
+gtt report "kriskbx/example-project" "kriskbx/example-project-2"
+gtt report ["namespace"] ["namespace"] ... --type=group
+gtt report example-group example-group-2 --type=group
+```
+
+*Hint: use the `project_id` or `project_namespace` columns in your report.*
+
 #### Choose an output for your report
 
 ```shell
@@ -368,6 +379,12 @@ gtt report --exclude_labels=bug --exclude_labels=feature
 
 ```shell
 gtt report --proxy="http://localhost:8080"
+```
+
+#### Output verbose debug information
+
+```shell
+gtt report --verbose
 ```
 
 ## configuration
@@ -657,6 +674,12 @@ report.mergeRequests.forEach(mergeRequest => {
 `total spent` is the total amount of time spent in all issues after filtering.
 It can include times outside the queried time frame. `spent` on the other hand
 is the total amount of time spent in the given time frame.
+
+#### Why 'total spent' and 'spent' are showing different amounts.
+
+gtt can only track time records from notes/comments. If you start your 
+issue or merge request with `/spent [time]` in its description, gtt won't
+take it into consideration (for now).
 
 ## contributing
 

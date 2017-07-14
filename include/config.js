@@ -34,7 +34,8 @@ const defaults = {
     quiet: false,
     showWithoutTimes: false,
     _perPage: 100,
-    _parallel: 10
+    _parallel: 10,
+    _verbose: false
 };
 
 /**

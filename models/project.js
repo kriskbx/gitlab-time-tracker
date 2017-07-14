@@ -43,6 +43,10 @@ class project extends Base {
         return this.data.id;
     }
 
+    get name() {
+        return this.data.path_with_namespace;
+    }
+
     get users() {
         return this.members.map(member => member.username);
     }

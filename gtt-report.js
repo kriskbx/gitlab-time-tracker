@@ -51,6 +51,7 @@ program
     .option('--merge_request_columns <columns>', 'include the given columns in the merge request part of the report', collect, null)
     .option('--user_columns', 'include user columns in the report')
     .option('--quiet', 'only output report')
+    .option('--verbose', 'show verbose output')
     .option('--show_without_times', 'show issues/merge requests without time records')
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .parse(process.argv);
@@ -88,13 +89,26 @@ config
     .set('userColumns', program.user_columns)
     .set('proxy', program.proxy)
     .set('type', program.type)
-    .set('subgroups', program.subgroups);
+    .set('subgroups', program.subgroups)
+    .set('_verbose', program.verbose);
 
 Cli.quiet = config.get('quiet');
+Cli.verbose = config.get('_verbose');
+
+
+// create stuff
+let reports = new ReportCollection(config),
+    master = new Report(config),
+    projectLabels = _.isArray(config.get('project')) ? config.get('project').join('", "') : config.get('project'),
+    projects = _.isArray(config.get('project')) ? config.get('project') : [config.get('project')],
+    output;
 
 // warnings
 if (config.get('iids').length > 1 && config.get('query').length > 1) {
-    Cli.warn(`The ids argument is ignored when querying multiple data types`);
+    Cli.warn(`The ids argument is ignored when querying issues and merge requests`);
+}
+if (config.get('iids').length > 1 && (config.get('type') !== 'project' || projects.length > 1)) {
+    Cli.warn(`The ids argument is ignored when querying multiple projects`);
 }
 if ((config.get('report').includes('issues') && !config.get('query').includes('issues'))) {
     Cli.warn(`Issues are included in the report but not queried.`);
@@ -115,11 +129,6 @@ if (!config.get('to').isValid()) {
     Cli.error(`TO is not a in valid ISO date format.`);
 }
 
-// create stuff
-let reports = new ReportCollection(config),
-    master = new Report(config),
-    output;
-
 // file prompt
 new Promise(resolve => {
     if (config.get('file') && fs.existsSync(config.get('file'))) {
@@ -133,36 +142,46 @@ new Promise(resolve => {
 
 // get project(s)
     .then(() => new Promise((resolve, reject) => {
-        Cli.list(`${Cli.look}  Resolving "${config.get('project')}"`);
+        Cli.list(`${Cli.look}  Resolving "${projectLabels}"`);
         let owner = new Owner(config);
 
-        switch (config.get('type')) {
-            case 'project':
-                let report = new Report(config);
-                reports.push(report);
-                report.getProject()
-                    .then(() => resolve())
-                    .catch(e => reject(e));
-                break;
+        owner
+            .parallel(projects, (project, done) => {
+                config.set('project', project);
 
-            case 'group':
-                owner.getGroup()
-                    .then(() => {
-                        if (!config.get('subgroups')) return new Promise(r => r());
-                        return owner.getSubGroups();
-                    })
-                    .then(() => owner.getProjectsByGroup()
-                        .then(() => {
-                            owner.projects.forEach(project => {
-                                reports.push(new Report(config, project));
-                            });
-                            Cli.out(`\r${Cli.look}  Selected projects: ${owner.listProjects()}\n`);
-                            resolve();
-                        }))
-                    .catch(e => reject(e));
-                break;
-        }
+                switch (config.get('type')) {
+                    case 'project':
+                        let report = new Report(config);
+                        reports.push(report);
+                        report.getProject()
+                            .then(() => done())
+                            .catch(e => done(e));
+                        break;
+
+                    case 'group':
+                        owner.getGroup()
+                            .then(() => {
+                                if (!config.get('subgroups')) return new Promise(r => r());
+                                return owner.getSubGroups();
+                            })
+                            .then(() => owner.getProjectsByGroup()
+                                .then(() => {
+                                    owner.projects.forEach(project => {
+                                        reports.push(new Report(config, project));
+                                    });
+                                    done();
+                                }))
+                            .catch(e => done(e));
+                        break;
+                }
+            }, 1)
+            .catch(e => reject(e))
+            .then(() => {
+                config.set('project', projects);
+                resolve();
+            });
     }))
+    .then(() => Cli.out(`\r${Cli.look}  Selected projects: ${reports.reports.map(r => r.project.name.bold.blue).join(', ')}\n`))
 
     // get members and user columns
     .then(() => new Promise(resolve => {
@@ -185,7 +204,7 @@ new Promise(resolve => {
             .then(() => resolve());
     }))
     .then(() => Cli.mark())
-    .catch(error => Cli.x(`Could not resolve "${config.get('project')}"`, error))
+    .catch(error => Cli.x(`Could not resolve "${projectLabels}"`, error))
 
     // get issues
     .then(() => new Promise(resolve => {
