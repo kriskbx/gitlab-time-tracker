@@ -166,9 +166,7 @@ new Promise(resolve => {
                             })
                             .then(() => owner.getProjectsByGroup()
                                 .then(() => {
-                                    owner.projects.forEach(project => {
-                                        reports.push(new Report(config, project));
-                                    });
+                                    owner.projects.forEach(project => reports.push(new Report(config, project)));
                                     done();
                                 }))
                             .catch(e => done(e));

@@ -2,31 +2,30 @@ const colors = require('colors');
 const moment = require('moment');
 const program = require('commander');
 
-const Frame = require('./models/frame');
 const Config = require('./include/file-config');
 const Cli = require('./include/cli');
-const Fs = require('./include/filesystem');
+const Tasks = require('./include/tasks');
 
 program
     .arguments('[project] [id]')
     .option('-t, --type <type>', 'specify resource type: issue, merge_request')
+    .option('--verbose', 'show verbose output')
     .parse(process.argv);
 
-let config = new Config(process.cwd());
+Cli.verbose = program.verbose;
 
-if (program.args.length < 2 && !config.get('project')) Cli.error('No project set');
-if (program.args.length === 2) config.set('project', program.args[0]);
+let config = new Config(process.cwd()),
+    tasks = new Tasks(config),
+    type = program.type ? program.type : 'issue',
+    id = program.args.length === 1 ? parseInt(program.args[0]) : parseInt(program.args[1]),
+    project = program.args.length === 2 ? project = program.args[0] : null;
 
-let id = program.args.length === 1 ? parseInt(program.args[0]) : parseInt(program.args[1]);
-if (!id) Cli.error('Wrong or missing issue/merge_request id');
+if (program.args.length < 2 && !config.get('project'))
+    Cli.error('No project set');
 
-let type = program.type ? program.type : 'issue';
+if (!id)
+    Cli.error('Wrong or missing issue/merge_request id');
 
-Fs.find(`"stop": false`, config.frameDir)
-    .then(frames => {
-        if (frames.length > 0) Cli.error("Already running. Please stop it first with 'gtt stop'.");
-
-        new Frame(config, id, type).startMe();
-        console.log(`Starting project ${config.get('project').magenta} ${type.blue} ${('#' + id).blue} at ${moment().format('HH:mm').green}`);
-    })
-    .catch(error => Cli.error('Could not write frame.', error));
+tasks.start(project, type, id)
+    .then(frame => console.log(`Starting project ${config.get('project').magenta} ${type.blue} ${('#' + id).blue} at ${moment().format('HH:mm').green}`))
+    .catch(error => Cli.error(error));

@@ -1,0 +1,214 @@
+const _ = require('underscore');
+const moment = require('moment');
+
+const Config = require('./config');
+const Fs = require('./filesystem');
+const Frame = require('./../models/frame');
+const Issue = require('./../models/issue');
+const MergeRequest = require('./../models/mergeRequest');
+const FrameCollection = require('./../models/frameCollection');
+
+const classes = {
+    issue: Issue,
+    merge_request: MergeRequest
+};
+
+class tasks {
+    constructor(config) {
+        this.config = config;
+        this.sync = {};
+    }
+
+    /**
+     * Filter frames that need an update and resolve merge_requests and issues
+     * respectively.
+     * @returns {Promise}
+     */
+    syncResolve() {
+        this.sync.frames = new FrameCollection(this.config);
+
+        this.sync.resources = {
+            issue: {},
+            merge_request: {}
+        };
+
+        // filter out frames, that don't need an update
+        this.sync.frames.filter(frame => !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0)));
+
+        // resolve issues and merge requests
+        return this.sync.frames.forEach((frame, done) => {
+            let project = frame.project,
+                type = frame.resource.type,
+                id = frame.resource.id,
+                resource = this.sync.resources[type][id];
+
+            if (resource !== undefined && resource.data.project_id)
+                return done();
+
+            this.sync.resources[type][id] = new classes[type](this.config, {});
+            this.sync.resources[type][id]
+                .make(project, id)
+                .then(() => done())
+                .catch(error => done(`Could not resolve ${type} ${id} on "${project}"`));
+        })
+    }
+
+    /**
+     * Get notes for all frames.
+     */
+    syncNotes() {
+        return this.sync.frames.forEach((frame, done) => {
+            let project = frame.project,
+                type = frame.resource.type,
+                id = frame.resource.id,
+                notes;
+
+            if ((notes = this.sync.resources[type][id].notes) && notes.length > 0) return;
+
+            this.sync.resources[type][id]
+                .getNotes()
+                .then(() => done())
+                .catch(error => done(`Could not get notes from ${type} ${id} on "${project}"`));
+        });
+    }
+
+    syncUpdate(callback) {
+        return this.sync.frames.forEach((frame, done) => {
+            let time = frame.duration,
+                project = frame.project,
+                type = frame.resource.type,
+                id = frame.resource.id;
+
+            if (frame.notes.length > 0)
+                time = Math.ceil(frame.duration) - parseInt(_.reduce(frame.notes, (n, m) => (n + m.time), 0));
+
+            this._addTime(frame, time)
+                .then(() => {
+                    if (callback) callback();
+                    done();
+                })
+                .catch(error => done(`Could not update ${type} ${id} on ${project}`))
+        });
+    }
+
+    _addTime(frame, time) {
+        return new Promise((resolve, reject) => {
+            let resource = this.sync.resources[frame.resource.type][frame.resource.id];
+
+            resource
+                .createTime(Math.ceil(time))
+                .then(() => resource.getNotes())
+                .then(() => {
+                    frame.notes.push({
+                        id: resource.notes[0].id,
+                        time: Math.ceil(time)
+                    });
+                    frame.write();
+                    resolve();
+                })
+                .catch(error => reject(error))
+        });
+    }
+
+    /**
+     *
+     * @returns {Promise}
+     */
+    status() {
+        return new Promise((resolve, reject) => {
+            Fs.find(`"stop": false`, this.config.frameDir)
+                .then(frames => resolve(frames.map(file => Frame.fromFile(this.config, file))))
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     *
+     * @returns {Promise}
+     */
+    log() {
+        return new Promise((resolve, reject) => {
+            let frames = {},
+                times = {};
+
+            Fs.readDir(this.config.frameDir).forEach(file => {
+                let frame = Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
+                if (frame.stop === false) return;
+                let date = moment(frame.start).format('YYYY-MM-DD');
+
+                if (!frames[date]) frames[date] = [];
+                if (!times[date]) times[date] = 0;
+
+                frames[date].push(frame);
+                times[date] += Math.ceil(frame.duration);
+            });
+
+            resolve({frames, times})
+        });
+    }
+
+    /**
+     *
+     * @param project
+     * @param type
+     * @param id
+     * @returns {Promise}
+     */
+    start(project, type, id) {
+        this.config.set('project', project);
+
+        return new Promise((resolve, reject) => {
+            Fs.find(`"stop": false`, this.config.frameDir)
+                .then(frames => {
+                    if (frames.length > 0)
+                        return reject("Already running. Please stop it first with 'gtt stop'.");
+
+                    resolve(new Frame(this.config, id, type).startMe());
+                })
+                .catch(error => reject(error));
+        })
+    }
+
+    /**
+     *
+     * @returns {Promise}
+     */
+    stop() {
+        return new Promise((resolve, reject) => {
+            Fs.find(`"stop": false`, this.config.frameDir)
+                .then(frames => {
+                    if (frames.length === 0)
+                        return reject('No projects started.');
+
+                    resolve(frames.map(file => {
+                        return Frame.fromFile(this.config, file).stopMe();
+                    }));
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     *
+     * @returns {Promise}
+     */
+    cancel() {
+        return new Promise((resolve, reject) => {
+            Fs.find(`"stop": false`, this.config.frameDir)
+                .then(frames => {
+                    if (frames.length === 0)
+                        return reject('No projects started.');
+
+                    resolve(frames.map(file => {
+                        let frame = Frame.fromFile(this.config, file);
+                        Fs.remove(file);
+
+                        return frame;
+                    }));
+                })
+                .catch(error => reject(error));
+        });
+    }
+}
+
+module.exports = tasks;

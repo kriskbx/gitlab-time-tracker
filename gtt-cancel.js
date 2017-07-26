@@ -2,23 +2,21 @@ const program = require('commander');
 const colors = require('colors');
 const moment = require('moment');
 
-const Frame = require('./models/frame');
 const Config = require('./include/file-config');
 const Cli = require('./include/cli');
-const Fs = require('./include/filesystem');
+const Tasks = require('./include/tasks');
 
-program.parse(process.argv);
+program
+    .option('--verbose', 'show verbose output')
+    .parse(process.argv);
+
+Cli.verbose = program.verbose;
 
 let config = new Config(process.cwd());
+let tasks = new Tasks(config);
 
-Fs.find(`"stop": false`, config.frameDir)
+tasks.cancel()
     .then(frames => {
-        if (frames.length === 0) Cli.error('No projects started.');
-
-        frames.forEach(file => {
-            let frame = Frame.fromFile(config, file);
-            Fs.remove(file);
-            console.log(`Cancel project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green}`);
-        });
+        frames.forEach(frame => console.log(`Cancel project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green}`))
     })
-    .catch(error => Cli.error('Could not read frames.', error));
+    .catch(error => Cli.error(error));

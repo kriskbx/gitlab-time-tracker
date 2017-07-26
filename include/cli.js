@@ -177,7 +177,7 @@ class cli {
      */
     static mark() {
         cli.resolve();
-        cli.out(`${cli.active.message}` + `✓\n`.green);
+        if (cli.active) cli.out(`${cli.active.message}` + `✓\n`.green);
 
         return cli.promise();
     }
@@ -190,7 +190,7 @@ class cli {
      */
     static x(message = false, error = false) {
         cli.resolve();
-        cli.out(`${cli.active.message}` + `✗\n`.red);
+        if (cli.active) cli.out(`${cli.active.message}` + `✗\n`.red);
 
         if (message) cli.error(message, error);
         return cli.promise();
