@@ -3,12 +3,7 @@ const path = require('path');
 const config = require('./config');
 const yaml = require('read-yaml');
 const hash = require('hash-sum');
-
-const globalConfigDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + '/.gtt';
-const globalConfigFile = globalConfigDir + '/config.yml';
-const frameDir = globalConfigDir + '/frames';
-const cacheDir = globalConfigDir + '/cache';
-const localConfigFile = '/.gtt.yml';
+const Fs = require('./filesystem');
 
 /**
  * file config with local and global configuration files
@@ -20,12 +15,14 @@ class fileConfig extends config {
      */
     constructor(workDir) {
         super();
+
         this.assertGlobalConfig();
         this.workDir = workDir;
         this.data = Object.assign(this.data, this.localExists() ? this.parseLocal() : this.parseGlobal());
         this.cache = {
             get: this._cacheGet,
-            set: this._cacheSet
+            set: this._cacheSet,
+            dir: this.cacheDir
         };
     }
 
@@ -62,7 +59,7 @@ class fileConfig extends config {
         while (workDir) {
             workDir = path.dirname(workDir);
             if (workDir === '/') workDir = '';
-            if (fs.existsSync(workDir + localConfigFile)) {
+            if (fs.existsSync(Fs.join(workDir, this.localConfigFile))) {
                 this.workDir = workDir;
                 return true;
             }
@@ -81,38 +78,43 @@ class fileConfig extends config {
     }
 
     _cacheGet(key) {
-        let file = this.cacheDir + '/' + hash(key);
+        let file = Fs.join(this.dir, hash(key));
         if (!fs.existsSync(file)) return false;
 
         return JSON.parse(fs.readFileSync(file));
     }
 
     _cacheSet(key, value) {
-        let file = this.cacheDir + '/' + hash(key);
+        let file = Fs.join(this.dir, hash(key));
         if (fs.existsSync(file)) fs.unlinkSync(file);
-        fs.appendFile(file, JSON.stringify(value), () => {});
+        fs.appendFile(file, JSON.stringify(value), () => {
+        });
 
         return value;
     }
 
-    get cacheDir() {
-        return cacheDir;
-    }
-
-    get frameDir() {
-        return frameDir;
+    get localConfigFile() {
+        return '.gtt.yml';
     }
 
     get globalDir() {
-        return globalConfigDir;
+        return Fs.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.gtt');
+    }
+
+    get frameDir() {
+        return Fs.join(this.globalDir, 'frames');
+    }
+
+    get cacheDir() {
+        return Fs.join(this.globalDir, 'cache')
     }
 
     get global() {
-        return globalConfigFile;
+        return Fs.join(this.globalDir, 'config.yml');
     }
 
     get local() {
-        return this.workDir + localConfigFile;
+        return Fs.join(this.workDir, this.localConfigFile);
     }
 }
 
