@@ -13,6 +13,7 @@ stored on GitLab.
 * [requirements](#requirements)
 * [installation](#installation)
 * [updating](#updating)
+* [docker](#docker)
 * [commands](#commands)
     * [I) configuration](#i-configuration)
     * [II) time tracking](#ii-time-tracking)
@@ -73,6 +74,54 @@ yarn global upgrade gitlab-time-tracker
 ```shell
 npm install -g gitlab-time-tracker
 ```
+
+## docker
+
+You don't need to have node and gtt installed on your system in order to use gtt,
+you can use the official [Docker image](https://hub.docker.com/r/kriskbx/gitlab-time-tracker) as well:
+
+```shell
+docker run \
+       --rm -it \
+       -v ~:/root \
+       kriskbx/gitlab-time-tracker \
+       --help
+```
+
+`--rm` removes the container after running, `-it` makes it interactive, `-v ~:/root` mounts your home directory to the
+home directory inside the container. If you want to store the config in another place, mount another directory: 
+ 
+ 
+ ```shell
+ docker run \
+        --rm -it \
+        -v /path/to/gtt-config:/root \
+        kriskbx/gitlab-time-tracker \
+        --help
+ ```
+
+... or use a Docker volume:
+
+```shell
+docker volume create gtt-config
+
+docker run \
+      --rm -it \
+      -v gtt-config:/root \
+      kriskbx/gitlab-time-tracker \
+      --help
+```
+ 
+I highly recommend creating an alias and adding it to your `bashrc`:
+ 
+```shell
+echo "alias gtt='docker run --rm -it -v ~:/root kriskbx/gitlab-time-tracker'" >>~/.bash_rc
+```
+
+Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
+
+**Note:** If you want to save reports via the `--file` parameter, make sure to save them in `/root` or another 
+mounted directory that you have access to on your host machine. Take a look at the [Docker documentation](https://docs.docker.com/engine/tutorials/dockervolumes/) about how Docker handles data and volumes.
 
 ## commands
 
