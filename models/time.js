@@ -2,8 +2,8 @@ const _ = require('underscore');
 const moment = require('moment');
 
 const defaultTimeFormat = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]';
-const mappings = ['complete', 'sign', 'days', 'hours', 'minutes', 'seconds'];
-const regex = /^(?:([-])\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
+const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
 const defaultRegex = /(\[\%([^\]]*)\])/ig;
 
@@ -83,7 +83,8 @@ class time {
         return (parsed.sign ? -1 : 1) * (parseInt(parsed.seconds)
             + (parseInt(parsed.minutes) * 60)
             + (parseInt(parsed.hours) * 60 * 60)
-            + (parseInt(parsed.days) * hoursPerDay * 60 * 60));
+            + (parseInt(parsed.days) * hoursPerDay * 60 * 60)
+            + (parseInt(parsed.weeks) * 5 * hoursPerDay * 60 * 60));
     }
 
     /**
