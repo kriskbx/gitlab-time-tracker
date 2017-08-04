@@ -686,7 +686,7 @@ Use it in your project:
 ```js
 // require modules
 const Config = require('gitlab-time-tracker/include/config');
-const Report = require('gitlab-time-tracker/model/report');
+const Report = require('gitlab-time-tracker/models/report');
 
 // create a default config
 let config = new Config();
