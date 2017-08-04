@@ -104,20 +104,22 @@ class base {
         let projects = {};
         let times = [];
 
-        this.report.issues.forEach(issue => {
-            issue.times.forEach(time => {
-                if (!users[time.user]) users[time.user] = 0;
-                if (!projects[time.project_namespace]) projects[time.project_namespace] = 0;
+        ['issues', 'mergeRequests'].forEach(type => {
+            this.report[type].forEach(issue => {
+                issue.times.forEach(time => {
+                    if (!users[time.user]) users[time.user] = 0;
+                    if (!projects[time.project_namespace]) projects[time.project_namespace] = 0;
 
-                users[time.user] += time.seconds;
-                projects[time.project_namespace] += time.seconds;
+                    users[time.user] += time.seconds;
+                    projects[time.project_namespace] += time.seconds;
 
-                spent += time.seconds;
-                times.push(time);
+                    spent += time.seconds;
+                    times.push(time);
+                });
+
+                totalEstimate += parseInt(issue.stats.time_estimate);
+                totalSpent += parseInt(issue.stats.total_time_spent);
             });
-
-            totalEstimate += parseInt(issue.stats.time_estimate);
-            totalSpent += parseInt(issue.stats.total_time_spent);
         });
 
         this.times = times;
