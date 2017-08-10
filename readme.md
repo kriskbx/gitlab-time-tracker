@@ -686,7 +686,7 @@ Use it in your project:
 ```js
 // require modules
 const Config = require('gitlab-time-tracker/include/config');
-const Report = require('gitlab-time-tracker/model/report');
+const Report = require('gitlab-time-tracker/models/report');
 
 // create a default config
 let config = new Config();
@@ -698,12 +698,16 @@ config.set('project', 'namespace/project');
 // create report
 let report = new Report(config);
 
-// chain promises to query and process data
-report.project()
-      .then(report.issues, error => {})
-      .then(report.mergeRequests, error => {})
-      .then(report.processIssues, error => {})
-      .then(report.processMergeRequests, error => {});
+// query and process data
+try {
+    await report.getProject()
+    await report.getIssues()
+    await report.getMergeRequests()
+    await report.processIssues()
+    await report.processMergeRequests()
+} catch (error) {
+    console.log(error)
+}
       
 // access data on report
 report.issues.forEach(issue => {
