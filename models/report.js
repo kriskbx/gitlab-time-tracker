@@ -114,26 +114,29 @@ class report extends Base {
     process(input, model, advance = false) {
         let collect = [];
 
-        let promise = this.parallel(this[input], (item, done) => {
-            // filter out things that are too old
-            if (!this.config.get('showWithoutTimes') && moment(item.updated_at).isBefore(this.config.get('from'))) {
-                if (advance) advance();
-                return done();
-            }
+        let promise = this.parallel(this[input], (data, done) => {
 
-            // collect items, query times & stats
-            collect.push(item = new model(this.config, item));
+            let item = new model(this.config, data);
             item.project_namespace = this.projects[item.project_id];
 
             item.getNotes()
                 .then(() => item.getTimes())
                 .catch(error => done(error))
+                .catch(error => done(error))
                 .then(() => item.getStats())
                 .catch(error => done(error))
                 .then(() => {
+                    if (this.config.get('showWithoutTimes') || item.times.length > 0) {
+                        collect.push(item);
+                    }
+
                     if (advance) advance();
-                    done();
+                    return done();
                 });
+
+
+            // collect items, query times & stats
+            collect.push();
         });
 
         promise.then(() => this[input] = this.filter(collect));
