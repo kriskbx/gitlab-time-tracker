@@ -1,5 +1,10 @@
 # gtt
 
+### upgrading from < 1.5.* to 1.6.*
+
+Starting with version `1.6` the local configuration file will extend the global configuration by default. If you
+don't want this behaviour, make sure to use `extend: false` in your local config.
+
 ### upgrading from 0.*
 
 I built gtt originally in PHP because I'm a PHP dev and I chose the language I'm most familiar 

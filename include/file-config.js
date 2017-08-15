@@ -45,7 +45,20 @@ class fileConfig extends config {
      */
     parseLocal() {
         try {
-            return yaml.sync(this.local, {});
+            let local = Object.assign({extend: true}, yaml.sync(this.local, {}));
+
+            if (local.extend === true) {
+                local = Object.assign(this.parseGlobal(), local);
+            } else if (local.extend) {
+                try {
+                    local = Object.assign(yaml.sync(local.extend, {}), local);
+                } catch (e) {
+                    console.log(`Error parsing configuration: "${local.extend}"`);
+                    process.exit(1);
+                }
+            }
+
+            return local;
         } catch (e) {
             console.log(`Error parsing configuration: "${this.local}"`);
             process.exit(1);
