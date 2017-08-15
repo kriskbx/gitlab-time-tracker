@@ -141,9 +141,9 @@ gtt config
 gtt config --local
 ```
 
-If a local configuration file is present it's used instead of the global one.
-So you can use gtt on a per project basis. Make sure to add .gtt.yml to your 
-gitignore file if using a local configuration.
+If a local configuration file is present it will extend of the global one and overwrites global settings.
+If you don't want to extend the global configuration file, set the `extend` option in your local config to `false`.
+So you can use gtt easily on a per project basis. Make sure to add .gtt.yml to your gitignore file if using a local configuration.
 
 ### II) time tracking
 
@@ -576,6 +576,12 @@ _parallel: 20
 # Change rows per page (max. 100)
 # defaults to 100
 _perPage: 100
+
+# Only works if using a local configuration file!
+# Extend the global configuration if set to true, pass a string to extend 
+# the configuration file stored at the given path
+# defaults to true
+extend: true
 ```
 
 ### Time format

@@ -4,7 +4,6 @@ const config = require('./config');
 const yaml = require('read-yaml');
 const hash = require('hash-sum');
 const Fs = require('./filesystem');
-const extend = require('util')._extend;
 
 /**
  * file config with local and global configuration files
@@ -46,9 +45,20 @@ class fileConfig extends config {
      */
     parseLocal() {
         try {
-            let global = this.parseGlobal();
-            let local = yaml.sync(this.local, {});
-            return extend(global, local);
+            let local = Object.assign({extend: true}, yaml.sync(this.local, {}));
+
+            if (local.extend === true) {
+                local = Object.assign(this.parseGlobal(), local);
+            } else if (local.extend) {
+                try {
+                    local = Object.assign(yaml.sync(local.extend, {}), local);
+                } catch (e) {
+                    console.log(`Error parsing configuration: "${local.extend}"`);
+                    process.exit(1);
+                }
+            }
+
+            return local;
         } catch (e) {
             console.log(`Error parsing configuration: "${this.local}"`);
             process.exit(1);
