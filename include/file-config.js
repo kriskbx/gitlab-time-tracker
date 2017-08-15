@@ -4,6 +4,7 @@ const config = require('./config');
 const yaml = require('read-yaml');
 const hash = require('hash-sum');
 const Fs = require('./filesystem');
+const extend = require('util')._extend;
 
 /**
  * file config with local and global configuration files
@@ -45,7 +46,9 @@ class fileConfig extends config {
      */
     parseLocal() {
         try {
-            return yaml.sync(this.local, {});
+            let global = yaml.sync(this.global, {});
+            let local = yaml.sync(this.local, {});
+            return extend(global, local);
         } catch (e) {
             console.log(`Error parsing configuration: "${this.local}"`);
             process.exit(1);
