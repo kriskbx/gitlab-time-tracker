@@ -46,7 +46,7 @@ class fileConfig extends config {
      */
     parseLocal() {
         try {
-            let global = yaml.sync(this.global, {});
+            let global = this.parseGlobal();
             let local = yaml.sync(this.local, {});
             return extend(global, local);
         } catch (e) {
