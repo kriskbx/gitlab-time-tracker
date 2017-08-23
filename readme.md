@@ -40,14 +40,14 @@ Install the gtt command line interface using yarn:
 yarn global add gitlab-time-tracker --prefix /usr/local
 ```
 
-... or using npm:
+... or using npm (recommended on **Windows** operating systems):
 
 ```shell
 npm install -g gitlab-time-tracker
 ```
 
 Run the config command to create a config file and open it in your default editor.
-If nothing happens, open the file manually: `~/.gtt/config.yml`
+If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
 
 ```shell
 gtt config
@@ -144,6 +144,8 @@ gtt config --local
 If a local configuration file is present it will extend of the global one and overwrites global settings.
 If you don't want to extend the global configuration file, set the `extend` option in your local config to `false`.
 So you can use gtt easily on a per project basis. Make sure to add .gtt.yml to your gitignore file if using a local configuration.
+
+If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
 
 ### II) time tracking
 
