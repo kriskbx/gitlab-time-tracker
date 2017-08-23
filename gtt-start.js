@@ -18,7 +18,7 @@ let config = new Config(process.cwd()),
     tasks = new Tasks(config),
     type = program.type ? program.type : 'issue',
     id = program.args.length === 1 ? parseInt(program.args[0]) : parseInt(program.args[1]),
-    project = program.args.length === 2 ? project = program.args[0] : null;
+    project = program.args.length === 2 ? program.args[0] : null;
 
 if (program.args.length < 2 && !config.get('project'))
     Cli.error('No project set');
