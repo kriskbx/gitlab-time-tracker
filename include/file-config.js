@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const os = require("os");
 const config = require('./config');
 const yaml = require('read-yaml');
 const hash = require('hash-sum');
@@ -68,10 +69,11 @@ class fileConfig extends config {
     localExists() {
         if (fs.existsSync(this.local)) return true;
 
+        let root = (os.platform() === "win32") ? process.cwd().split(path.sep)[0] + "\\" : "/";
         let workDir = this.workDir;
         while (workDir) {
             workDir = path.dirname(workDir);
-            if (workDir === '/') workDir = '';
+            if (workDir === root) workDir = '';
             if (fs.existsSync(Fs.join(workDir, this.localConfigFile))) {
                 this.workDir = workDir;
                 return true;

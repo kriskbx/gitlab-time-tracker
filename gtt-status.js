@@ -6,7 +6,6 @@ const Config = require('./include/file-config');
 const Cli = require('./include/cli');
 const Tasks = require('./include/tasks');
 
-
 program
     .option('--verbose', 'show verbose output')
     .parse(process.argv);
