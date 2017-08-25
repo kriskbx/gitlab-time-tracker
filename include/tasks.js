@@ -20,20 +20,28 @@ class tasks {
     }
 
     /**
-     * Filter frames that need an update and resolve merge_requests and issues
+     * Filter frames that need an update
+     * @returns {Promise}
+     */
+    syncInit() {
+        this.sync.frames = new FrameCollection(this.config);
+
+        // filter out frames, that don't need an update
+        this.sync.frames.filter(frame => !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0)));
+
+        return new Promise(r => r());
+    }
+
+    /**
+     * Resolve merge_requests and issues
      * respectively.
      * @returns {Promise}
      */
-    syncResolve() {
-        this.sync.frames = new FrameCollection(this.config);
-
+    syncResolve(callback) {
         this.sync.resources = {
             issue: {},
             merge_request: {}
         };
-
-        // filter out frames, that don't need an update
-        this.sync.frames.filter(frame => !(Math.ceil(frame.duration) === _.reduce(frame.notes, (n, m) => (n + m.time), 0)));
 
         // resolve issues and merge requests
         return this.sync.frames.forEach((frame, done) => {
@@ -48,7 +56,10 @@ class tasks {
             this.sync.resources[type][id] = new classes[type](this.config, {});
             this.sync.resources[type][id]
                 .make(project, id)
-                .then(() => done())
+                .then(() => {
+                    if (callback) callback();
+                    done();
+                })
                 .catch(error => done(`Could not resolve ${type} ${id} on "${project}"`));
         })
     }
@@ -56,18 +67,24 @@ class tasks {
     /**
      * Get notes for all frames.
      */
-    syncNotes() {
+    syncNotes(callback) {
         return this.sync.frames.forEach((frame, done) => {
             let project = frame.project,
                 type = frame.resource.type,
                 id = frame.resource.id,
                 notes;
 
-            if ((notes = this.sync.resources[type][id].notes) && notes.length > 0) return;
+            if ((notes = this.sync.resources[type][id].notes) && notes.length > 0) {
+                if (callback) callback();
+                return done();
+            }
 
             this.sync.resources[type][id]
                 .getNotes()
-                .then(() => done())
+                .then(() => {
+                    if (callback) callback();
+                    done();
+                })
                 .catch(error => done(`Could not get notes from ${type} ${id} on "${project}"`));
         });
     }
@@ -92,22 +109,24 @@ class tasks {
     }
 
     _addTime(frame, time) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async function(resolve, reject) {
             let resource = this.sync.resources[frame.resource.type][frame.resource.id];
 
-            resource
-                .createTime(Math.ceil(time))
-                .then(() => resource.getNotes())
-                .then(() => {
-                    frame.notes.push({
-                        id: resource.notes[0].id,
-                        time: Math.ceil(time)
-                    });
-                    frame.write();
-                    resolve();
-                })
-                .catch(error => reject(error))
-        });
+            try {
+                await resource.createTime(Math.ceil(time));
+                await resource.getNotes();
+            } catch(error) {
+                return reject(error);
+            }
+
+            frame.notes.push({
+                id: resource.notes[0].id,
+                time: Math.ceil(time)
+            });
+
+            frame.write();
+            resolve();
+        }.bind(this));
     }
 
     /**

@@ -15,11 +15,18 @@ Cli.verbose = program.verbose;
 let config = new Config(process.cwd()).set('proxy', program.proxy),
     tasks = new Tasks(config);
 
-tasks.syncResolve()
+tasks.syncInit()
+    .then(() => tasks.sync.frames.length === 0 ? process.exit(0) : null)
     .then(() => {
-        if (tasks.sync.frames.length === 0) process.exit(0);
-        return Cli.bar(`${Cli.process}  Syncing time records...`, tasks.sync.frames.length)
+        Cli.bar(`${Cli.fetch}  Fetching issues & merge requests...`, tasks.sync.frames.length);
+        return tasks.syncResolve(Cli.advance);
     })
-    .then(() => tasks.syncNotes())
-    .then(() => tasks.syncUpdate(Cli.advance))
+    .then(() => {
+        Cli.bar(`${Cli.process}  Processing issues & merge requests...`, tasks.sync.frames.length);
+        return tasks.syncNotes(Cli.advance);
+    })
+    .then(() => {
+        Cli.bar(`${Cli.update}  Syncing time records...`, tasks.sync.frames.length);
+        return tasks.syncUpdate(Cli.advance)
+    })
     .catch(error => Cli.x(error));

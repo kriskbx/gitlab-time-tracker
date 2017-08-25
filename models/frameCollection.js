@@ -6,33 +6,38 @@ class frameCollection extends Base {
     constructor(config) {
         super(config);
 
-        this.frames = Fs.readDir(config.frameDir);
+        this.frames =
+            Fs.readDir(config.frameDir)
+                .map(file => {
+                    try {
+                        return Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
+                    } catch (e) {
+                        return false;
+                    }
+                })
+                .filter(frame => frame);
     }
 
     filter(func) {
         let arr = [];
 
-        this.frames.forEach(file => {
-            let frame = Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
+        this.frames.forEach(frame => {
             if (frame.stop === false) {
-                return;
+                return false;
             }
 
             if (func(frame)) {
-                arr.push(file);
+                arr.push(frame);
             }
-        });
 
-        this.frames = arr;
+            this.frames = arr;
+        });
     }
 
     forEach(iterator) {
-        return this.parallel(this.frames, (file, done) => {
-            let frame = Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
-            if (frame.stop === false) return done();
+        let promise = this.parallel(this.frames, iterator);
 
-            iterator(frame, done);
-        });
+        return promise;
     }
 
     get length() {

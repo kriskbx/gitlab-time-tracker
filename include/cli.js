@@ -18,6 +18,10 @@ class cli {
     /*
      * emojis
      */
+    static get update() {
+        return '⏱';
+    }
+
     static get print() {
         return '🖨';
     }
