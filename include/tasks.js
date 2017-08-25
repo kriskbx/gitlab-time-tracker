@@ -109,13 +109,13 @@ class tasks {
     }
 
     _addTime(frame, time) {
-        return new Promise(async function(resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             let resource = this.sync.resources[frame.resource.type][frame.resource.id];
 
             try {
                 await resource.createTime(Math.ceil(time));
                 await resource.getNotes();
-            } catch(error) {
+            } catch (error) {
                 return reject(error);
             }
 
@@ -146,24 +146,30 @@ class tasks {
      * @returns {Promise}
      */
     log() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async function (resolve, reject) {
             let frames = {},
                 times = {};
 
-            Fs.readDir(this.config.frameDir).forEach(file => {
-                let frame = Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
-                if (frame.stop === false) return;
-                let date = moment(frame.start).format('YYYY-MM-DD');
+            try {
+                await new FrameCollection(this.config)
+                    .forEach((frame, done) => {
+                        if (frame.stop === false) return done();
+                        let date = moment(frame.start).format('YYYY-MM-DD');
 
-                if (!frames[date]) frames[date] = [];
-                if (!times[date]) times[date] = 0;
+                        if (!frames[date]) frames[date] = [];
+                        if (!times[date]) times[date] = 0;
 
-                frames[date].push(frame);
-                times[date] += Math.ceil(frame.duration);
-            });
+                        frames[date].push(frame);
+                        times[date] += Math.ceil(frame.duration);
 
-            resolve({frames, times})
-        });
+                        done();
+                    });
+            } catch (error) {
+                reject(error);
+            }
+
+            resolve({frames, times});
+        }.bind(this));
     }
 
     /**
