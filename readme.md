@@ -1,6 +1,6 @@
 # gtt 
 
-[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg)](https://www.npmjs.com/package/gitlab-time-tracker)
+[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![Travis](https://img.shields.io/travis/kriskbx/gitlab-time-tracker.svg)]() [![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg)](https://www.npmjs.com/package/gitlab-time-tracker)
 
 > A command line interface for GitLabs time tracking feature.
 
