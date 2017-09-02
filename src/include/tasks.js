@@ -109,24 +109,22 @@ class tasks {
     }
 
     _addTime(frame, time) {
-        return new Promise(async function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             let resource = this.sync.resources[frame.resource.type][frame.resource.id];
 
-            try {
-                await resource.createTime(Math.ceil(time));
-                await resource.getNotes();
-            } catch (error) {
-                return reject(error);
-            }
+            resource.createTime(Math.ceil(time))
+                .then(() => resource.getNotes())
+                .then(() => {
+                    frame.notes.push({
+                        id: resource.notes[0].id,
+                        time: Math.ceil(time)
+                    });
 
-            frame.notes.push({
-                id: resource.notes[0].id,
-                time: Math.ceil(time)
-            });
-
-            frame.write();
-            resolve();
-        }.bind(this));
+                    frame.write();
+                    resolve();
+                })
+                .catch(error => reject(error));
+        });
     }
 
     /**
@@ -146,30 +144,29 @@ class tasks {
      * @returns {Promise}
      */
     log() {
-        return new Promise(async function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             let frames = {},
                 times = {};
 
-            try {
-                await new FrameCollection(this.config)
-                    .forEach((frame, done) => {
-                        if (frame.stop === false) return done();
-                        let date = moment(frame.start).format('YYYY-MM-DD');
+            new FrameCollection(this.config)
+                .forEach((frame, done) => {
+                    if (frame.stop === false) return done();
+                    let date = moment(frame.start).format('YYYY-MM-DD');
 
-                        if (!frames[date]) frames[date] = [];
-                        if (!times[date]) times[date] = 0;
+                    if (!frames[date]) frames[date] = [];
+                    if (!times[date]) times[date] = 0;
 
-                        frames[date].push(frame);
-                        times[date] += Math.ceil(frame.duration);
+                    frames[date].push(frame);
+                    times[date] += Math.ceil(frame.duration);
 
-                        done();
-                    });
-            } catch (error) {
-                reject(error);
-            }
-
-            resolve({frames, times});
-        }.bind(this));
+                    done();
+                })
+                .then(() => new Promise(r => {
+                    resolve({frames, times});
+                    r();
+                }))
+                .catch(error => reject(error));
+        });
     }
 
     /**

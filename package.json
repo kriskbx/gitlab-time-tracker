@@ -9,10 +9,15 @@
     "type": "git",
     "url": "https://github.com/kriskbx/gitlab-time-tracker.git"
   },
-  "main": "gtt.js",
-  "scripts": {},
+  "main": "src/gtt.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha 'spec/**/*.spec.js'"
+  },
   "bin": {
-    "gtt": "gtt.js"
+    "gtt": "src/gtt.js"
+  },
+  "engines": {
+    "node": ">=6.11"
   },
   "author": "kriskbx",
   "license": "GPL-2.0",
@@ -38,5 +43,10 @@
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.0",
+    "sinon": "^3.2.1"
   }
 }

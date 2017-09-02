@@ -2,3 +2,4 @@
 /node_modules
 .gtt.yml
 .DS_STORE
+yarn-error.log
