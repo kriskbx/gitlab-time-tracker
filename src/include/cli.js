@@ -48,7 +48,6 @@ class cli {
 
     static get party() {
         return '🥑';
-        // return '🍺';
     }
 
     /**
