@@ -3,3 +3,4 @@
 .gtt.yml
 .DS_STORE
 yarn-error.log
+**/._*
