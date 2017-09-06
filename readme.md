@@ -695,13 +695,13 @@ Use it in your project:
 
 ```js
 // require modules
-const Config = require('gitlab-time-tracker/include/config');
-const Report = require('gitlab-time-tracker/models/report');
+const Config = require('gitlab-time-tracker/src/include/config');
+const Report = require('gitlab-time-tracker/src/models/report');
 
 // create a default config
 let config = new Config();
 
-// set some vars on config
+// set required parameters
 config.set('token', 'abcdefghijklmnopqrst');
 config.set('project', 'namespace/project');
 
@@ -721,11 +721,15 @@ try {
       
 // access data on report
 report.issues.forEach(issue => {
+    // time records on issue
     console.log(issue.times);
+    // time spent of single time record
     console.log(issue.times[0].time);
 });
 report.mergeRequests.forEach(mergeRequest => {
+    // time records on merge requests
     console.log(mergeRequests.times);
+    // user of single time record
     console.log(issue.times[0].user);
 });
 ```
