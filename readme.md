@@ -1,6 +1,10 @@
 # gtt 
 
-[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker) [![Travis](https://img.shields.io/travis/kriskbx/gitlab-time-tracker.svg?style=flat-square)](https://travis-ci.org/kriskbx/gitlab-time-tracker) [![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
+[![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
+[![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
+[![Travis](https://img.shields.io/travis/kriskbx/gitlab-time-tracker.svg?style=flat-square)](https://travis-ci.org/kriskbx/gitlab-time-tracker)
+[![Coveralls](https://img.shields.io/coveralls/kriskbx/gitlab-time-tracker.svg?style=flat-square)](https://coveralls.io/github/kriskbx/gitlab-time-tracker)
+[![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 
 > A command line interface for GitLabs time tracking feature.
 
@@ -137,6 +141,8 @@ mounted directory that you have access to on your host machine. Take a look at t
 gtt config
 ```
 
+If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
+
 **Edit/create a local configuration file `.gtt.yml` in the current working directory:**
 
 ```shell
@@ -146,8 +152,6 @@ gtt config --local
 If a local configuration file is present it will extend of the global one and overwrites global settings.
 If you don't want to extend the global configuration file, set the `extend` option in your local config to `false`.
 So you can use gtt easily on a per project basis. Make sure to add .gtt.yml to your gitignore file if using a local configuration.
-
-If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
 
 ### II) time tracking
 

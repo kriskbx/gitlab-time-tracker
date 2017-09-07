@@ -5,3 +5,5 @@ node_js:
   - "7"
   - "8"
 cache: yarn
+after_success:
+- yarn run coveralls

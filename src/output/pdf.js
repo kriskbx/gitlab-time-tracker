@@ -11,11 +11,7 @@ class pdf extends markdown {
         markdownpdf({
             cssPath: `${__dirname}/styles/layout/${style}.css`,
             highlightCssPath: `${__dirname}/styles/highlight/${style}.css`
-        })
-            .from.string(this.out)
-            .to.string({}, (string) => {
-                console.log(string);
-            });
+        }).from.string(this.out).to(file, () => resolve());
     }
 
     toStdOut() {

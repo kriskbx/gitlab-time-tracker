@@ -90,7 +90,7 @@ class base {
      */
     toFile(file, resolve) {
         fs.writeFileSync(file, this.out);
-        resolve();
+        if(resolve) resolve();
     }
 
     /**
