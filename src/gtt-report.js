@@ -35,7 +35,7 @@ program
     .option('-q --query <query>', 'query the given data types: issues, merge_requests', collect, null)
     .option('-e --type <type>', 'specify the query type: project, user, group')
     .option('-r --report <report>', 'include in the report: stats, issues, merge_requests, records', collect, null)
-    .option('-o --output <output>', 'use the given output', collect, null)
+    .option('-o --output <output>', 'use the given output')
     .option('-l --file <file>', 'save report to the given file')
     .option('--subgroups', 'include sub groups')
     .option('--include_by_labels <labels>', 'only include issues that have the given labels', collect, null)
@@ -116,11 +116,14 @@ if ((config.get('report').includes('issues') && !config.get('query').includes('i
 if ((config.get('report').includes('merge_requests') && !config.get('query').includes('merge_requests'))) {
     Cli.warn(`Merge Requests are included in the report but not queried.`);
 }
+if (!config.get('project')) {
+    Cli.error(`Missing project(s) or group(s) namespace. Try this: gtt report "username/project-name"`);
+}
 if (!Output[config.get('output')]) {
-    Cli.error(`The output ${config.get('output')} doesn't exist`);
+    Cli.error(`The output ${config.get('output')} doesn't exist. Available outputs: ${Object.keys(Output).join(',')}`);
 }
 if (config.get('output') === 'pdf' && !config.get('file')) {
-    Cli.error(`Cannot output a pdf to stdout`);
+    Cli.error(`Cannot output a pdf to stdout. You probably forgot to use the --file parameter`);
 }
 if (!config.get('from').isValid()) {
     Cli.error(`FROM is not in a valid ISO date format.`);
