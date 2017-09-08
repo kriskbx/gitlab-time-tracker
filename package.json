@@ -1,6 +1,6 @@
 {
   "name": "gitlab-time-tracker",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "A command line interface for GitLabs time tracking feature.",
   "bugs": {
     "url": "https://github.com/kriskbx/gitlab-time-tracker/issues"
