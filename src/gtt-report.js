@@ -52,6 +52,7 @@ program
     .option('--user_columns', 'include user columns in the report')
     .option('--quiet', 'only output report')
     .option('--verbose', 'show verbose output')
+    .option('--check_token', 'check the access token')
     .option('--show_without_times', 'show issues/merge requests without time records')
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .parse(process.argv);
@@ -90,7 +91,8 @@ config
     .set('proxy', program.proxy)
     .set('type', program.type)
     .set('subgroups', program.subgroups)
-    .set('_verbose', program.verbose);
+    .set('_verbose', program.verbose)
+    .set('_checkToken', program.check_token);
 
 Cli.quiet = config.get('quiet');
 Cli.verbose = config.get('_verbose');
@@ -148,8 +150,9 @@ new Promise(resolve => {
         Cli.list(`${Cli.look}  Resolving "${projectLabels}"`);
         let owner = new Owner(config);
 
-        owner
-            .parallel(projects, (project, done) => {
+        owner.authorized()
+            .catch(e => Cli.x(`Invalid access token!`, e))
+            .then(() => owner.parallel(projects, (project, done) => {
                 config.set('project', project);
 
                 switch (config.get('type')) {
@@ -158,7 +161,7 @@ new Promise(resolve => {
                         reports.push(report);
                         report.getProject()
                             .then(() => done())
-                            .catch(e => done(e));
+                            .catch(e => Cli.x(`Project not found or no access rights "${projectLabels}". Run again with --check_token to see if your access token is invalid!`, e));
                         break;
 
                     case 'group':
@@ -175,7 +178,7 @@ new Promise(resolve => {
                             .catch(e => done(e));
                         break;
                 }
-            }, 1)
+            }, 1))
             .catch(e => reject(e))
             .then(() => {
                 config.set('project', projects);

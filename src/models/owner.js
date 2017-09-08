@@ -14,6 +14,23 @@ class owner extends Base {
     }
 
     /**
+     * is authorized?
+     * @returns {Promise}
+     */
+    authorized() {
+        if (!this.config.get('_checkToken')) return new Promise(r => r());
+
+        return new Promise((resolve, reject) => {
+            this.get('broadcast_messages')
+                .then(() => resolve())
+                .catch(e => {
+                    if (e.statusCode === 403) resolve();
+                    reject(e);
+                });
+        });
+    }
+
+    /**
      * query and set the group
      * @returns {Promise}
      */
