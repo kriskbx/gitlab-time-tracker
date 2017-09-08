@@ -12,7 +12,11 @@ gtt monitors the time you spent on an issue or merge request locally and syncs i
 It also allows you to create reports in various formats from time tracking data
 stored on GitLab.
 
+### Monitor your time
+
 ![Monitor your time](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/tracking.gif)
+
+### And get a report
 
 ![Get a report](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/reports.gif)
 
