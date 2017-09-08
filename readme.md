@@ -732,9 +732,9 @@ report.issues.forEach(issue => {
 });
 report.mergeRequests.forEach(mergeRequest => {
     // time records on merge requests
-    console.log(mergeRequests.times);
+    console.log(mergeRequest.times);
     // user of single time record
-    console.log(issue.times[0].user);
+    console.log(mergeRequest.times[0].user);
 });
 ```
 
@@ -749,7 +749,7 @@ is the total amount of time spent in the given time frame.
 #### Why 'total spent' and 'spent' are showing different amounts.
 
 gtt can only track time records from notes/comments. If you start your 
-issue or merge request with `/spent [time]` in its description, gtt won't
+issue or merge request with `/spend [time]` in its description, gtt won't
 take it into consideration (for now).
 
 ## contributing
