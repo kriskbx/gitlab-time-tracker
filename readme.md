@@ -384,6 +384,12 @@ gtt report --time_format="[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
 *Note: [Click here](#time-format) for a further documentation on the time format.*
 
+#### Set hours per day
+
+```shell
+gtt report --hours_per_day=6
+```
+
 #### Set columns included in the time record table
 
 ```shell

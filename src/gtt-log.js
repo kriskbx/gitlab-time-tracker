@@ -8,12 +8,15 @@ const Cli = require('./include/cli');
 const Time = require('./models/time');
 const Tasks = require('./include/tasks');
 
-program.option('--verbose', 'show verbose output')
+program
+    .option('--verbose', 'show verbose output')
+    .option('--hours_per_day <hours>', 'hours per day for human readable time formats')
     .parse(process.argv);
 
 Cli.verbose = program.verbose;
 
-let config = new Config(__dirname),
+let config = new Config(__dirname)
+        .set('hoursPerDay', program.hours_per_day),
     tasks = new Tasks(config);
 
 function toHumanReadable(input) {
