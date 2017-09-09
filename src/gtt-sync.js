@@ -8,11 +8,14 @@ const Tasks = require('./include/tasks');
 program
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .option('--verbose', 'show verbose output')
+    .option('--check_token', 'check the access token')
     .parse(process.argv);
 
 Cli.verbose = program.verbose;
 
-let config = new Config(process.cwd()).set('proxy', program.proxy),
+let config = new Config(process.cwd())
+        .set('proxy', program.proxy)
+        .set('_checkToken', program.check_token),
     tasks = new Tasks(config);
 
 tasks.syncInit()
