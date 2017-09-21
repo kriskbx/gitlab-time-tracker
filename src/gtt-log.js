@@ -32,7 +32,8 @@ tasks.log()
                 frames[date]
                     .sort((a, b) => moment(a.start).isBefore(moment(b.start)) ? -1 : 1)
                     .forEach(frame => {
-                        console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t\t${frame.project.magenta}\t\t${(frame.resource.type + ' #' + frame.resource.id).blue}`)
+                        let issue = frame.resource.new ? `new ${frame.resource.type + ' "' + frame.resource.id.blue}"` : `${(frame.resource.type + ' #' + frame.resource.id).blue}`;
+                        console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t\t${frame.project.magenta}\t\t${issue}`)
                     });
             });
         }

@@ -182,7 +182,14 @@ gtt start --type=merge_request "kriskbx/example-project" 15
 gtt start --type=merge_request 15
 ```
 
-If you configured a project in your config you can omit the project.
+**Start local time monitoring and create a new issue or merge request with the given title:**
+
+```shell
+gtt create "kriskbx/example-project" "New Issue"
+gtt create "New Issue"
+gtt create --type=merge_request "kriskbx/example-project" "New Issue"
+gtt create --type=merge_request "New Issue"
+```
 
 **Show the current time monitoring status:**
 

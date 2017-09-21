@@ -15,6 +15,10 @@ class frame {
         this.config = config;
         this.project = config.get('project');
         this.resource = {id, type};
+
+        if(typeof id === 'string' || id instanceof String)
+            this.resource.new = true;
+
         this.id = frame.generateId();
         this.start = false;
         this.stop = false;

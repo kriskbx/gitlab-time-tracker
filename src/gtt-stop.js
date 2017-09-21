@@ -17,6 +17,11 @@ let config = new Config(__dirname),
 
 tasks.stop()
     .then(frames => {
-        frames.forEach(frame => console.log(`Stopping project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green} (id: ${frame.id})`));
+        frames.forEach(frame => {
+            if(!frame.resource.new)
+                return console.log(`Stopping project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green} (id: ${frame.id})`)
+
+            console.log(`Stopping project ${frame.project.magenta} for new ${frame.resource.type} "${(frame.resource.id).blue}", started ${moment(frame.start).fromNow().green} (id: ${frame.id})`)
+        });
     })
     .catch(error => Cli.error(error));

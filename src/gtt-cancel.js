@@ -17,6 +17,11 @@ let tasks = new Tasks(config);
 
 tasks.cancel()
     .then(frames => {
-        frames.forEach(frame => console.log(`Cancel project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green}`))
+        frames.forEach(frame => {
+            if(!frame.resource.new)
+                return console.log(`Cancel project ${frame.project.magenta} ${frame.resource.type.blue} ${('#' + frame.resource.id).blue}, started ${moment(frame.start).fromNow().green}`)
+
+            console.log(`Cancel project ${frame.project.magenta} for new ${frame.resource.type} "${(frame.resource.id).blue}", started ${moment(frame.start).fromNow().green}`)
+        })
     })
     .catch(error => Cli.error(error));

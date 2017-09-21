@@ -9,8 +9,15 @@ class mergeRequest extends hasTimes {
         this.data = data;
     }
 
-    make(project, id) {
-        let promise = this.get(`projects/${encodeURIComponent(project)}/merge_requests/${id}`);
+    make(project, id, create = false) {
+        let promise;
+
+        if (create) {
+            promise = this.post(`projects/${encodeURIComponent(project)}/merge_requests`, {title: id});
+        } else {
+            promise = this.get(`projects/${encodeURIComponent(project)}/merge_requests/${id}`);
+        }
+
         promise.then(issue => {
             this.data = issue.body;
             return promise;

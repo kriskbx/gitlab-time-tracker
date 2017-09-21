@@ -21,7 +21,7 @@ let config = new Config(process.cwd())
 tasks.syncInit()
     .then(() => tasks.sync.frames.length === 0 ? process.exit(0) : null)
     .then(() => {
-        Cli.bar(`${Cli.fetch}  Fetching issues & merge requests...`, tasks.sync.frames.length);
+        Cli.bar(`${Cli.fetch}  Fetching or creating issues & merge requests...`, tasks.sync.frames.length);
         return tasks.syncResolve(Cli.advance);
     })
     .then(() => {

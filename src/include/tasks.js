@@ -55,7 +55,7 @@ class tasks {
 
             this.sync.resources[type][id] = new classes[type](this.config, {});
             this.sync.resources[type][id]
-                .make(project, id)
+                .make(project, id, frame.resource.new)
                 .then(() => {
                     if (callback) callback();
                     done();
@@ -115,6 +115,11 @@ class tasks {
             resource.createTime(Math.ceil(time))
                 .then(() => resource.getNotes())
                 .then(() => {
+                    if(frame.resource.new) {
+                        delete frame.resource.new;
+                        frame.resource.id = resource.data.iid;
+                    }
+
                     frame.notes.push({
                         id: resource.notes[0].id,
                         time: Math.ceil(time)
