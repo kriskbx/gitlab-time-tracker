@@ -12,6 +12,7 @@ class project extends Base {
     constructor(config, data) {
         super(config);
         this.data = data;
+        this.projectMembers = data.members ? data.members : [];
     }
 
     /**
@@ -30,10 +31,24 @@ class project extends Base {
      * @returns {Promise}
      */
     members() {
-        let promise = this.get(`projects/${this.id}/members`);
-        promise.then(response => this.members = response.body);
+        return new Promise((resolve, reject) => {
+            this.get(`projects/${this.id}/members`)
+                .then(response => {
+                    this.projectMembers = this.projectMembers.concat(response.body);
+                    return new Promise(r => r());
+                })
+                .then(() => {
+                    if (!this.data.namespace || !this.data.namespace.kind || this.data.namespace.kind !== "group") return resolve();
 
-        return promise;
+                    this.get(`groups/${this.data.namespace.id}/members`)
+                        .then(response => {
+                            this.projectMembers = this.projectMembers.concat(response.body);
+                            resolve();
+                        })
+                        .catch(e => reject(e));
+                })
+                .catch(e => reject(e));
+        });
     }
 
     /*
@@ -48,7 +63,7 @@ class project extends Base {
     }
 
     get users() {
-        return this.members.map(member => member.username);
+        return this.projectMembers.map(member => member.username);
     }
 }
 
