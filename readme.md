@@ -782,12 +782,6 @@ report.mergeRequests.forEach(mergeRequest => {
 It can include times outside the queried time frame. `spent` on the other hand
 is the total amount of time spent in the given time frame.
 
-#### Why 'total spent' and 'spent' are showing different amounts.
-
-gtt can only track time records from notes/comments. If you start your 
-issue or merge request with `/spend [time]` in its description, gtt won't
-take it into consideration (for now).
-
 ## contributing
 
 I would love to integrate unit testing in this project, but unfortunately my knowledge of 
