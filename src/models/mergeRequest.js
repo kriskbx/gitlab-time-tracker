@@ -7,7 +7,6 @@ class mergeRequest extends hasTimes {
     constructor(config, data = {}) {
         super(config);
         this.data = data;
-        this.name = 'merge_requests';
     }
 
     make(project, id, create = false) {
@@ -81,19 +80,23 @@ class mergeRequest extends hasTimes {
     }
 
     get spent() {
-        return this.config.toHumanReadable(this.timeSpent, this.name);
+        return this.config.toHumanReadable(this.timeSpent, this._type);
     }
 
     get total_spent() {
-        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this.name) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this._type) : null;
     }
 
     get total_estimate() {
-        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this.name) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this._type) : null;
     }
 
     get _type() {
         return 'merge_requests';
+    }
+
+    get _typeSingular() {
+        return 'Merge Request';
     }
 }
 

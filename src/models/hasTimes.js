@@ -15,7 +15,6 @@ class hasTimes extends Base {
     constructor(config) {
         super(config);
         this.times = [];
-        this.name = '';
     }
 
     /**
@@ -59,7 +58,7 @@ class hasTimes extends Base {
         let times = [],
             timeSpent = 0,
             timeUsers = {},
-            timeFormat = this.config.get('timeFormat', this.name);
+            timeFormat = this.config.get('timeFormat', this._type);
 
         // sort by created at
         this.notes.sort((a, b) => {
@@ -94,6 +93,17 @@ class hasTimes extends Base {
 
             done();
         });
+
+        promise = promise.then(() => new Promise(resolve => {
+            if (this.config('_skipDescriptionParsing') || timeSpent === this.data.time_stats.total_time_spent) return resolve();
+
+            let difference = this.data.time_stats.total_time_spent - timeSpent,
+                note = Object.assign({noteable_type: this._typeSingular}, this.data);
+
+            times.unshift(new Time(Time.toHumanReadable(difference, this.config.get('hoursPerDay')), note, this, this.config));
+
+            resolve();
+        }));
 
         promise.then(() => {
             _.each(timeUsers, (time, name) => this[`time_${name}`] = Time.toHumanReadable(time, this.config.get('hoursPerDay'), timeFormat));

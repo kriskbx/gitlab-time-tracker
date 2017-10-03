@@ -603,6 +603,12 @@ includeLabels:
 - pending
 - approved
 
+# Only works if using a local configuration file!
+# Extend the global configuration if set to true, pass a string to extend 
+# the configuration file stored at the given path
+# defaults to true
+extend: true
+
 # Change number of concurrent connections/http queries
 # Note: Handle with care, we don't want to spam GitLabs API too much
 # defaults to 10
@@ -612,11 +618,14 @@ _parallel: 20
 # defaults to 100
 _perPage: 100
 
-# Only works if using a local configuration file!
-# Extend the global configuration if set to true, pass a string to extend 
-# the configuration file stored at the given path
-# defaults to true
-extend: true
+# Verbose output
+_verbose: false
+
+# Check access token validity up front
+_checkToken: false
+
+# Skip parsing the issue/merge_request description for time records
+_skipDescriptionParsing: false
 ```
 
 ### Time format

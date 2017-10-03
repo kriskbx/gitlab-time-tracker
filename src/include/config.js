@@ -38,7 +38,8 @@ const defaults = {
     _perPage: 100,
     _parallel: 10,
     _verbose: false,
-    _checkToken: false
+    _checkToken: false,
+    _skipDescriptionParsing: false
 };
 
 /**
