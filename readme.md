@@ -543,7 +543,7 @@ hoursPerDay: 8
 issueColumns:
 - iid
 - title
-- estimation
+- total_estimate
 
 # Include the given columns in the merge request table
 # See --merge_request_columns option for more information
@@ -551,7 +551,7 @@ issueColumns:
 mergeRequestColumns:
 - iid
 - title
-- estimation
+- total_estimate
 
 # Include the given columns in the time record table
 # See --record_columns option for more information
