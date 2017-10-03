@@ -10,6 +10,7 @@ class issue extends hasTimes {
     constructor(config, data = {}) {
         super(config);
         this.data = data;
+        this.name= 'issues';
     }
 
     make(project, id, create = false) {
@@ -87,15 +88,15 @@ class issue extends hasTimes {
     }
 
     get spent() {
-        return this.config.toHumanReadable(this.timeSpent);
+        return this.config.toHumanReadable(this.timeSpent, this.name);
     }
 
     get total_spent() {
-        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this.name) : null;
     }
 
     get total_estimate() {
-        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this.name) : null;
     }
 
     get _type() {

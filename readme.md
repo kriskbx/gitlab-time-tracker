@@ -576,6 +576,16 @@ dateFormat: DD.MM.YYYY HH:mm:ss
 # defaults to "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
+# Time format for different parts of the report
+# Instead of specifying one global time format you can specify one for every
+# part of the report and the log command
+timeFormat:
+  log: "[%sign][%hours_overall]"
+  stats: "[%sign][%days_overall]"
+  issues: "[%sign][%hours_overall]"
+  merge_requests: "[%sign][%hours_overall]"
+  records: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+
 # Output type
 # Available: csv, table, markdown, pdf
 # defaults to table

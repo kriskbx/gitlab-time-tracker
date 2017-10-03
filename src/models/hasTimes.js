@@ -15,6 +15,7 @@ class hasTimes extends Base {
     constructor(config) {
         super(config);
         this.times = [];
+        this.name = '';
     }
 
     /**
@@ -55,9 +56,10 @@ class hasTimes extends Base {
      * @returns {Promise}
      */
     getTimes() {
-        let times = [];
-        let timeSpent = 0;
-        let timeUsers = {};
+        let times = [],
+            timeSpent = 0,
+            timeUsers = {},
+            timeFormat = this.config.get('timeFormat', this.name);
 
         // sort by created at
         this.notes.sort((a, b) => {
@@ -69,7 +71,7 @@ class hasTimes extends Base {
             let created = moment(note.created_at), match, subMatch, removeMatch;
 
             if (
-            // filter out user notes
+                // filter out user notes
             !note.system ||
             // only include times by the configured user
             (this.config.get('user') && this.config.get('user') !== note.author.username) ||
@@ -94,7 +96,7 @@ class hasTimes extends Base {
         });
 
         promise.then(() => {
-            _.each(timeUsers, (time, name) => this[`time_${name}`] = this.config.toHumanReadable(time));
+            _.each(timeUsers, (time, name) => this[`time_${name}`] = Time.toHumanReadable(time, this.config.get('hoursPerDay'), timeFormat));
             this.timeSpent = timeSpent;
             this.times = times
         });

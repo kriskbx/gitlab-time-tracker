@@ -61,7 +61,7 @@ class time {
     }
 
     get _timeFormat() {
-        return this.config && this.config.get('timeFormat') ? this.config.get('timeFormat') : '';
+        return this.config && this.config.get('timeFormat', 'records') ? this.config.get('timeFormat', 'records') : '';
     }
 
     get _hoursPerDay() {

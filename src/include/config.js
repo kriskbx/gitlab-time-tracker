@@ -1,8 +1,10 @@
 const moment = require('moment');
+const _ = require('underscore');
 
 const Time = require('./../models/time');
 
 const dates = ['from', 'to'];
+const objectsWithDefaults = ['timeFormat', 'columns'];
 const defaults = {
     type: 'project',
     subgroups: false,
@@ -47,7 +49,7 @@ class config {
      * construct
      */
     constructor() {
-        this.data = defaults;
+        this.data = _.extend({}, defaults);
     }
 
     /**
@@ -70,21 +72,27 @@ class config {
     /**
      * get a value by the given key
      * @param key
+     * @param subKey
      * @returns {*}
      */
-    get(key) {
-        if (!dates.includes(key)) return this.data[key];
+    get(key, subKey = false) {
+        if (dates.includes(key))
+            return moment(this.data[key]);
 
-        return moment(this.data[key]);
+        if (objectsWithDefaults.includes(key) && _.isObject(this.data[key]))
+            return subKey && this.data[key][subKey] ? this.data[key][subKey] : defaults[key];
+
+        return this.data[key];
     }
 
     /**
      * get a human readable version of the given time
      * @param input
+     * @param timeFormat
      * @returns {string}
      */
-    toHumanReadable(input) {
-        return Time.toHumanReadable(input, this.get('hoursPerDay'), this.get('timeFormat'));
+    toHumanReadable(input, timeFormat = false) {
+        return Time.toHumanReadable(input, this.get('hoursPerDay'), this.get('timeFormat', timeFormat));
     }
 }
 
