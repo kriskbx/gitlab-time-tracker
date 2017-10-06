@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const open = require('open');
 const find = require('find-in-files');
+const child_process = require('child_process');
 
 class filesystem {
     static find(pattern, dir) {
@@ -22,7 +23,14 @@ class filesystem {
     }
 
     static open(file) {
+      if ((process.env.SSH_CLIENT || process.env.SSH_TTY) && process.env.EDITOR) {
+        var child = child_process.spawn(process.env.EDITOR, [file], {
+          stdio: 'inherit'
+        });
+        return child;
+      } else {
         return open(file);
+      }
     }
 
     static join(...args) {
