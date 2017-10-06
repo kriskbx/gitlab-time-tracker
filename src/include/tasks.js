@@ -180,10 +180,13 @@ class tasks {
      */
     resume() {
         return new Promise((resolve, reject) => {
-            let frames = new FrameCollection(this.config);
+            let project = this.config.get('project'),
+                frames = new FrameCollection(this.config);
+
+            if (!project) return reject("No project set.");
 
             frames
-                .filter(frame => frame.project === this.config.get('project'))
+                .filter(frame => frame.project === project)
                 .sort((a, b) => moment(a.stop).isBefore(moment(b.stop)) ? 1 : -1);
 
             let last = frames.frames[0];
