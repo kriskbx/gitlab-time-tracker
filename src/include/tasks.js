@@ -176,6 +176,29 @@ class tasks {
 
     /**
      *
+     * @returns {Promise}
+     */
+   resume() {
+        return new Promise((resolve, reject) => {
+            let project;
+            let frames = new FrameCollection(this.config).frames
+            if (project = this.config.get('project')) {
+              frames = frames.filter(frame => frame.project == project)
+            }
+            const last = frames.filter(frame => frame.stop)
+              .sort((a, b) => -1 * a.stop.localeCompare(b.stop))[0]
+            if (last) {
+              this.start(last.project, last.resource.type, last.resource.id)
+                .then(frames => resolve(frames))
+                .catch(error => reject(error))
+            } else {
+              reject("No recent entry found for project")
+            }
+        });
+    }
+
+    /**
+     *
      * @param project
      * @param type
      * @param id
