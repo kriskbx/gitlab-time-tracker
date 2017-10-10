@@ -57,6 +57,7 @@ class hasTimes extends Base {
     getTimes() {
         let times = [],
             timeSpent = 0,
+            totalTimeSpent = 0,
             timeUsers = {},
             timeFormat = this.config.get('timeFormat', this._type);
 
@@ -67,24 +68,33 @@ class hasTimes extends Base {
         });
 
         let promise = this.parallel(this.notes, (note, done) => {
-            let created = moment(note.created_at), match, subMatch, removeMatch;
+            let created = moment(note.created_at), match, subMatch;
 
-            if (
-                // filter out user notes
+
+            if ( //
+            // filter out user notes
             !note.system ||
+            // filter out notes that are no time things
+            !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body)) && !removeRegex.exec(note.body)
+            ) return done();
+
+            // create a time string and a time object
+            let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent, this.config.get('hoursPerDay'))}`);
+            let time = new Time(timeString, note, this, this.config);
+
+            // add to total time spent
+            totalTimeSpent += time.seconds;
+
+            if ( //
             // only include times by the configured user
             (this.config.get('user') && this.config.get('user') !== note.author.username) ||
             // filter out times that are not in the given time frame
-            !(created.isSameOrAfter(moment(this.config.get('from'))) && created.isSameOrBefore(moment(this.config.get('to')))) ||
-            // filter out notes that are no time things
-            !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body)) && !(removeMatch = removeRegex.exec(note.body))
+            !(created.isSameOrAfter(moment(this.config.get('from'))) && created.isSameOrBefore(moment(this.config.get('to'))))
             ) return done();
 
             if (!timeUsers[note.author.username]) timeUsers[note.author.username] = 0;
 
-            let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent, this.config.get('hoursPerDay'))}`);
-            let time = new Time(timeString, note, this, this.config);
-
+            // add to time spent & add to user specific time spent
             timeSpent += time.seconds;
             timeUsers[note.author.username] += time.seconds;
 
@@ -95,9 +105,20 @@ class hasTimes extends Base {
         });
 
         promise = promise.then(() => new Promise(resolve => {
-            if (this.config('_skipDescriptionParsing') || timeSpent === this.data.time_stats.total_time_spent) return resolve();
+            let created = moment(this.data.created_at);
 
-            let difference = this.data.time_stats.total_time_spent - timeSpent,
+            if ( //
+            // skip if description parsing is disabled
+            this.config.get('_skipDescriptionParsing') ||
+            // or the total time matches
+            totalTimeSpent === this.data.time_stats.total_time_spent ||
+            // or the user is filtered out
+            (this.config.get('user') && this.config.get('user') !== this.data.author.username) ||
+            // or the issue is not within the given time frame
+            !(created.isSameOrAfter(moment(this.config.get('from'))) && created.isSameOrBefore(moment(this.config.get('to'))))
+            ) return resolve();
+
+            let difference = this.data.time_stats.total_time_spent - totalTimeSpent,
                 note = Object.assign({noteable_type: this._typeSingular}, this.data);
 
             times.unshift(new Time(Time.toHumanReadable(difference, this.config.get('hoursPerDay')), note, this, this.config));
