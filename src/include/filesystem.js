@@ -23,14 +23,15 @@ class filesystem {
     }
 
     static open(file) {
-      if ((process.env.SSH_CLIENT || process.env.SSH_TTY) && process.env.EDITOR) {
-        var child = child_process.spawn(process.env.EDITOR, [file], {
-          stdio: 'inherit'
-        });
-        return child;
-      } else {
-        return open(file);
-      }
+        let editor = process.env.VISUAL;
+
+        if (editor || (editor = process.env.EDITOR)) {
+            return child_process.spawn(editor, [file], {
+                stdio: 'inherit'
+            });
+        } else {
+            return open(file);
+        }
     }
 
     static join(...args) {
