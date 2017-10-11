@@ -196,6 +196,11 @@ class tasks {
         });
     }
 
+    list(project, state, my) {
+        this.config.set('project', project);
+        return (new classes['issue'](this.config, {})).list(this.config.get('project'), state, my);
+    }
+
     /**
      *
      * @param project

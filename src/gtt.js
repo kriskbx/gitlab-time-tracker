@@ -11,6 +11,7 @@ program
     .command('stop', 'stop monitoring time')
     .command('resume [project]', 'resume monitoring time for last stopped record')
     .command('cancel', 'cancel and discard active monitoring time')
+    .command('list [project]', 'list all open issues')
     .command('log', 'log recorded time records')
     .command('sync', 'sync local time records to GitLab')
     .command('edit [id]', 'edit time record by the given id')
