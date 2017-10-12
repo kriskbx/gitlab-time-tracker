@@ -717,6 +717,23 @@ timeFormat: "[%sign][%minutes_overall]"
 1095
 ```
 
+##### `[%hours_overall:2]`, `[%days_overall:3]`
+
+You can ceil any float value by adding the number of decimals to keep separated with a `:`.
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%hours_overall:2]"
+```
+
+**Example outputs:**
+
+```shell
+0,51
+18,25
+```
+
 ## how to use gtt as a library
 
 Add as a dependency using yarn:

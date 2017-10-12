@@ -5,6 +5,7 @@ const defaultTimeFormat = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]
 const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
 const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
+const roundedRegex = /(\[\%([^\>\]]*)\:([^\]]*)\])/ig;
 const defaultRegex = /(\[\%([^\]]*)\])/ig;
 
 Number.prototype.padLeft = function (n, str) {
@@ -125,6 +126,13 @@ class time {
         while ((match = conditionalRegex.exec(format)) !== null) {
             if (match.index === conditionalRegex.lastIndex) conditionalRegex.lastIndex++;
             output = output.replace(match[0], inserts[match[2]] > 0 ? inserts[match[2]] + match[3] : '');
+        }
+
+        // rounded
+        while ((match = roundedRegex.exec(format)) !== null) {
+            if (match.index === roundedRegex.lastIndex) roundedRegex.lastIndex++;
+            // console.log(match); process.exit();
+            output = output.replace(match[0], Math.ceil(inserts[match[2]] * Math.pow(10, match[3])) / Math.pow(10, match[3]));
         }
 
         // default

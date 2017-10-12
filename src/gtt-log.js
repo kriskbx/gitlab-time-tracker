@@ -18,9 +18,7 @@ Cli.verbose = program.verbose;
 
 let config = new Config(__dirname).set('hoursPerDay', program.hours_per_day),
     tasks = new Tasks(config),
-    timeFormat = config.set('timeFormat', program.time_format).get('timeFormat');
-
-timeFormat = _.isObject(timeFormat) && timeFormat['log'] ? timeFormat['log'] : timeFormat;
+    timeFormat = config.set('timeFormat', program.time_format).get('timeFormat', 'log');
 
 function toHumanReadable(input) {
     return Time.toHumanReadable(Math.ceil(input), config.get('hoursPerDay'), timeFormat);
