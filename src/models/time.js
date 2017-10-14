@@ -6,6 +6,7 @@ const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seco
 const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
 const roundedRegex = /(\[\%([^\>\]]*)\:([^\]]*)\])/ig;
+const conditionalSimpleRegex = /(.*)\>(.*)/ig;
 const defaultRegex = /(\[\%([^\]]*)\])/ig;
 
 Number.prototype.padLeft = function (n, str) {
@@ -96,7 +97,7 @@ class time {
      * @returns {string}
      */
     static toHumanReadable(input, hoursPerDay = 8, format = time.defaultTimeFormat) {
-        let sign = parseInt(input) < 0 ? '-' : '', output = format, match;
+        let sign = parseInt(input) < 0 ? '-' : '', output = format, match, conditionalMatch;
         input = Math.abs(input);
 
         let secondsInADay = 60 * 60 * hoursPerDay;
@@ -122,17 +123,23 @@ class time {
         inserts.seconds = ((input % secondsInADay) % secondsInAnHour) % secondsInAMinute;
         inserts.Seconds = inserts.seconds.padLeft(2, 0);
 
+        // rounded
+        while ((match = roundedRegex.exec(format)) !== null) {
+            if (match.index === roundedRegex.lastIndex) roundedRegex.lastIndex++;
+            let time;
+
+            if ((conditionalMatch = conditionalSimpleRegex.exec(match[3])) !== null) {
+                match[3] = conditionalMatch[1]
+            }
+
+            time = Math.ceil(inserts[match[2]] * Math.pow(10, match[3])) / Math.pow(10, match[3]);
+            output = output.replace(match[0], time !== 0 && conditionalMatch ? time + conditionalMatch[2] : '');
+        }
+
         // conditionals
         while ((match = conditionalRegex.exec(format)) !== null) {
             if (match.index === conditionalRegex.lastIndex) conditionalRegex.lastIndex++;
             output = output.replace(match[0], inserts[match[2]] > 0 ? inserts[match[2]] + match[3] : '');
-        }
-
-        // rounded
-        while ((match = roundedRegex.exec(format)) !== null) {
-            if (match.index === roundedRegex.lastIndex) roundedRegex.lastIndex++;
-            // console.log(match); process.exit();
-            output = output.replace(match[0], Math.ceil(inserts[match[2]] * Math.pow(10, match[3])) / Math.pow(10, match[3]));
         }
 
         // default
