@@ -6,7 +6,7 @@ const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seco
 const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
 const roundedRegex = /(\[\%([^\>\]]*)\:([^\]]*)\])/ig;
-const conditionalSimpleRegex = /(.*)\>(.*)/ig;
+const conditionalSimpleRegex = /([0-9]*)\>(.*)/ig;
 const defaultRegex = /(\[\%([^\]]*)\])/ig;
 
 Number.prototype.padLeft = function (n, str) {
@@ -97,7 +97,7 @@ class time {
      * @returns {string}
      */
     static toHumanReadable(input, hoursPerDay = 8, format = time.defaultTimeFormat) {
-        let sign = parseInt(input) < 0 ? '-' : '', output = format, match, conditionalMatch;
+        let sign = parseInt(input) < 0 ? '-' : '', output = format, match;
         input = Math.abs(input);
 
         let secondsInADay = 60 * 60 * hoursPerDay;
@@ -126,14 +126,15 @@ class time {
         // rounded
         while ((match = roundedRegex.exec(format)) !== null) {
             if (match.index === roundedRegex.lastIndex) roundedRegex.lastIndex++;
-            let time;
+            let time, conditionalMatch, decimals = match[3];
 
-            if ((conditionalMatch = conditionalSimpleRegex.exec(match[3])) !== null) {
-                match[3] = conditionalMatch[1]
+            if ((conditionalMatch = conditionalSimpleRegex.exec(decimals)) !== null) {
+                decimals = conditionalMatch[1]
             }
 
-            time = Math.ceil(inserts[match[2]] * Math.pow(10, match[3])) / Math.pow(10, match[3]);
-            output = output.replace(match[0], time !== 0 && conditionalMatch ? time + conditionalMatch[2] : '');
+            decimals = parseInt(decimals);
+            time = Math.ceil(inserts[match[2]] * Math.pow(10, decimals)) / Math.pow(10, decimals);
+            output = output.replace(match[0], time !== 0 && conditionalMatch ? time + conditionalMatch[2] : time);
         }
 
         // conditionals
