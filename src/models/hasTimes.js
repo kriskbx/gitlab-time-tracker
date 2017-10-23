@@ -111,7 +111,7 @@ class hasTimes extends Base {
             // skip if description parsing is disabled
             this.config.get('_skipDescriptionParsing') ||
             // or the total time matches
-            totalTimeSpent === this.data.time_stats.total_time_spent ||
+            (this.data.time_stats && totalTimeSpent === this.data.time_stats.total_time_spent) ||
             // or the user is filtered out
             (this.config.get('user') && this.config.get('user') !== this.data.author.username) ||
             // or the issue is not within the given time frame
