@@ -110,6 +110,8 @@ class hasTimes extends Base {
             if ( //
             // skip if description parsing is disabled
             this.config.get('_skipDescriptionParsing') ||
+            // or time stats are not available
+            !this.data.time_stats || !this.data.time_stats.total_time_spent ||
             // or the total time matches
             !this.data.time_stats ||
             totalTimeSpent === this.data.time_stats.total_time_spent ||
