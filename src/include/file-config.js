@@ -82,9 +82,9 @@ class fileConfig extends config {
     }
 
     assertGlobalConfig() {
-        if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0644', true);
-        if (!fs.existsSync(this.frameDir)) fs.mkdirSync(this.frameDir, '0744', true);
-        if (!fs.existsSync(this.cacheDir)) fs.mkdirSync(this.cacheDir, '0744', true);
+        if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0750', true);
+        if (!fs.existsSync(this.frameDir)) fs.mkdirSync(this.frameDir, '0750', true);
+        if (!fs.existsSync(this.cacheDir)) fs.mkdirSync(this.cacheDir, '0750', true);
         if (!fs.existsSync(this.global)) fs.appendFileSync(this.global, '');
     }
 
