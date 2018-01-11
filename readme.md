@@ -485,6 +485,10 @@ token: abcdefghijklmnopqrst
 # defaults to false
 proxy: http://localhost:8080
 
+# Don't check SSL certificate
+# defaults to false
+insecure: true
+
 # Project
 # defaults to false
 project: namespace/projectname
