@@ -9,6 +9,8 @@ const Tasks = require('./include/tasks');
 program
     .arguments('[project] [id]')
     .option('-t, --type <type>', 'specify resource type: issue, merge_request')
+    .option('-m', 'shorthand for --type=merge_request')
+    .option('-i', 'shorthand for --type=issue')
     .option('--verbose', 'show verbose output')
     .parse(process.argv);
 
@@ -19,6 +21,12 @@ let config = new Config(process.cwd()),
     type = program.type ? program.type : 'issue',
     id = program.args.length === 1 ? parseInt(program.args[0]) : parseInt(program.args[1]),
     project = program.args.length === 2 ? program.args[0] : null;
+
+if (program.I) {
+    type = 'issue';
+} else if (program.M) {
+    type = 'merge_request';
+}
 
 if (program.args.length < 2 && !config.get('project'))
     Cli.error('No project set');

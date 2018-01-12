@@ -5,6 +5,8 @@ const defaultTimeFormat = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]
 const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
 const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
+const roundedRegex = /(\[\%([^\>\]]*)\:([^\]]*)\])/ig;
+const conditionalSimpleRegex = /([0-9]*)\>(.*)/ig;
 const defaultRegex = /(\[\%([^\]]*)\])/ig;
 
 Number.prototype.padLeft = function (n, str) {
@@ -61,7 +63,7 @@ class time {
     }
 
     get _timeFormat() {
-        return this.config && this.config.get('timeFormat') ? this.config.get('timeFormat') : '';
+        return this.config && this.config.get('timeFormat', 'records') ? this.config.get('timeFormat', 'records') : '';
     }
 
     get _hoursPerDay() {
@@ -120,6 +122,20 @@ class time {
         inserts.seconds_overall = input;
         inserts.seconds = ((input % secondsInADay) % secondsInAnHour) % secondsInAMinute;
         inserts.Seconds = inserts.seconds.padLeft(2, 0);
+
+        // rounded
+        while ((match = roundedRegex.exec(format)) !== null) {
+            if (match.index === roundedRegex.lastIndex) roundedRegex.lastIndex++;
+            let time, conditionalMatch, decimals = match[3];
+
+            if ((conditionalMatch = conditionalSimpleRegex.exec(decimals)) !== null) {
+                decimals = conditionalMatch[1]
+            }
+
+            decimals = parseInt(decimals);
+            time = Math.ceil(inserts[match[2]] * Math.pow(10, decimals)) / Math.pow(10, decimals);
+            output = output.replace(match[0], time !== 0 && conditionalMatch ? time + conditionalMatch[2] : time);
+        }
 
         // conditionals
         while ((match = conditionalRegex.exec(format)) !== null) {

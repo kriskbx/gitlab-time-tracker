@@ -18,6 +18,12 @@ class frameCollection extends Base {
                 .filter(frame => frame);
     }
 
+    sort(func) {
+        this.frames.sort(func);
+
+        return this;
+    }
+
     filter(func) {
         let arr = [];
 
@@ -29,9 +35,11 @@ class frameCollection extends Base {
             if (func(frame)) {
                 arr.push(frame);
             }
-
-            this.frames = arr;
         });
+
+        this.frames = arr;
+
+        return this;
     }
 
     forEach(iterator) {

@@ -115,7 +115,7 @@ class tasks {
             resource.createTime(Math.ceil(time))
                 .then(() => resource.getNotes())
                 .then(() => {
-                    if(frame.resource.new) {
+                    if (frame.resource.new) {
                         delete frame.resource.new;
                         frame.resource.id = resource.data.iid;
                     }
@@ -170,6 +170,28 @@ class tasks {
                     resolve({frames, times});
                     r();
                 }))
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     *
+     * @returns {Promise}
+     */
+    resume() {
+        return new Promise((resolve, reject) => {
+            let project = this.config.get('project'),
+                frames = new FrameCollection(this.config);
+
+            if (!project) return reject("No project set.");
+
+            frames
+                .filter(frame => frame.project === project)
+                .sort((a, b) => moment(a.stop).isBefore(moment(b.stop)) ? 1 : -1);
+
+            let last = frames.frames[0];
+            this.start(last.project, last.resource.type, last.resource.id)
+                .then(frame => resolve(frame))
                 .catch(error => reject(error));
         });
     }

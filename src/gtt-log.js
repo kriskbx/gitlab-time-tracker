@@ -11,16 +11,17 @@ const Tasks = require('./include/tasks');
 program
     .option('--verbose', 'show verbose output')
     .option('--hours_per_day <hours>', 'hours per day for human readable time formats')
+    .option('--time_format <time_format>', 'time format')
     .parse(process.argv);
 
 Cli.verbose = program.verbose;
 
-let config = new Config(__dirname)
-        .set('hoursPerDay', program.hours_per_day),
-    tasks = new Tasks(config);
+let config = new Config(__dirname).set('hoursPerDay', program.hours_per_day),
+    tasks = new Tasks(config),
+    timeFormat = config.set('timeFormat', program.time_format).get('timeFormat', 'log');
 
 function toHumanReadable(input) {
-    return Time.toHumanReadable(Math.ceil(input), config.get('hoursPerDay'), config.get('timeFormat'));
+    return Time.toHumanReadable(Math.ceil(input), config.get('hoursPerDay'), timeFormat);
 }
 
 tasks.log()

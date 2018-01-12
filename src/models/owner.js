@@ -36,11 +36,13 @@ class owner extends Base {
      */
     getGroup() {
         return new Promise((resolve, reject) => {
-            this.get(`groups/?search=${encodeURIComponent(this.config.get('project'))}`)
-                .then(group => {
-                    if (group.body.length === 0) return reject('Group not found');
-                    let filtered = group.body.filter(u => u.path === this.config.get('project'));
-                    if (filtered.length === 0) return reject();
+            this.get(`groups`)
+                .then(groups => {
+                    if (groups.body.length === 0) return reject('Group not found');
+                    groups = groups.body;
+
+                    let filtered = groups.filter(group => group.full_path === this.config.get('project'));
+                    if (filtered.length === 0) return reject('Group not found');
                     this.groups = this.groups.concat(filtered);
                     resolve();
                 })
@@ -57,13 +59,27 @@ class owner extends Base {
             this.get(`groups`)
                 .then(groups => {
                     if (groups.body.length === 0) return resolve();
-                    let filtered = groups.body.filter(u => this.groups.map(g => g.id).indexOf(u.parent_id) !== -1);
+
+                    let filtered = this._filterGroupsByParents(groups.body, this.groups.map(g => g.id));
                     if (filtered.length === 0) return resolve();
+
                     this.groups = this.groups.concat(filtered);
                     resolve();
                 })
                 .catch(e => reject(e));
         });
+    }
+
+    _filterGroupsByParents(groups, parents) {
+        let filtered = groups.filter(group => {
+            return parents.indexOf(group.parent_id) !== -1;
+        });
+
+        if (filtered.length !== 0) {
+            filtered = filtered.concat(this._filterGroupsByParents(groups, filtered.map(g => g.id)));
+        }
+
+        return filtered;
     }
 
     // /**

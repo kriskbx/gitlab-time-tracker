@@ -42,8 +42,33 @@ describe('The config class', () => {
         });
     });
 
+    it('returns values from objects and falls back to the default', () => {
+        let Config = new config(),
+            objectsWithDefaults = ['timeFormat'],
+            defaults = Object.assign({}, Config.data),
+            stringData = 'booze',
+            objectData = {
+                foo: 'bar',
+                baz: 'bar'
+            };
+
+        objectsWithDefaults.forEach(key => {
+            Config.set(key, objectData);
+
+            expect(Config.get(key, 'foo')).to.equal('bar');
+            expect(Config.get(key, 'baz')).to.equal('bar');
+            expect(Config.get(key, 'not_a_real_key')).to.equal(defaults[key]);
+
+            Config.set(key, stringData);
+
+            expect(Config.get(key, 'foo')).to.equal('booze');
+            expect(Config.get(key, 'baz')).to.equal('booze');
+            expect(Config.get(key, 'not_a_real_key')).to.equal('booze');
+        });
+    });
+
     it('makes durations human readable', () => {
-        let Config = new config,
+        let Config = new config(),
             humanReadable = "1d 4h 30m 10s",
             seconds = 45010;
 

@@ -55,6 +55,7 @@ npm install -g gitlab-time-tracker
 ```
 
 Run the config command to create a config file and open it in your default editor.
+In linux terminal, you must set your preferred editor in the environment. For example, use `export EDITOR=vim` to edit the files with vim (put this in `.bashrc` or similar to have it always configured).
 If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
 
 ```shell
@@ -484,6 +485,10 @@ token: abcdefghijklmnopqrst
 # defaults to false
 proxy: http://localhost:8080
 
+# Don't check SSL certificate
+# defaults to false
+insecure: true
+
 # Project
 # defaults to false
 project: namespace/projectname
@@ -543,7 +548,7 @@ hoursPerDay: 8
 issueColumns:
 - iid
 - title
-- estimation
+- total_estimate
 
 # Include the given columns in the merge request table
 # See --merge_request_columns option for more information
@@ -551,7 +556,7 @@ issueColumns:
 mergeRequestColumns:
 - iid
 - title
-- estimation
+- total_estimate
 
 # Include the given columns in the time record table
 # See --record_columns option for more information
@@ -576,6 +581,16 @@ dateFormat: DD.MM.YYYY HH:mm:ss
 # defaults to "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 timeFormat: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
 
+# Time format for different parts of the report
+# Instead of specifying one global time format you can specify one for every
+# part of the report and the log command
+timeFormat:
+  log: "[%sign][%hours_overall]"
+  stats: "[%sign][%days_overall]"
+  issues: "[%sign][%hours_overall]"
+  merge_requests: "[%sign][%hours_overall]"
+  records: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+
 # Output type
 # Available: csv, table, markdown, pdf
 # defaults to table
@@ -593,6 +608,12 @@ includeLabels:
 - pending
 - approved
 
+# Only works if using a local configuration file!
+# Extend the global configuration if set to true, pass a string to extend 
+# the configuration file stored at the given path
+# defaults to true
+extend: true
+
 # Change number of concurrent connections/http queries
 # Note: Handle with care, we don't want to spam GitLabs API too much
 # defaults to 10
@@ -602,11 +623,14 @@ _parallel: 20
 # defaults to 100
 _perPage: 100
 
-# Only works if using a local configuration file!
-# Extend the global configuration if set to true, pass a string to extend 
-# the configuration file stored at the given path
-# defaults to true
-extend: true
+# Verbose output
+_verbose: false
+
+# Check access token validity up front
+_checkToken: false
+
+# Skip parsing the issue/merge_request description for time records
+_skipDescriptionParsing: false
 ```
 
 ### Time format
@@ -698,6 +722,23 @@ timeFormat: "[%sign][%minutes_overall]"
 1095
 ```
 
+##### `[%hours_overall:2]`, `[%days_overall:3]`
+
+You can ceil any float value by adding the number of decimals to keep separated with a `:`.
+
+**Example config:** 
+ 
+```yaml
+timeFormat: "[%sign][%hours_overall:2]"
+```
+
+**Example outputs:**
+
+```shell
+0,51
+18,25
+```
+
 ## how to use gtt as a library
 
 Add as a dependency using yarn:
@@ -762,12 +803,6 @@ report.mergeRequests.forEach(mergeRequest => {
 `total spent` is the total amount of time spent in all issues after filtering.
 It can include times outside the queried time frame. `spent` on the other hand
 is the total amount of time spent in the given time frame.
-
-#### Why 'total spent' and 'spent' are showing different amounts.
-
-gtt can only track time records from notes/comments. If you start your 
-issue or merge request with `/spend [time]` in its description, gtt won't
-take it into consideration (for now).
 
 ## contributing
 

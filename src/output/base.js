@@ -90,7 +90,7 @@ class base {
      */
     toFile(file, resolve) {
         fs.writeFileSync(file, this.out);
-        if(resolve) resolve();
+        if (resolve) resolve();
     }
 
     /**
@@ -123,12 +123,12 @@ class base {
         });
 
         this.times = times;
-        this.users = _.mapObject(users, user => this.config.toHumanReadable(user));
-        this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project));
+        this.users = _.mapObject(users, user => this.config.toHumanReadable(user, 'stats'));
+        this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project, 'stats'));
         this.stats = {
-            'total estimate': this.config.toHumanReadable(totalEstimate),
-            'total spent': this.config.toHumanReadable(totalSpent),
-            'spent': this.config.toHumanReadable(spent)
+            'total estimate': this.config.toHumanReadable(totalEstimate, 'stats'),
+            'total spent': this.config.toHumanReadable(totalSpent, 'stats'),
+            'spent': this.config.toHumanReadable(spent, 'stats')
         };
     }
 

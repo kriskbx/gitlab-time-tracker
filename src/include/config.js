@@ -1,14 +1,17 @@
 const moment = require('moment');
+const _ = require('underscore');
 
 const Time = require('./../models/time');
 
 const dates = ['from', 'to'];
+const objectsWithDefaults = ['timeFormat', 'columns'];
 const defaults = {
     type: 'project',
     subgroups: false,
     url: 'https://gitlab.com/api/v4',
     token: false,
     proxy: false,
+    insecure: false,
     project: false,
     from: "1970-01-01",
     to: moment().format(),
@@ -36,7 +39,8 @@ const defaults = {
     _perPage: 100,
     _parallel: 10,
     _verbose: false,
-    _checkToken: false
+    _checkToken: false,
+    _skipDescriptionParsing: false
 };
 
 /**
@@ -47,7 +51,7 @@ class config {
      * construct
      */
     constructor() {
-        this.data = defaults;
+        this.data = _.extend({}, defaults);
     }
 
     /**
@@ -70,21 +74,27 @@ class config {
     /**
      * get a value by the given key
      * @param key
+     * @param subKey
      * @returns {*}
      */
-    get(key) {
-        if (!dates.includes(key)) return this.data[key];
+    get(key, subKey = false) {
+        if (dates.includes(key))
+            return moment(this.data[key]);
 
-        return moment(this.data[key]);
+        if (objectsWithDefaults.includes(key) && _.isObject(this.data[key]))
+            return subKey && this.data[key][subKey] ? this.data[key][subKey] : defaults[key];
+
+        return this.data[key];
     }
 
     /**
      * get a human readable version of the given time
      * @param input
+     * @param timeFormat
      * @returns {string}
      */
-    toHumanReadable(input) {
-        return Time.toHumanReadable(input, this.get('hoursPerDay'), this.get('timeFormat'));
+    toHumanReadable(input, timeFormat = false) {
+        return Time.toHumanReadable(input, this.get('hoursPerDay'), this.get('timeFormat', timeFormat));
     }
 }
 

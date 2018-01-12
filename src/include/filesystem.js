@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const open = require('open');
 const find = require('find-in-files');
+const child_process = require('child_process');
 
 class filesystem {
     static find(pattern, dir) {
@@ -22,7 +23,15 @@ class filesystem {
     }
 
     static open(file) {
-        return open(file);
+        let editor = process.env.VISUAL;
+
+        if (editor || (editor = process.env.EDITOR)) {
+            return child_process.spawn(editor, [file], {
+                stdio: 'inherit'
+            });
+        } else {
+            return open(file);
+        }
     }
 
     static join(...args) {

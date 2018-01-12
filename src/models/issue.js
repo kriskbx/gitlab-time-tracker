@@ -87,19 +87,23 @@ class issue extends hasTimes {
     }
 
     get spent() {
-        return this.config.toHumanReadable(this.timeSpent);
+        return this.config.toHumanReadable(this.timeSpent, this._type);
     }
 
     get total_spent() {
-        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this._type) : null;
     }
 
     get total_estimate() {
-        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this._type) : null;
     }
 
     get _type() {
         return 'issues';
+    }
+
+    get _typeSingular() {
+        return 'Issue';
     }
 }
 
