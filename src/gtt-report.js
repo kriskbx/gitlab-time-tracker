@@ -13,7 +13,8 @@ const Output = {
     table: require('./output/table'),
     csv: require('./output/csv'),
     pdf: require('./output/pdf'),
-    markdown: require('./output/markdown')
+    markdown: require('./output/markdown'),
+    dump: require('./output/dump')
 };
 
 // this collects options
