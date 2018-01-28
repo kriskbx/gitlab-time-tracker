@@ -7,22 +7,11 @@ class dump extends Base {
 
         config.set('url', null, true);
         config.set('token', null, true);
+        config.set('_createDump', false);
         config.workDir = null;
         config.cache = null;
 
-        let dump = {config};
-
-        ['issues', 'mergeRequests'].forEach(type => {
-            dump[type] =
-                report[type].map(resource => {
-                    return {
-                        data: resource.data,
-                        notes: resource.notes
-                    };
-                });
-        });
-
-        this.write(JSON.stringify(dump));
+        this.write(JSON.stringify(config));
     }
 
     makeStats() {
