@@ -122,7 +122,14 @@ class base {
             });
         });
 
+        times.sort((a, b) => {
+            if (a.date.isSame(b.date)) return 0;
+
+            return a.date.isBefore(b.date) ? 1 : -1;
+        });
+
         this.times = times;
+
         this.users = _.mapObject(users, user => this.config.toHumanReadable(user, 'stats'));
         this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project, 'stats'));
         this.stats = {
