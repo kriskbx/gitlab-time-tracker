@@ -156,7 +156,7 @@ class tasks {
             new FrameCollection(this.config)
                 .forEach((frame, done) => {
                     if (frame.stop === false) return done();
-                    let date = moment(frame.start).format('YYYY-MM-DD');
+                    let date = frame.date.format('YYYY-MM-DD');
 
                     if (!frames[date]) frames[date] = [];
                     if (!times[date]) times[date] = 0;

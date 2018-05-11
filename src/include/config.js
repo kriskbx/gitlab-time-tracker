@@ -36,6 +36,7 @@ const defaults = {
     noWarnings: false,
     quiet: false,
     showWithoutTimes: false,
+    timezone: "UTC",
     _perPage: 100,
     _parallel: 10,
     _verbose: false,

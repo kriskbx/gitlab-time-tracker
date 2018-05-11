@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const program = require('commander');
 const colors = require('colors');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const Config = require('./include/file-config');
 const Cli = require('./include/cli');
@@ -31,10 +31,10 @@ tasks.log()
 
                 console.log(`${moment(date).format('MMMM Do YYYY')} (${toHumanReadable(times[date])})`.green);
                 frames[date]
-                    .sort((a, b) => moment(a.start).isBefore(moment(b.start)) ? -1 : 1)
+                    .sort((a, b) => a.start.isBefore(b.start) ? -1 : 1)
                     .forEach(frame => {
                         let issue = frame.resource.new ? `new ${frame.resource.type + ' "' + frame.resource.id.blue}"` : `${(frame.resource.type + ' #' + frame.resource.id).blue}`;
-                        console.log(`  ${frame.id}  ${moment(frame.start).format('HH:mm').green} to ${moment(frame.stop).format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t\t${frame.project.magenta}\t\t${issue}`)
+                        console.log(`  ${frame.id}  ${frame.start.clone().format('HH:mm').green} to ${frame.stop.clone().format('HH:mm').green}\t${toHumanReadable(frame.duration)}\t\t${frame.project.magenta}\t\t${issue}`)
                     });
             });
         }

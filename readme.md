@@ -1,4 +1,4 @@
-/home/kriskbx/data/Keys/ssh/github_rsa"# ![gtt](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/icon.png) gtt
+# ![gtt](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/icon.png) gtt
 
 [![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
@@ -216,6 +216,7 @@ gtt cancel
 ```shell
 gtt log
 ```
+Note: gtt log uses UTC as default timezone. If you want to display the times in a different timezone, make sure to use `timezone: "Europe/Berlin"` in your config.
 
 **Edit a local time record by the given id:**
 
@@ -599,6 +600,10 @@ timeFormat:
   issues: "[%sign][%hours_overall]"
   merge_requests: "[%sign][%hours_overall]"
   records: "[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]"
+
+# Change your timezone
+# default: UTC
+timezone: "Europe/Berlin"
 
 # Output type
 # Available: csv, table, markdown, pdf

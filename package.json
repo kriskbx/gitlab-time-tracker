@@ -38,6 +38,7 @@
     "markdown-table": "^1.1.0",
     "mdpdf": "^1.5.1",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.16",
     "node-spinner": "^0.0.4",
     "open": "^0.0.5",
     "progress": "^2.0.0",

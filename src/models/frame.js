@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const Hashids = require('hashids');
 const hashids = new Hashids();
 
@@ -20,8 +20,9 @@ class frame {
             this.resource.new = true;
 
         this.id = frame.generateId();
-        this.start = false;
-        this.stop = false;
+        this._start = false;
+        this._stop = false;
+        this.timezone = config.get('timezone');
         this.notes = [];
     }
 
@@ -29,9 +30,10 @@ class frame {
         let frame = new this(config, json.resource.id, json.resource.type);
         frame.project = json.project;
         frame.id = json.id;
-        frame.start = json.start;
-        frame.stop = json.stop;
+        frame._start = json.start;
+        frame._stop = json.stop;
         frame.notes = json.notes;
+        frame.timezone = json.timezone;
 
         return frame;
     }
@@ -41,17 +43,24 @@ class frame {
     }
 
     startMe() {
-        this.start = new Date();
+        this._start = this._getCurrentDate();
         this.write();
 
         return this;
     }
 
     stopMe() {
-        this.stop = new Date();
+        this._stop = this._getCurrentDate();
         this.write();
 
         return this;
+    }
+
+    _getCurrentDate() {
+        if(this.timezone)
+            return moment().tz(this.timezone).format();
+
+        return moment();
     }
 
     /**
@@ -71,8 +80,9 @@ class frame {
             project: this.project,
             resource: this.resource,
             notes: this.notes,
-            start: this.start,
-            stop: this.stop
+            start: this._start,
+            stop: this._stop,
+            timezone: this.timezone
         }, null, "\t"));
     }
 
@@ -82,6 +92,18 @@ class frame {
 
     get duration() {
         return moment(this.stop).diff(this.start) / 1000;
+    }
+
+    get date() {
+       return this.start;
+    }
+
+    get start() {
+        return this.timezone ? moment(this._start).tz(this.timezone) : moment(this._start);
+    }
+
+    get stop() {
+        return this.timezone ? moment(this._stop).tz(this.timezone) : moment(this._stop);
     }
 
     /**
