@@ -1,4 +1,4 @@
-# ![gtt](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/icon.png) gtt
+/home/kriskbx/data/Keys/ssh/github_rsa"# ![gtt](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/icon.png) gtt
 
 [![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
@@ -313,6 +313,14 @@ gtt report --from="2017-03-01" --to="2017-04-01"
 ```
 
 *Note: `--from` defaults to 1970-01-01, `--to` defaults to now. Make sure to use an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) compatible time/date format.*
+
+There are some quick shorthands:
+
+```shell
+gtt report --today
+gtt report --this_week
+gtt report --this_month
+```
 
 #### Include closed issues/merge requests
 

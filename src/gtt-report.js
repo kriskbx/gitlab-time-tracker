@@ -30,6 +30,9 @@ program
     .arguments('[project] [ids]')
     .option('-f --from <from>', 'query times that are equal or greater than the given date')
     .option('-t --to <to>', 'query times that are equal or smaller than the given date')
+    .option('--today', 'ignores --from and --to and queries entries for today')
+    .option('--this_week', 'ignores --from and --to and queries entries for this week')
+    .option('--this_month', 'ignores --from and --to and queries entries for this month')
     .option('-c --closed', 'include closed issues')
     .option('-u --user <user>', 'only query times from the given user')
     .option('-m --milestone <milestone>', 'include issues from the given milestone')
@@ -109,6 +112,20 @@ config
     .set('_verbose', program.verbose)
     .set('_checkToken', program.check_token)
     .set('_createDump', program.output === 'dump');
+
+// date shortcuts
+if(program.today)
+    config
+        .set('from', moment().startOf('day'))
+        .set('to', moment().endOf('day'));
+if(program.this_week)
+    config
+        .set('from', moment().startOf('week'))
+        .set('to', moment().endOf('week'));
+if(program.this_month)
+    config
+        .set('from', moment().startOf('month'))
+        .set('to', moment().endOf('month'));          
 
 Cli.quiet = config.get('quiet');
 Cli.verbose = config.get('_verbose');
