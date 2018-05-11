@@ -13,7 +13,8 @@ const Output = {
     table: require('./output/table'),
     csv: require('./output/csv'),
     pdf: require('./output/pdf'),
-    markdown: require('./output/markdown')
+    markdown: require('./output/markdown'),
+    dump: require('./output/dump')
 };
 
 // this collects options
@@ -56,11 +57,23 @@ program
     .option('--check_token', 'check the access token')
     .option('--show_without_times', 'show issues/merge requests without time records')
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
+    .option('--from_dump <file>', 'instead of querying gitlab, use data from the given dump file')
     .parse(process.argv);
 
 // init helpers
 let config = new Config(process.cwd());
 let cli = new Cli(program.args);
+
+// if using a dump, set the config accordingly
+if (program.from_dump && fs.existsSync(program.from_dump)) {
+    let data = JSON.parse(fs.readFileSync(program.from_dump));
+
+    if (data.data) _.each(data.data, (v, i) => {
+        config.set(i, v);
+    });
+
+    if (data._dump) config.dump = data._dump;
+}
 
 // overwrite config with args and opts
 config
@@ -94,11 +107,11 @@ config
     .set('type', program.type)
     .set('subgroups', program.subgroups)
     .set('_verbose', program.verbose)
-    .set('_checkToken', program.check_token);
+    .set('_checkToken', program.check_token)
+    .set('_createDump', program.output === 'dump');
 
 Cli.quiet = config.get('quiet');
 Cli.verbose = config.get('_verbose');
-
 
 // create stuff
 let reports = new ReportCollection(config),

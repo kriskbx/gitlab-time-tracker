@@ -1,4 +1,4 @@
-# gtt 
+# ![gtt](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/icon.png) gtt
 
 [![npm](https://img.shields.io/npm/dt/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 [![npm](https://img.shields.io/npm/v/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
@@ -30,6 +30,7 @@ stored on GitLab.
     * [config file](#config-file)
     * [time format](#time-format)
 * [how to use gtt as a library](#how-to-use-gtt-as-a-library)
+* [dumps](#dumps)
 * [faqs](#faqs)
 * [contributing](#contributing)
 * [buy me a beer 🍺](#buy-me-a-beer)
@@ -72,7 +73,7 @@ token: 01234567891011
 
 ## updating
 
-**Updating from version <= 1.5? Please [click here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/upgrade.md)!**
+**Updating from version <= 1.5? Please [click here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/UPGRADE.md)!**
 
 Update gtt via yarn:
 
@@ -795,6 +796,10 @@ report.mergeRequests.forEach(mergeRequest => {
     console.log(mergeRequest.times[0].user);
 });
 ```
+
+## dumps
+
+Starting with 1.7.4 gtt can dump the results of all API requests within a report and use it on another machine without access to the GitLab instance itself. This is very useful for debugging purposes. If you stumble upon a bug which could be unique to your set of data, please rerun the report with these options to save a dump to the given file: `--output=dump --file=/path/dump.json` Check your dump for sensitive information and provide it when asked.
 
 ## faqs
 

@@ -120,9 +120,22 @@ class base {
                 totalEstimate += parseInt(issue.stats.time_estimate);
                 totalSpent += parseInt(issue.stats.total_time_spent);
             });
+
+            this.report[type].sort((a, b) => {
+                if (a.iid === b.iid) return 0;
+
+                return (a.iid - b.iid) < 0 ? 1 : -1;
+            });
         });
 
+
         this.times = times;
+        this.times.sort((a, b) => {
+            if (a.date.isSame(b.date)) return 0;
+
+            return a.date.isBefore(b.date) ? 1 : -1;
+        });
+
         this.users = _.mapObject(users, user => this.config.toHumanReadable(user, 'stats'));
         this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project, 'stats'));
         this.stats = {

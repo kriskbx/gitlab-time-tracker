@@ -1,6 +1,7 @@
 const request = require('request-promise-native');
 const url = require('url');
 const async = require('async');
+const crypto = require('crypto');
 
 /**
  * base model
@@ -29,17 +30,25 @@ class base {
      * @returns {*}
      */
     post(path, data) {
+        let key = base.createDumpKey(path, data);
+        if (this.config.dump) return this.getDump(key);
+
         data.private_token = this.token;
 
-        return request.post(`${this.url}${path}`, {
-            json: true,
-            body: data,
-            insecure: this._insecure,
-            proxy: this._proxy,
-            resolveWithFullResponse: true,
-            headers: {
-                'PRIVATE-TOKEN': this.token
-            }
+        return new Promise((resolve, reject) => {
+            request.post(`${this.url}${path}`, {
+                json: true,
+                body: data,
+                insecure: this._insecure,
+                proxy: this._proxy,
+                resolveWithFullResponse: true,
+                headers: {
+                    'PRIVATE-TOKEN': this.token
+                }
+            }).then(response => {
+                if (this.config.get('_createDump')) this.setDump(response, key);
+                resolve(response);
+            }).catch(e => reject(e));
         });
     }
 
@@ -51,17 +60,25 @@ class base {
      * @returns {Promise}
      */
     get(path, page = 1, perPage = this._perPage) {
+        let key = base.createDumpKey(path, page, perPage);
+        if (this.config.dump) return this.getDump(key);
+
         path += (path.includes('?') ? '&' : '?') + `private_token=${this.token}`;
         path += `&page=${page}&per_page=${perPage}`;
 
-        return request(`${this.url}${path}`, {
-            json: true,
-            insecure: this._insecure,
-            proxy: this._proxy,
-            resolveWithFullResponse: true,
-            headers: {
-                'PRIVATE-TOKEN': this.token
-            }
+        return new Promise((resolve, reject) => {
+            request(`${this.url}${path}`, {
+                json: true,
+                insecure: this._insecure,
+                proxy: this._proxy,
+                resolveWithFullResponse: true,
+                headers: {
+                    'PRIVATE-TOKEN': this.token
+                }
+            }).then(response => {
+                if (this.config.get('_createDump')) this.setDump(response, key);
+                resolve(response);
+            }).catch(e => reject(e));
         });
     }
 
@@ -125,6 +142,29 @@ class base {
     }
 
     /**
+     * save the given response to dump
+     * @param response
+     * @param key
+     */
+    setDump(response, key) {
+        if (!this.config._dump) this.config._dump = {};
+
+        this.config._dump[key] = {
+            headers: response.headers,
+            body: response.body
+        };
+    }
+
+    /**
+     * get from dump
+     * @param key
+     * @returns {Promise}
+     */
+    getDump(key) {
+        return new Promise(r => r(this.config.dump[key]));
+    }
+
+    /**
      * create a task list to get all pages from
      * the given path
      * @param path
@@ -141,6 +181,14 @@ class base {
         }
 
         return tasks;
+    }
+
+    /**
+     * create a key representing a request
+     * @param args
+     */
+    static createDumpKey(...args) {
+        return crypto.createHash('md5').update(JSON.stringify(args)).digest("hex");
     }
 }
 
