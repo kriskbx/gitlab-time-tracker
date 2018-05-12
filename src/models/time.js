@@ -24,8 +24,9 @@ class time {
      * @param parent
      * @param config
      */
-    constructor(timeString, note, parent, config) {
+    constructor(timeString, date = null, note, parent, config) {
         this.data = note;
+        this._date = date;
         this.parent = parent;
         this.config = config;
         this.seconds = time.parse(timeString, this._hoursPerDay);
@@ -43,7 +44,7 @@ class time {
     }
 
     get date() {
-        return moment(this.data.created_at);
+        return this._date ? moment(this._date) : moment(this.data.created_at);
     }
 
     get type() {

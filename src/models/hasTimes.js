@@ -4,8 +4,8 @@ const moment = require('moment');
 const Base = require('./base');
 const Time = require('./time');
 
-const regex = /added (.*) of time spent/i;
-const subRegex = /subtracted (.*) of time spent/i;
+const regex = /added (.*) of time spent(?: at (.*))?/i;
+const subRegex = /subtracted (.*) of time spent(?: at (.*))?/i;
 const removeRegex = /Removed time spent/i;
 
 /**
@@ -70,7 +70,6 @@ class hasTimes extends Base {
         let promise = this.parallel(this.notes, (note, done) => {
             let created = moment(note.created_at), match, subMatch;
 
-
             if ( //
             // filter out user notes
             !note.system ||
@@ -78,9 +77,13 @@ class hasTimes extends Base {
             !(match = regex.exec(note.body)) && !(subMatch = subRegex.exec(note.body)) && !removeRegex.exec(note.body)
             ) return done();
 
+            // change created date when explicitly defined
+            if(match && match[2]) created = moment(match[2]);
+            if(subMatch && subMatch[2]) created = moment(subMatch[2]);
+
             // create a time string and a time object
             let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent, this.config.get('hoursPerDay'))}`);
-            let time = new Time(timeString, note, this, this.config);
+            let time = new Time(timeString, created, note, this, this.config);
 
             // add to total time spent
             totalTimeSpent += time.seconds;
@@ -124,7 +127,7 @@ class hasTimes extends Base {
             let difference = this.data.time_stats.total_time_spent - totalTimeSpent,
                 note = Object.assign({noteable_type: this._typeSingular}, this.data);
 
-            times.unshift(new Time(Time.toHumanReadable(difference, this.config.get('hoursPerDay')), note, this, this.config));
+            times.unshift(new Time(Time.toHumanReadable(difference, null, this.config.get('hoursPerDay')), note, this, this.config));
 
             resolve();
         }));
