@@ -13,6 +13,11 @@ const classes = {
     merge_request: MergeRequest
 };
 
+const stop_condition = {
+    term: `"stop" ?: ?false`, 
+    flags: "i"
+};
+
 class tasks {
     constructor(config) {
         this.config = config;
@@ -138,7 +143,7 @@ class tasks {
      */
     status() {
         return new Promise((resolve, reject) => {
-            Fs.find(`"stop": false`, this.config.frameDir)
+            Fs.find(stop_condition, this.config.frameDir)
                 .then(frames => resolve(frames.map(file => Frame.fromFile(this.config, file))))
                 .catch(error => reject(error));
         });
@@ -196,6 +201,11 @@ class tasks {
         });
     }
 
+    list(project, state, my) {
+        this.config.set('project', project);
+        return (new classes['issue'](this.config, {})).list(this.config.get('project'), state, my);
+    }
+
     /**
      *
      * @param project
@@ -207,7 +217,7 @@ class tasks {
         this.config.set('project', project);
 
         return new Promise((resolve, reject) => {
-            Fs.find(`"stop": false`, this.config.frameDir)
+            Fs.find(stop_condition, this.config.frameDir)
                 .then(frames => {
                     if (frames.length > 0)
                         return reject("Already running. Please stop it first with 'gtt stop'.");
@@ -224,7 +234,7 @@ class tasks {
      */
     stop() {
         return new Promise((resolve, reject) => {
-            Fs.find(`"stop": false`, this.config.frameDir)
+            Fs.find(stop_condition, this.config.frameDir)
                 .then(frames => {
                     if (frames.length === 0)
                         return reject('No projects started.');
@@ -243,7 +253,7 @@ class tasks {
      */
     cancel() {
         return new Promise((resolve, reject) => {
-            Fs.find(`"stop": false`, this.config.frameDir)
+            Fs.find(stop_condition, this.config.frameDir)
                 .then(frames => {
                     if (frames.length === 0)
                         return reject('No projects started.');
