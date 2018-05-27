@@ -73,7 +73,7 @@ token: 01234567891011
 
 ## updating
 
-**Updating from version <= 1.5? Please [click here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/UPGRADE.md)!**
+**Updating from version <= 1.5? Please [click here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/upgrade.md)!**
 
 Update gtt via yarn:
 
