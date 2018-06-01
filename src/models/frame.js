@@ -103,7 +103,7 @@ class frame {
     }
 
     get stop() {
-        return this.timezone ? moment(this._stop).tz(this.timezone) : moment(this._stop);
+        return this.timezone ? moment(this._stop).tz(this.timezone) : (this._stop ? moment(this._stop) : false );
     }
 
     /**
