@@ -49,7 +49,8 @@ class fileConfig extends config {
             let local = Object.assign({extend: true}, yaml.sync(this.local, {}));
 
             if (local.extend === true) {
-                local = Object.assign(this.parseGlobal(), local);
+                let global = this.parseGlobal();
+                local = Object.assign(global ? global : {}, local);
             } else if (local.extend) {
                 try {
                     local = Object.assign(yaml.sync(local.extend, {}), local);
