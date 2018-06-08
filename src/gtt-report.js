@@ -57,7 +57,6 @@ program
     .option('--user_columns', 'include user columns in the report')
     .option('--quiet', 'only output report')
     .option('--verbose', 'show verbose output')
-    .option('--check_token', 'check the access token')
     .option('--show_without_times', 'show issues/merge requests without time records')
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .option('--from_dump <file>', 'instead of querying gitlab, use data from the given dump file')
@@ -76,6 +75,13 @@ if (program.from_dump && fs.existsSync(program.from_dump)) {
     });
 
     if (data._dump) config.dump = data._dump;
+}
+
+// if writing a dump, set config accordingly
+if (program.output === "dump") {
+    config.on("dump-updated", () => {
+        new Output['dump'](config);
+    });
 }
 
 // overwrite config with args and opts
@@ -110,22 +116,21 @@ config
     .set('type', program.type)
     .set('subgroups', program.subgroups)
     .set('_verbose', program.verbose)
-    .set('_checkToken', program.check_token)
     .set('_createDump', program.output === 'dump');
 
 // date shortcuts
-if(program.today)
+if (program.today)
     config
         .set('from', moment().startOf('day'))
         .set('to', moment().endOf('day'));
-if(program.this_week)
+if (program.this_week)
     config
         .set('from', moment().startOf('week'))
         .set('to', moment().endOf('week'));
-if(program.this_month)
+if (program.this_month)
     config
         .set('from', moment().startOf('month'))
-        .set('to', moment().endOf('month'));          
+        .set('to', moment().endOf('month'));
 
 Cli.quiet = config.get('quiet');
 Cli.verbose = config.get('_verbose');
@@ -193,7 +198,7 @@ new Promise(resolve => {
                         reports.push(report);
                         report.getProject()
                             .then(() => done())
-                            .catch(e => Cli.x(`Project not found or no access rights "${projectLabels}". Run again with --check_token to see if your access token is invalid!`, e));
+                            .catch(e => Cli.x(`Project not found or no access rights "${projectLabels}".`, e));
                         break;
 
                     case 'group':
@@ -222,7 +227,6 @@ new Promise(resolve => {
     // get members and user columns
     .then(() => new Promise(resolve => {
         if (!config.get('userColumns')) return resolve();
-
         reports
             .forEach((report, done) => {
                 report.project.members()

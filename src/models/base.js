@@ -147,12 +147,10 @@ class base {
      * @param key
      */
     setDump(response, key) {
-        if (!this.config._dump) this.config._dump = {};
-
-        this.config._dump[key] = {
+        this.config.setDump(key, {
             headers: response.headers,
             body: response.body
-        };
+        });
     }
 
     /**
@@ -161,7 +159,7 @@ class base {
      * @returns {Promise}
      */
     getDump(key) {
-        return new Promise(r => r(this.config.dump[key]));
+        return new Promise(r => r(this.config.getDump(key)));
     }
 
     /**

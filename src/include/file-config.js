@@ -20,6 +20,7 @@ class fileConfig extends config {
         this.assertGlobalConfig();
         this.workDir = workDir;
         this.data = Object.assign(this.data, this.localExists() ? this.parseLocal() : this.parseGlobal());
+        this._dump = {};
         this.cache = {
             get: this._cacheGet,
             set: this._cacheSet,
@@ -131,6 +132,15 @@ class fileConfig extends config {
 
     get local() {
         return Fs.join(this.workDir, this.localConfigFile);
+    }
+
+    setDump(key, value) {
+        this._dump[key] = value;
+        this.emit('dump-updated');
+    }
+
+    getDump(key) {
+        return this._dump[key];
     }
 }
 

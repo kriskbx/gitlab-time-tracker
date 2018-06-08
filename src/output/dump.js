@@ -1,29 +1,29 @@
-const Base = require('./base');
-const Report = require('../models/report');
+const fs = require('fs');
+const Config = require('../include/config');
 
-class dump extends Base {
+class dump {
     constructor(config, report) {
-        super(config, report);
+        let configCopy = new Config();
+        configCopy.data = Object.assign({}, config.data);
+        configCopy._dump = config._dump;
 
-        config.set('url', null, true);
-        config.set('token', null, true);
-        config.set('_createDump', false);
-        config.workDir = null;
-        config.cache = null;
+        configCopy.set('url', null, true);
+        configCopy.set('token', null, true);
+        configCopy.set('_createDump', false);
+        configCopy.workDir = null;
+        configCopy.cache = null;
 
-        this.write(JSON.stringify(config));
+        fs.writeFileSync(configCopy.get('file'), JSON.stringify(configCopy));
     }
 
-    makeStats() {
+    make() {
     }
 
-    makeIssues() {
+    toStdOut() {
     }
 
-    makeMergeRequests() {
-    }
-
-    makeRecords() {
+    toFile(file, resolve) {
+        if (resolve) resolve();
     }
 }
 

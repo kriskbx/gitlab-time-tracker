@@ -2,6 +2,7 @@ const moment = require('moment');
 const _ = require('underscore');
 
 const Time = require('./../models/time');
+const EventEmitter = require('events');
 
 const dates = ['from', 'to'];
 const objectsWithDefaults = ['timeFormat', 'columns'];
@@ -47,11 +48,13 @@ const defaults = {
 /**
  * basic config
  */
-class config {
+class config extends EventEmitter {
     /**
      * construct
      */
     constructor() {
+        super();
+
         this.data = _.extend({}, defaults);
     }
 
