@@ -12,7 +12,8 @@ class frameCollection extends Base {
                     try {
                         return Frame.fromFile(this.config, Fs.join(this.config.frameDir, file));
                     } catch (e) {
-                        return false;
+                        console.log(e);
+                        throw `Error parsing frame file: ${file}`
                     }
                 })
                 .filter(frame => frame);

@@ -34,6 +34,7 @@ class frame {
         frame._stop = json.stop;
         frame.notes = json.notes;
         frame.timezone = json.timezone;
+        frame.validate();
 
         return frame;
     }
@@ -54,6 +55,18 @@ class frame {
         this.write();
 
         return this;
+    }
+
+    validate() {
+        moment.suppressDeprecationWarnings = true;
+
+        if(!moment(this._start).isValid())
+            throw `Error: Start date is not in a valid ISO date format!`;
+
+        if(!moment(this._stop).isValid())
+            throw `Error: Stop date is not in a valid ISO date format!`;
+
+        moment.suppressDeprecationWarnings = false;
     }
 
     _getCurrentDate() {
