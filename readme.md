@@ -552,6 +552,14 @@ showWithoutTimes: true
 # defaults to 8
 hoursPerDay: 8
 
+# Days per week
+# defaults to 5
+daysPerWeek: 5
+
+# Weeks per month
+# defaults to 4
+weeksPerMonth: 4
+
 # Include the given columns in the issue table
 # See --issue_columns option for more information
 # defaults to iid, title, spent, total_estimate

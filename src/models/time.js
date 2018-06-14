@@ -2,8 +2,8 @@ const _ = require('underscore');
 const moment = require('moment');
 
 const defaultTimeFormat = '[%sign][%days>d ][%hours>h ][%minutes>m ][%seconds>s]';
-const mappings = ['complete', 'sign', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
-const regex = /^(?:([-])\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
+const mappings = ['complete', 'sign', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+const regex = /^(?:([-])\s*)?(?:(\d+)mo\s*)?(?:(\d+)w\s*)?(?:(\d+)d\s*)?(?:(\d+)h\s*)?(?:(\d+)m\s*)?(?:(\d+)s\s*)?$/;
 const conditionalRegex = /(\[\%([^\>\]]*)\>([^\]]*)\])/ig;
 const roundedRegex = /(\[\%([^\>\]]*)\:([^\]]*)\])/ig;
 const conditionalSimpleRegex = /([0-9]*)\>(.*)/ig;
@@ -29,7 +29,7 @@ class time {
         this._date = date;
         this.parent = parent;
         this.config = config;
-        this.seconds = time.parse(timeString, this._hoursPerDay);
+        this.seconds = time.parse(timeString, this._hoursPerDay, this._daysPerWeek, this._weeksPerMonth);
     }
 
     /*
@@ -71,13 +71,23 @@ class time {
         return this.config && this.config.get('hoursPerDay') ? parseInt(this.config.get('hoursPerDay')) : 8;
     }
 
+    get _daysPerWeek() {
+        return this.config && this.config.get('daysPerWeek') ? parseInt(this.config.get('daysPerWeek')) : 5;
+    }
+
+    get _weeksPerMonth() {
+        return this.config && this.config.get('weeksPerMonth') ? parseInt(this.config.get('weeksPerMonth')) : 4;
+    }
+
     /**
      * parse human readable to seconds
      * @param string
      * @param hoursPerDay
+     * @param daysPerWeek
+     * @param weeksPerMonth
      * @returns {*}
      */
-    static parse(string, hoursPerDay = 8) {
+    static parse(string, hoursPerDay = 8, daysPerWeek = 5, weeksPerMonth = 4) {
         let match, parsed;
 
         if ((match = regex.exec(string)) === null) return false;
@@ -87,7 +97,8 @@ class time {
             + (parseInt(parsed.minutes) * 60)
             + (parseInt(parsed.hours) * 60 * 60)
             + (parseInt(parsed.days) * hoursPerDay * 60 * 60)
-            + (parseInt(parsed.weeks) * 5 * hoursPerDay * 60 * 60));
+            + (parseInt(parsed.weeks) * daysPerWeek * hoursPerDay * 60 * 60)
+            + (parseInt(parsed.months) * weeksPerMonth * daysPerWeek * hoursPerDay * 60 * 60));
     }
 
     /**

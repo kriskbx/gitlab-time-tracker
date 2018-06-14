@@ -20,6 +20,8 @@ const defaults = {
     closed: false,
     milestone: false,
     hoursPerDay: 8,
+    daysPerWeek: 5,
+    weeksPerMonth: 4,
     issueColumns: ['iid', 'title', 'spent', 'total_estimate'],
     mergeRequestColumns: ['iid', 'title', 'spent', 'total_estimate'],
     recordColumns: ['user', 'date', 'type', 'iid', 'time'],
