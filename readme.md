@@ -6,15 +6,15 @@
 [![Coveralls](https://img.shields.io/coveralls/kriskbx/gitlab-time-tracker.svg?style=flat-square)](https://coveralls.io/github/kriskbx/gitlab-time-tracker)
 [![npm](https://img.shields.io/npm/l/gitlab-time-tracker.svg?style=flat-square)](https://www.npmjs.com/package/gitlab-time-tracker)
 
-> A command line interface for GitLabs time tracking feature.
+> A fully featured command line interface for GitLab's time tracking feature. gtt monitors the time you spent on an issue or merge request locally and syncs it to GitLab. It also allows you to create reports in various formats from time tracking data stored on GitLab.
 
-gtt monitors the time you spent on an issue or merge request locally and syncs it to GitLab. 
-It also allows you to create reports in various formats from time tracking data
-stored on GitLab.
+**Please support the development of this free software by [donating or sharing](#buy-me-a-beer)!**
 
 | monitor your time | ... and get reports |
 | --- | --- |
 | ![Monitor your time](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/tracking.gif) | ![Get a report](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/reports.gif) |
+
+
 
 ## contents
 
