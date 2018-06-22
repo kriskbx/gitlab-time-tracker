@@ -241,8 +241,11 @@ class cli {
 
         if (this.data.project) return this.data.project;
 
-        let projects = _.uniq(_.filter(this.args, arg => !Number.isNaN(new Number(arg))));
+        let projects = _.uniq(_.filter(this.args, arg => isNaN(new Number(arg))));
         this.args = _.difference(this.args, projects);
+
+        if(projects.length == 0)
+            return null;
 
         return this.data.project = projects;
     }
