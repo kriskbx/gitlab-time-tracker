@@ -127,7 +127,7 @@ docker run \
 I highly recommend creating an alias and adding it to your `bashrc`:
  
 ```shell
-echo "alias gtt='docker run --rm -it -v ~:/root kriskbx/gitlab-time-tracker'" >>~/.bash_rc
+echo "alias gtt='docker run --rm -it -v ~:/root kriskbx/gitlab-time-tracker'" >>~/.bashrc
 ```
 
 Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
