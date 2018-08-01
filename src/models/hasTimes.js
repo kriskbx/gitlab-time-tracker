@@ -127,7 +127,7 @@ class hasTimes extends Base {
             let difference = this.data.time_stats.total_time_spent - totalTimeSpent,
                 note = Object.assign({noteable_type: this._typeSingular}, this.data);
 
-            times.unshift(new Time(Time.toHumanReadable(difference, null, this.config.get('hoursPerDay')), note, this, this.config));
+            times.unshift(new Time(Time.toHumanReadable(difference, this.config.get('hoursPerDay')), note, this, this.config));
 
             resolve();
         }));
