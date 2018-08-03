@@ -14,7 +14,7 @@ const classes = {
 };
 
 const stop_condition = {
-    term: `"stop" ?: ?false`, 
+    term: `"stop" ?: ?false`,
     flags: "i"
 };
 
