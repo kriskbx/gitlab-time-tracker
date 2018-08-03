@@ -83,7 +83,7 @@ class baseFrame {
     }
 
     get stop() {
-        return this.timezone ? moment(this._stop).tz(this.timezone) : (this._stop ? moment(this._stop) : false );
+        return this.timezone ? this._stop ? moment(this._stop).tz(this.timezone) : false : (this._stop ? moment(this._stop) : false );
     }
 
     /**
