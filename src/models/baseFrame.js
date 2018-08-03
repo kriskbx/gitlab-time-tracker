@@ -56,6 +56,18 @@ class baseFrame {
         return moment();
     }
 
+    toJson() {
+        return JSON.stringify({
+            id: this.id,
+            project: this.project,
+            resource: this.resource,
+            notes: this.notes,
+            start: this._start,
+            stop: this._stop,
+            timezone: this.timezone
+        });
+    }
+
     get duration() {
         return moment(this.stop).diff(this.start) / 1000;
     }
