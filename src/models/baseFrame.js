@@ -68,6 +68,10 @@ class baseFrame {
         });
     }
 
+    static copy(frame) {
+        return baseFrame.fromJson(frame.config, JSON.parse(frame.toJson()));
+    }
+
     get duration() {
         return moment(this.stop).diff(this.start) / 1000;
     }
