@@ -56,20 +56,16 @@ class baseFrame {
         return moment();
     }
 
-    toJson() {
-        return JSON.stringify({
-            id: this.id,
-            project: this.project,
-            resource: this.resource,
-            notes: this.notes,
-            start: this._start,
-            stop: this._stop,
-            timezone: this.timezone
-        });
-    }
-
     static copy(frame) {
-        return baseFrame.fromJson(frame.config, JSON.parse(frame.toJson()));
+        return baseFrame.fromJson(frame.config, {
+            id: frame.id,
+            project: frame.project,
+            resource: frame.resource,
+            notes: frame.notes,
+            start: frame._start,
+            stop: frame._stop,
+            timezone: frame.timezone
+        });
     }
 
     get duration() {
