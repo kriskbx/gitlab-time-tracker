@@ -1,3 +1,5 @@
+const Config = require('../include/config');
+
 const moment = require('moment-timezone');
 const Hashids = require('hashids');
 const hashids = new Hashids();
@@ -57,7 +59,7 @@ class baseFrame {
     }
 
     static copy(frame) {
-        return baseFrame.fromJson(frame.config, {
+        return baseFrame.fromJson(Object.assign(new Config, frame.config), {
             id: frame.id,
             project: frame.project,
             resource: frame.resource,
