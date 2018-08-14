@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment');
 const BaseFrame = require('./baseFrame.js');
 
 class frame extends BaseFrame {
@@ -40,7 +41,8 @@ class frame extends BaseFrame {
             notes: this.notes,
             start: this._start,
             stop: this._stop,
-            timezone: this.timezone
+            timezone: this.timezone,
+            modified: moment()
         }, null, "\t"));
     }
 
