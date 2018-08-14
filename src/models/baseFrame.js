@@ -34,6 +34,7 @@ class baseFrame {
         frame._stop = json.stop;
         frame.notes = json.notes;
         frame.timezone = json.timezone;
+        frame.modified = json.modified;
         frame.validate();
 
         return frame;
@@ -66,7 +67,8 @@ class baseFrame {
             notes: frame.notes,
             start: frame._start,
             stop: frame._stop,
-            timezone: frame.timezone
+            timezone: frame.timezone,
+            modified: frame.modified
         });
     }
 
