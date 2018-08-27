@@ -12,6 +12,8 @@
 
 gtt is a fully featured command line interface for GitLab's time tracking feature. It monitors the time you spent on an issue or merge request locally and syncs it to GitLab. It also allows you to create reports in various formats from time tracking data stored on GitLab. **Looking for a graphical user interface? Check out the [gtt taskbar/menubar app](https://github.com/kriskbx/gitlab-time-tracker-taskbar) for Linux, Mac & Windows!**
 
+![gtt demo](https://raw.githubusercontent.com/kriskbx/gitlab-time-tracker/master/preview/demo.gif)
+
 ## documentation
 
 You can find the documentation [here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/documentation.md).
