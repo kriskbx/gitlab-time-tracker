@@ -16,7 +16,7 @@ gtt is a fully featured command line interface for GitLab's time tracking featur
 
 ## documentation
 
-You can find the documentation [here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/documentation.md).
+How to install and use gtt? You can find the documentation [here](https://github.com/kriskbx/gitlab-time-tracker/blob/master/documentation.md).
 
 ## support further development
 
