@@ -32,7 +32,7 @@ class frame extends BaseFrame {
     /**
      * write data to file
      */
-    write() {
+    write(skipModified) {
         if (fs.existsSync(this.file)) fs.unlinkSync(this.file);
         fs.appendFileSync(this.file, JSON.stringify({
             id: this.id,
@@ -42,7 +42,7 @@ class frame extends BaseFrame {
             start: this._start,
             stop: this._stop,
             timezone: this.timezone,
-            modified: moment()
+            modified: skipModified ? this.modified : moment()
         }, null, "\t"));
     }
 

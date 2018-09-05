@@ -130,7 +130,7 @@ class tasks {
                         time: Math.ceil(time)
                     });
 
-                    frame.write();
+                    frame.write(true);
                     resolve();
                 })
                 .catch(error => reject(error));
