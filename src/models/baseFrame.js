@@ -60,7 +60,7 @@ class baseFrame {
     }
 
     static copy(frame) {
-        return baseFrame.fromJson(Object.assign(new Config, frame.config), {
+        return this.constructor.fromJson(Object.assign(new Config, frame.config), {
             id: frame.id,
             project: frame.project,
             resource: frame.resource,
