@@ -79,7 +79,7 @@ class xlsx extends Base {
             XLSX.utils.book_append_sheet(workbook, this.xlsxRecords, 'Records');
         }
 
-        XLSX.writeFile(workbook, fileName + extName);
+        XLSX.writeFile(workbook, fileName);
 
         resolve();
     }
