@@ -281,9 +281,10 @@ gtt report --output=table
 gtt report --output=markdown
 gtt report --output=csv
 gtt report --output=pdf --file=filename.pdf
+gtt report --output=xlsx --file=filename.xlsx
 ```
 
-Defaults to `table`. `csv` and `markdown` can be printed to stdout, `pdf` needs the file parameter.
+Defaults to `table`. `csv` and `markdown` can be printed to stdout, `pdf` and `xlsx` need the file parameter.
 
 #### Print the output to a file
 
@@ -598,7 +599,7 @@ timeFormat:
 timezone: "Europe/Berlin"
 
 # Output type
-# Available: csv, table, markdown, pdf
+# Available: csv, table, markdown, pdf, xlsx
 # defaults to table
 output: markdown
 

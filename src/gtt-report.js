@@ -14,7 +14,8 @@ const Output = {
     csv: require('./output/csv'),
     pdf: require('./output/pdf'),
     markdown: require('./output/markdown'),
-    dump: require('./output/dump')
+    dump: require('./output/dump'),
+    xlsx: require('./output/xlsx')
 };
 
 // this collects options
@@ -169,6 +170,9 @@ if (!config.get('from').isValid()) {
 }
 if (!config.get('to').isValid()) {
     Cli.error(`TO is not a in valid ISO date format.`);
+}
+if (config.get('output') === 'xlsx' && !config.get('file')) {
+    Cli.error(`Cannot output an xlsx to stdout. You probably forgot to use the --file parameter`);
 }
 
 // file prompt
