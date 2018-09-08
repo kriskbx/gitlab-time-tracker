@@ -90,6 +90,10 @@ class issue extends hasTimes {
         return this.config.toHumanReadable(this.timeSpent, this._type);
     }
 
+    get due_date() {
+        return this.data.due_date ? moment(this.data.due_date): null;
+    }
+
     get total_spent() {
         return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this._type) : null;
     }
