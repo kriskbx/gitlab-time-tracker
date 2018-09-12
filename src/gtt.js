@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const version = '1.7.26';
+const version = '1.7.27';	
 const program = require('commander');
 
 program
