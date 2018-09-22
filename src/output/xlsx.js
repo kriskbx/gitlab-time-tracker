@@ -87,6 +87,22 @@ class xlsx extends Base {
     toStdOut() {
         Cli.error(`Can't output xlsx to std out`);
     }
+
+    /**
+     * prepare the given object by converting numeric
+     * columns/properties as numbers instead of strings
+     * on top of what the parent method already does
+     *
+     * suboptimally done here to avoid impacts on other outputs
+     *
+     * @param obj
+     * @param columns
+     * @returns {Array}
+     */
+    prepare(obj = {}, columns = []) {
+        let formattedObj = super.prepare(obj, columns);
+        return formattedObj.map(field => isNaN(field) ? field : Number(field));
+    }
 }
 
 module.exports = xlsx;
