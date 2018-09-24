@@ -33,12 +33,6 @@ Install the gtt command line interface using yarn:
 yarn global add gitlab-time-tracker --prefix /usr/local
 ```
 
-... or using npm (recommended on **Windows** operating systems):
-
-```shell
-npm install -g gitlab-time-tracker
-```
-
 Run the config command to create a config file and open it in your default editor.
 In linux terminal, you must set your preferred editor in the environment. For example, use `export EDITOR=vim` to edit the files with vim (put this in `.bashrc` or similar to have it always configured).
 If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
@@ -63,12 +57,6 @@ Update gtt via yarn:
 
 ```shell
 yarn global upgrade gitlab-time-tracker
-```
-
-... or npm:
-
-```shell
-npm install -g gitlab-time-tracker
 ```
 
 ## docker
