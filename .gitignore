@@ -5,3 +5,4 @@
 .DS_STORE
 yarn-error.log
 **/._*
+out

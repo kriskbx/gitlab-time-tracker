@@ -105,7 +105,7 @@ echo "alias gtt='docker run --rm -it -v ~:/root kriskbx/gitlab-time-tracker'" >>
 Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
 
 **Note:** If you want to save reports via the `--file` parameter, make sure to save them in `/root` or another 
-mounted directory that you have access to on your host machine. Take a look at the [Docker documentation](https://docs.docker.com/engine/tutorials/dockervolumes/) about how Docker handles data and volumes.
+mounted directory that you have access to on your host machine. Take a look at the [Docker documentation](https://docs.docker.com/engine/tutorials/dockervolumes/) about how Dopcker handles data and volumes.
 
 ## commands
 
