@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require("os");
+const xdgBaseDir = require('xdg-basedir');
 const config = require('./config');
 const yaml = require('read-yaml');
 const hash = require('hash-sum');
@@ -84,6 +85,10 @@ class fileConfig extends config {
     }
 
     assertGlobalConfig() {
+        if(!fs.existsSync(this.globalDir) && fs.existsSync(this.oldGlobalDir)) {
+            fs.renameSync(this.oldGlobalDir, this.globalDir);
+        }
+
         if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0750', true);
         if (!fs.existsSync(this.frameDir)) fs.mkdirSync(this.frameDir, '0750', true);
         if (!fs.existsSync(this.cacheDir)) fs.mkdirSync(this.cacheDir, '0750', true);
@@ -114,8 +119,12 @@ class fileConfig extends config {
         return '.gtt.yml';
     }
 
-    get globalDir() {
+    get oldGlobalDir() {
         return Fs.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.gtt');
+    }
+
+    get globalDir() {
+        return Fs.join(xdgBaseDir.data, '.gtt');
     }
 
     get frameDir() {

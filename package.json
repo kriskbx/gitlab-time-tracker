@@ -48,6 +48,7 @@
     "request-promise-native": "^1.0.4",
     "tempfile": "^2.0.0",
     "underscore": "^1.9.1",
+    "xdg-basedir": "^3.0.0",
     "xlsx": "^0.13.5"
   },
   "devDependencies": {

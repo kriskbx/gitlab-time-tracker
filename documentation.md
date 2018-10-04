@@ -37,7 +37,7 @@ yarn global add gitlab-time-tracker --prefix /usr/local
 
 Run the config command to create a config file and open it in your default editor.
 In linux terminal, you must set your preferred editor in the environment. For example, use `export EDITOR=vim` to edit the files with vim (put this in `.bashrc` or similar to have it always configured).
-If nothing happens, open the file manually: `~/.gtt/config.yml` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
+If nothing happens, open the file manually: `~/.local/share/.gtt` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
 
 ```shell
 gtt config
