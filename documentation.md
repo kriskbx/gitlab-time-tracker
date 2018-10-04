@@ -27,11 +27,13 @@
 
 ## installation
 
-Install the gtt command line interface using yarn:
+Install the gtt command line interface using yarn: 
 
 ```shell
 yarn global add gitlab-time-tracker --prefix /usr/local
 ```
+
+... or download a compiled binary from [here](https://github.com/kriskbx/gitlab-time-tracker/releases) and put it into your `PATH`.
 
 Run the config command to create a config file and open it in your default editor.
 In linux terminal, you must set your preferred editor in the environment. For example, use `export EDITOR=vim` to edit the files with vim (put this in `.bashrc` or similar to have it always configured).
