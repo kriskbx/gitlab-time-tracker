@@ -34,6 +34,7 @@ program
     .option('--today', 'ignores --from and --to and queries entries for today')
     .option('--this_week', 'ignores --from and --to and queries entries for this week')
     .option('--this_month', 'ignores --from and --to and queries entries for this month')
+    .option('--last_month', 'ignores --from and --to and queries entries for last month')
     .option('-c --closed', 'include closed issues')
     .option('-u --user <user>', 'only query times from the given user')
     .option('-m --milestone <milestone>', 'include issues from the given milestone')
@@ -132,6 +133,10 @@ if (program.this_month)
     config
         .set('from', moment().startOf('month'))
         .set('to', moment().endOf('month'));
+if (program.last_month)
+    config
+        .set('from', moment().subtract(1, 'month').startOf('month'))
+        .set('to', moment().subtract(1, 'month').endOf('month'));
 
 Cli.quiet = config.get('quiet');
 Cli.verbose = config.get('_verbose');

@@ -296,6 +296,7 @@ There are some quick shorthands:
 gtt report --today
 gtt report --this_week
 gtt report --this_month
+gtt report --last_month
 ```
 
 #### Include closed issues/merge requests
