@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-const version = '1.7.29';	
+const packageJson = require('../package.json');
+
+const version = packageJson.version;
 const program = require('commander');
 
 program
