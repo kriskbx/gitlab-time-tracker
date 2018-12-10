@@ -14,13 +14,21 @@
     "test": "NODE_ENV=test mocha 'spec/**/*.spec.js'",
     "cover": "istanbul cover _mocha $(find ./spec -name \"*.spec.js\")",
     "coveralls": "yarn run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
-    "build": "pkg -o out/gtt -t node10-linux-x64,node10-macos-x64,node10-win-x64 src/gtt.js"
+    "build": "pkg src/gtt.js -o out/gtt -c package.json"
   },
   "bin": {
     "gtt": "src/gtt.js"
   },
   "engines": {
     "node": ">=6.11"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js",
+    "targets": [
+      "node10-linux-x64",
+      "node10-macos-x64",
+      "node10-win-x64"
+    ]
   },
   "author": "kriskbx",
   "license": "GPL-2.0",
