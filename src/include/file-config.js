@@ -23,6 +23,7 @@ class fileConfig extends config {
         this.data = Object.assign(this.data, this.localExists() ? this.parseLocal() : this.parseGlobal());
         this._dump = {};
         this.cache = {
+            delete: this._cacheDelete,
             get: this._cacheGet,
             set: this._cacheSet,
             dir: this.cacheDir
