@@ -8,12 +8,18 @@ const Owner = require('./models/owner');
 
 program
     .option('-p --proxy <proxy>', 'use a proxy server with the given url')
+    .option('--url <url>', 'URL to GitLabs API')
+    .option('--token <token>', 'API access token')
+    .option('--insecure', 'don\'t check certificates')
     .option('--verbose', 'show verbose output')
     .parse(process.argv);
 
 Cli.verbose = program.verbose;
 
 let config = new Config(process.cwd())
+        .set('url', program.url)
+        .set('token', program.token)
+        .set('insecure', program.insecure)
         .set('proxy', program.proxy);
     tasks = new Tasks(config),
     owner = new Owner(config);

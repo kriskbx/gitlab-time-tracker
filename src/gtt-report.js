@@ -29,27 +29,31 @@ function collect(val, arr) {
 // set options
 program
     .arguments('[project] [ids]')
+    .option('-e --type <type>', 'specify the query type: project, user, group')
+    .option('--subgroups', 'include sub groups')
+    .option('--url <url>', 'URL to GitLabs API')
+    .option('--token <token>', 'API access token')
+    .option('-p --proxy <proxy>', 'use a proxy server with the given url')
+    .option('--insecure', 'don\'t check certificates')
     .option('-f --from <from>', 'query times that are equal or greater than the given date')
     .option('-t --to <to>', 'query times that are equal or smaller than the given date')
     .option('--today', 'ignores --from and --to and queries entries for today')
     .option('--this_week', 'ignores --from and --to and queries entries for this week')
     .option('--this_month', 'ignores --from and --to and queries entries for this month')
     .option('-c --closed', 'include closed issues')
-    .option('-u --user <user>', 'only query times from the given user')
     .option('-m --milestone <milestone>', 'include issues from the given milestone')
+    .option('--hours_per_day <hours>', 'hours per day for human readable time formats')
+    .option('-u --user <user>', 'only query times from the given user')
     .option('-q --query <query>', 'query the given data types: issues, merge_requests', collect, null)
-    .option('-e --type <type>', 'specify the query type: project, user, group')
     .option('-r --report <report>', 'include in the report: stats, issues, merge_requests, records', collect, null)
     .option('-o --output <output>', 'use the given output')
     .option('-l --file <file>', 'save report to the given file')
-    .option('--subgroups', 'include sub groups')
     .option('--include_by_labels <labels>', 'only include issues that have the given labels', collect, null)
     .option('--exclude_by_labels <labels>', 'exclude issues that have the given labels', collect, null)
     .option('--include_labels <labels>', 'only include the given labels in the report', collect, null)
     .option('--exclude_labels <labels>', 'exclude the given labels in the report', collect, null)
     .option('--date_format <date>', 'use the given date format in the report', collect, null)
     .option('--time_format <time>', 'use the given time format in the report')
-    .option('--hours_per_day <hours>', 'hours per day for human readable time formats')
     .option('--no_headlines', 'hide headlines in the report')
     .option('--no_warnings', 'hide warnings in the report')
     .option('--record_columns <columns>', 'include the given columns in the record part of the report', collect, null)
@@ -59,7 +63,6 @@ program
     .option('--quiet', 'only output report')
     .option('--verbose', 'show verbose output')
     .option('--show_without_times', 'show issues/merge requests without time records')
-    .option('-p --proxy <proxy>', 'use a proxy server with the given url')
     .option('--from_dump <file>', 'instead of querying gitlab, use data from the given dump file')
     .parse(process.argv);
 
@@ -87,6 +90,9 @@ if (program.output === "dump") {
 
 // overwrite config with args and opts
 config
+    .set('url', program.url)
+    .set('token', program.token)
+    .set('insecure', program.insecure)
     .set('project', cli.project())
     .set('iids', cli.iids())
     .set('from', program.from)
