@@ -19,6 +19,9 @@
   "bin": {
     "gtt": "src/gtt.js"
   },
+  "files": [
+    "src/*"
+  ],
   "engines": {
     "node": ">=6.11"
   },
