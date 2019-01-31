@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 require('app-module-path').addPath(__dirname);
 
-const version = '1.7.33';
+const version = '1.7.34';
 const program = require('commander');
 
 program
