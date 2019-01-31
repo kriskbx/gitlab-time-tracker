@@ -99,6 +99,13 @@ class fileConfig extends config {
         if (!this.localExists()) fs.appendFileSync(this.local, '');
     }
 
+    _cacheDelete(key) {
+        let file = Fs.join(this.dir, hash(key));
+        if (!fs.existsSync(file)) return false;
+
+        return fs.unlinkSync(file);
+    }
+
     _cacheGet(key) {
         let file = Fs.join(this.dir, hash(key));
         if (!fs.existsSync(file)) return false;
