@@ -463,9 +463,9 @@ commander@^2.14.1:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
-commander@^2.16.0:
+commander@kriskbx/commander.js:
   version "2.19.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
+  resolved "https://codeload.github.com/kriskbx/commander.js/tar.gz/2275da95973c27e40e13a4195768947aa39672d0"
 
 commander@~2.14.1:
   version "2.14.1"
