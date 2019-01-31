@@ -1,6 +1,6 @@
 FROM node:8.2.1-alpine
 
-ENV GTT_VERSION 1.7.34
+ENV GTT_VERSION 1.7.35
 
 RUN yarn global add --prefix /usr/local "gitlab-time-tracker@$GTT_VERSION"
 
