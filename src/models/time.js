@@ -29,6 +29,11 @@ class time {
         this._date = date;
         this.parent = parent;
         this.config = config;
+
+        if(!timeString) {
+            return;
+        }
+
         this.seconds = time.parse(timeString, this._hoursPerDay, this._daysPerWeek, this._weeksPerMonth);
     }
 

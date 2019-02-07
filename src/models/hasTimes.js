@@ -82,8 +82,9 @@ class hasTimes extends Base {
             if(subMatch && subMatch[2]) created = moment(subMatch[2]);
 
             // create a time string and a time object
-            let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent, this.config.get('hoursPerDay'))}`);
-            let time = new Time(timeString, created, note, this, this.config);
+            let timeString = match ? match[1] : (subMatch ? `-${subMatch[1]}` : `-${Time.toHumanReadable(timeSpent)}`);
+            let time = new Time(null, created, note, this, this.config);
+            time.seconds = Time.parse(timeString, 8, 5, 4);
 
             // add to total time spent
             totalTimeSpent += time.seconds;
