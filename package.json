@@ -55,6 +55,7 @@
     "read-yaml": "^1.1.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.4",
+    "shelljs": "^0.8.3",
     "tempfile": "^2.0.0",
     "underscore": "^1.9.1",
     "xdg-basedir": "^3.0.0",

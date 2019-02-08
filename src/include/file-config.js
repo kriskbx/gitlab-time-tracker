@@ -1,4 +1,5 @@
 const fs = require('fs');
+const shell = require('shelljs');
 const path = require('path');
 const os = require("os");
 const xdgBaseDir = require('xdg-basedir');
@@ -90,9 +91,11 @@ class fileConfig extends config {
             fs.renameSync(this.oldGlobalDir, this.globalDir);
         }
 
-        if (!fs.existsSync(this.globalDir)) fs.mkdirSync(this.globalDir, '0750', true);
-        if (!fs.existsSync(this.frameDir)) fs.mkdirSync(this.frameDir, '0750', true);
-        if (!fs.existsSync(this.cacheDir)) fs.mkdirSync(this.cacheDir, '0750', true);
+
+
+        if (!fs.existsSync(this.globalDir)) shell.mkdir('-p', this.globalDir);
+        if (!fs.existsSync(this.frameDir)) shell.mkdir('-p', this.frameDir);
+        if (!fs.existsSync(this.cacheDir)) shell.mkdir('-p', this.cacheDir);
         if (!fs.existsSync(this.global)) fs.appendFileSync(this.global, '');
     }
 
