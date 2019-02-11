@@ -71,7 +71,7 @@ class issue extends hasTimes {
     }
 
     get closed() {
-        return !!this.data.closed;
+        return this.data.state === 'closed';
     }
 
     get updated_at() {
