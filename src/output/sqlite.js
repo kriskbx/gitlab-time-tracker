@@ -29,11 +29,11 @@ const COLUMNS = {
  * @returns {string}
  */
 function getGeneralColumnType(columnName) {
-    if(['iid'].includes(columnName)) {
+    if(['id'].includes(columnName)) {
         return 'INTEGER PRIMARY KEY';
     }
 
-    if(['id', 'project_id'].includes(columnName)) {
+    if(['iid', 'project_id'].includes(columnName)) {
         return 'INTEGER';
     }
 
