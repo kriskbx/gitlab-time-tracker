@@ -138,7 +138,7 @@ class SqliteDatabaseAbstraction {
      *
      * @param name
      * @param columnNameTypes
-     * @returns {Promise<any>}
+     * @returns {Promise<void>}
      */
     async createTable(name, columnNameTypes) {
         await new Promise((resolve, reject) => {
@@ -226,8 +226,8 @@ class Sqlite extends Base {
     async provisionDatabase() {
         await this.db.open();
 
-        for(const table of this.tables) {
-            await this.db.buildTable(table[1]);
+        for(const table of this.tables.values()) {
+            await this.db.buildTable(table);
         }
 
         if (this.config.get('report').includes('stats')) {
