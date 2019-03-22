@@ -13,6 +13,8 @@ const Cli = require('./../include/cli');
 const TABLE_ISSUES = 'issues';
 const TABLE_MERGE_REQUESTS = 'merge_requests';
 const TABLE_TIMES = 'times';
+const TABLE_LABELS = 'labels';
+const TABLE_LABEL_GROUP = 'label_group';
 
 const COLUMNS = {
     [TABLE_ISSUES]: 'issueColumns',
@@ -33,8 +35,8 @@ function getGeneralColumnType(columnName) {
         return 'INTEGER PRIMARY KEY';
     }
 
-    if(['iid', 'project_id'].includes(columnName)) {
-        return 'INTEGER';
+    if(['iid', 'project_id', 'gid'].includes(columnName)) {
+        return 'INTEGER NOT NULL';
     }
 
     if(['spent', 'total_spent', 'total_estimate', 'time'].includes(columnName)) {
@@ -43,6 +45,14 @@ function getGeneralColumnType(columnName) {
 
     if(['date', 'updated_at', 'created_at', 'due_date'].includes(columnName)) {
         return 'DATE';
+    }
+
+    if(columnName === 'label_group') {
+        return `REFERENCES ${TABLE_LABEL_GROUP}(gid)`;
+    }
+
+    if(columnName === 'label_id') {
+        return `REFERENCES ${TABLE_LABELS}(id)`;
     }
 
     // default:
@@ -175,6 +185,23 @@ class Sqlite extends Base {
         super(config, report);
         this.tables = new Map();
         this.stats = new Map();
+        this.labels = new Map();
+        this.labelGroupSerial = 0;
+        this.labelsSerial = 0;
+        this.makeDefaultTables();
+    }
+
+    makeDefaultTables() {
+        this.tables.set(TABLE_LABELS, new Table(
+            TABLE_LABELS,
+            ['id', 'name'],
+            []
+        ));
+        this.tables.set(TABLE_LABEL_GROUP, new Table(
+            TABLE_LABEL_GROUP,
+            ['gid', 'label_id'],
+            []
+        ));
     }
 
     makeStats() {
@@ -197,11 +224,29 @@ class Sqlite extends Base {
     }
 
     makeIssues() {
-        this.makeTable(TABLE_ISSUES, this.report.issues);
+        const table = this.makeTable(TABLE_ISSUES, this.report.issues);
+        const columns = this.config.get(COLUMNS[TABLE_ISSUES]);
+
+        if(columns.includes('labels')) {
+            columns.push('label_group');
+
+            table.records.forEach(record => {
+                record[columns.indexOf('label_group')] = this.parseLabelList(record[columns.indexOf('labels')]);
+            });
+        }
     }
 
     makeMergeRequests() {
-        this.makeTable(TABLE_MERGE_REQUESTS, this.report.mergeRequests);
+        const table = this.makeTable(TABLE_MERGE_REQUESTS, this.report.mergeRequests);
+        const columns = this.config.get(COLUMNS[TABLE_MERGE_REQUESTS]);
+
+        if(columns.includes('labels')) {
+            columns.push('label_group');
+
+            table.records.forEach(record => {
+                record[columns.indexOf('label_group')] = this.parseLabelList(record[columns.indexOf('labels')]);
+            });
+        }
     }
 
     makeRecords() {
@@ -214,7 +259,48 @@ class Sqlite extends Base {
 
         const table = new Table(name, columns, preparedData);
         this.tables.set(name,table);
+        return table;
     }
+
+
+    /**
+     * Creates a normalized labels structure from a labels comma list.
+     *
+     * @param labels {Array<string>}
+     * @returns {number | 'NULL'} id of the new label group
+     */
+    parseLabelList(labels) {
+        const serial = this.labelGroupSerial++;
+
+        if(!labels) {
+            return 'NULL';
+        }
+
+        const records = labels
+            .map(label => this.getOrCreateLabelId(label))
+            .map(labelId => [serial, labelId]);
+        this.tables.get('label_group').records.push(...records);
+
+        return serial;
+    }
+
+    /**
+     * Gets the id of a label (and create it, if it not yet exists)
+     *
+     * @param name
+     * @returns {number} id of the label
+     */
+    getOrCreateLabelId(name) {
+        if(this.labels.has(name)) {
+            return this.labels.get(name);
+        }
+
+        const serial = this.labelsSerial++;
+        this.tables.get('labels').records.push([serial, name]);
+        this.labels.set(name, serial);
+        return serial;
+    }
+
 
     toFile(file, resolve) {
         this.db = new SqliteDatabaseAbstraction(file);
