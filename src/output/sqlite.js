@@ -15,6 +15,7 @@ const TABLE_MERGE_REQUESTS = 'merge_requests';
 const TABLE_TIMES = 'times';
 const TABLE_LABELS = 'labels';
 const TABLE_LABEL_GROUP = 'label_group';
+const TABLE_MILESTONES = 'milestones';
 
 const COLUMNS = {
     [TABLE_ISSUES]: 'issueColumns',
@@ -53,6 +54,10 @@ function getGeneralColumnType(columnName) {
 
     if(columnName === 'label_id') {
         return `REFERENCES ${TABLE_LABELS}(id)`;
+    }
+
+    if(columnName === 'milestone') {
+        return `REFERENCES ${TABLE_MILESTONES}(id)`;
     }
 
     // default:
@@ -185,23 +190,49 @@ class Sqlite extends Base {
         super(config, report);
         this.tables = new Map();
         this.stats = new Map();
-        this.labels = new Map();
-        this.labelGroupSerial = 0;
-        this.labelsSerial = 0;
-        this.makeDefaultTables();
+
+        this.initSpecialTables();
     }
 
-    makeDefaultTables() {
-        this.tables.set(TABLE_LABELS, new Table(
-            TABLE_LABELS,
-            ['id', 'name'],
-            []
-        ));
-        this.tables.set(TABLE_LABEL_GROUP, new Table(
-            TABLE_LABEL_GROUP,
-            ['gid', 'label_id'],
-            []
-        ));
+    /**
+     * Initializes special tables like labels or milestones, which are extracted from the output tables.
+     */
+    initSpecialTables() {
+        const issueColumns = this.config.get(COLUMNS[TABLE_ISSUES]);
+        const mergeRequestColumns = this.config.get(COLUMNS[TABLE_MERGE_REQUESTS]);
+        if(issueColumns.includes('labels') || mergeRequestColumns.includes('labels')) {
+            /**
+             * @type {Map<string, number>} Maps Labels to label group ids.
+             */
+            this.labels = new Map();
+            this.labelGroupSerial = 0;
+            this.labelsSerial = 0;
+
+            this.tables.set(TABLE_LABELS, new Table(
+                TABLE_LABELS,
+                ['id', 'name'],
+                []
+            ));
+            this.tables.set(TABLE_LABEL_GROUP, new Table(
+                TABLE_LABEL_GROUP,
+                ['gid', 'label_id'],
+                []
+            ));
+        }
+
+        if(issueColumns.includes('milestone') || mergeRequestColumns.includes('milestone')) {
+            /**
+             * @type {Map<string, number>} Maps Milestones to ids
+             */
+            this.milestones = new Map();
+            this.milestonesSerial = 0;
+
+            this.tables.set(TABLE_MILESTONES, new Table(
+                TABLE_MILESTONES,
+                ['id', 'name'],
+                []
+            ));
+        }
     }
 
     makeStats() {
@@ -226,6 +257,13 @@ class Sqlite extends Base {
     makeIssues() {
         const table = this.makeTable(TABLE_ISSUES, this.report.issues);
         const columns = this.config.get(COLUMNS[TABLE_ISSUES]);
+
+        if(columns.includes('milestone')) {
+            table.records.forEach(record => {
+                const columnIndex = columns.indexOf('milestone');
+                record[columnIndex] = this.parseMilestone(record[columnIndex]);
+            });
+        }
 
         if(columns.includes('labels')) {
             columns.push('label_group');
@@ -262,24 +300,38 @@ class Sqlite extends Base {
         return table;
     }
 
+    /**
+     * Creates a normalized table for milestones.
+     *
+     * @param milestone {string | number} Name of the milestone (or 0 if empty)
+     * @returns {number | null} ID of the milestone record.
+     */
+    parseMilestone(milestone) {
+        if(milestone === 0) {
+            return null;
+        }
+
+        return this.getOrCreateMilestoneId(milestone);
+    }
+
 
     /**
      * Creates a normalized labels structure from a labels comma list.
      *
      * @param labels {Array<string>}
-     * @returns {number | 'NULL'} id of the new label group
+     * @returns {number | null} id of the new label group
      */
     parseLabelList(labels) {
         const serial = this.labelGroupSerial++;
 
         if(!labels) {
-            return 'NULL';
+            return null;
         }
 
         const records = labels
             .map(label => this.getOrCreateLabelId(label))
             .map(labelId => [serial, labelId]);
-        this.tables.get('label_group').records.push(...records);
+        this.tables.get(TABLE_LABEL_GROUP).records.push(...records);
 
         return serial;
     }
@@ -298,6 +350,24 @@ class Sqlite extends Base {
         const serial = this.labelsSerial++;
         this.tables.get('labels').records.push([serial, name]);
         this.labels.set(name, serial);
+        return serial;
+    }
+
+
+    /**
+     * Creates a Milestone (or fetches the existing one) and returns the ID.
+     *
+     * @param milestone {string}
+     * @returns {number}
+     */
+    getOrCreateMilestoneId(milestone) {
+        if(this.milestones.has(milestone)) {
+            return this.milestones.get(milestone);
+        }
+
+        const serial = this.milestonesSerial++;
+        this.tables.get('milestones').records.push([serial, milestone]);
+        this.milestones.set(milestone, serial);
         return serial;
     }
 
