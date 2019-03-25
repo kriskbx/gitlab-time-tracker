@@ -14,7 +14,7 @@ const TABLE_ISSUES = 'issues';
 const TABLE_MERGE_REQUESTS = 'merge_requests';
 const TABLE_TIMES = 'times';
 const TABLE_LABELS = 'labels';
-const TABLE_LABEL_GROUP = 'label_group';
+const TABLE_LABEL_GROUP = 'label_groups';
 const TABLE_MILESTONES = 'milestones';
 
 const COLUMNS = {
@@ -83,7 +83,9 @@ class Table {
     }
 }
 
-
+/**
+ * Promise-based abstraction of the SQLite database driver
+ */
 class SqliteDatabaseAbstraction {
 
     constructor(file) {
@@ -133,7 +135,8 @@ class SqliteDatabaseAbstraction {
      */
     insertRecords(table) {
         return new Promise((resolve, reject) => {
-            const stmt = this.database.prepare(`INSERT INTO ${table.name} VALUES (${table.columns.map(() => '?').join(', ')})`);
+            const query = `INSERT INTO ${table.name} VALUES (${table.columns.map(() => '?').join(', ')})`;
+            const stmt = this.database.prepare(query);
             for (const record of table.records) {
                 stmt.run(...record)
             }
@@ -249,9 +252,14 @@ class Sqlite extends Base {
                 .map(table => `SELECT ${column} FROM ${table}`)
                 .join(' UNION ALL ');
 
-            queries.push(`SELECT '${column}', SUM(${column}) FROM (${subTableQueries})`)
+            if(subTableQueries.length > 0) {
+                queries.push(`SELECT '${column}', SUM(${column}) FROM (${subTableQueries})`);
+            }
         }
-        this.stats.set('view_time_stats', queries.join(' UNION ALL '))
+
+        if(queries.length > 0) {
+            this.stats.set('view_time_stats', queries.join(' UNION ALL '));
+        }
     }
 
     makeIssues() {
