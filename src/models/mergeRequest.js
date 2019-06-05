@@ -1,4 +1,5 @@
 const hasTimes = require('./hasTimes');
+const moment = require('moment');
 
 /**
  * merge request model
