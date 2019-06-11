@@ -68,7 +68,7 @@ you can use the official [Docker image](https://hub.docker.com/r/kriskbx/gitlab-
 
 ```shell
 docker run \
-       --rm -it \
+       --rm -it -e VISUAL=vi \
        -v ~:/root \
        kriskbx/gitlab-time-tracker \
        --help
@@ -80,7 +80,7 @@ home directory inside the container. If you want to store the config in another 
  
  ```shell
  docker run \
-        --rm -it \
+        --rm -it -e VISUAL=vi \
         -v /path/to/gtt-config:/root \
         kriskbx/gitlab-time-tracker \
         --help
@@ -92,7 +92,7 @@ home directory inside the container. If you want to store the config in another 
 docker volume create gtt-config
 
 docker run \
-      --rm -it \
+      --rm -it -e VISUAL=vi \
       -v gtt-config:/root \
       kriskbx/gitlab-time-tracker \
       --help
@@ -101,7 +101,7 @@ docker run \
 I highly recommend creating an alias and adding it to your `bashrc`:
  
 ```shell
-echo "alias gtt='docker run --rm -it -v ~:/root kriskbx/gitlab-time-tracker'" >>~/.bashrc
+echo "alias gtt='docker run --rm -it -e VISUAL=vi -v ~:/root kriskbx/gitlab-time-tracker'" >>~/.bashrc
 ```
 
 Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
