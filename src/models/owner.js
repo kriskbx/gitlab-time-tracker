@@ -60,9 +60,9 @@ class owner extends Base {
             this.get(`groups`)
                 .then(response => response.json())
                 .then(groups => {
-                    if (groups.body.length === 0) return resolve();
+                    if (groups.length === 0) return resolve();
 
-                    let filtered = this._filterGroupsByParents(groups.body, this.groups.map(g => g.id));
+                    let filtered = this._filterGroupsByParents(groups, this.groups.map(g => g.id));
                     if (filtered.length === 0) return resolve();
 
                     this.groups = this.groups.concat(filtered);
@@ -126,7 +126,7 @@ class owner extends Base {
             this.get(`groups/${group.id}/projects`)
                 .then(response => response.json())
                 .then(projects => {
-                    this.projects = this.projects.concat(projects.body);
+                    this.projects = this.projects.concat(projects);
                     done();
                 })
                 .catch(e => done(e));
