@@ -39,8 +39,8 @@ class owner extends Base {
             this.get(`groups`)
                 .then(response => response.json())
                 .then(groups => {
-                    if (groups.body.length === 0) return reject('Group not found');
-                    groups = groups.body;
+                    if (groups.length === 0) return reject('Group not found');
+                    groups = groups;
 
                     let filtered = groups.filter(group => group.full_path === this.config.get('project'));
                     if (filtered.length === 0) return reject('Group not found');
