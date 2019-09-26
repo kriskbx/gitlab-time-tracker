@@ -34,7 +34,7 @@ class hasTimes extends Base {
      */
     getStats() {
         let promise = this.get(`projects/${this.data.project_id}/${this._type}/${this.iid}/time_stats`);
-        promise.then(response => response.json()).then(response => this.stats = response);
+        promise.then(response => this.stats = response.body);
 
         return promise;
     }
