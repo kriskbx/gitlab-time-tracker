@@ -21,7 +21,7 @@ class project extends Base {
      */
     make(name) {
         let promise = this.get(`projects/${encodeURIComponent(name)}`);
-        promise.then(project => this.data = project.body);
+        promise.then(response => response.json()).then(project => this.data = project);
 
         return promise;
     }
@@ -33,16 +33,18 @@ class project extends Base {
     members() {
         return new Promise((resolve, reject) => {
             this.get(`projects/${this.id}/members`)
+                .then(response => response.json())
                 .then(response => {
-                    this.projectMembers = this.projectMembers.concat(response.body);
+                    this.projectMembers = this.projectMembers.concat(response);
                     return new Promise(r => r());
                 })
                 .then(() => {
                     if (!this.data.namespace || !this.data.namespace.kind || this.data.namespace.kind !== "group") return resolve();
 
                     this.get(`groups/${this.data.namespace.id}/members`)
+                        .then(response => response.json())
                         .then(response => {
-                            this.projectMembers = this.projectMembers.concat(response.body);
+                            this.projectMembers = this.projectMembers.concat(response);
                             resolve();
                         })
                         .catch(e => reject(e));

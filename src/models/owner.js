@@ -37,6 +37,7 @@ class owner extends Base {
     getGroup() {
         return new Promise((resolve, reject) => {
             this.get(`groups`)
+                .then(response => response.json())
                 .then(groups => {
                     if (groups.body.length === 0) return reject('Group not found');
                     groups = groups.body;
@@ -57,6 +58,7 @@ class owner extends Base {
     getSubGroups() {
         return new Promise((resolve, reject) => {
             this.get(`groups`)
+                .then(response => response.json())
                 .then(groups => {
                     if (groups.body.length === 0) return resolve();
 
@@ -122,6 +124,7 @@ class owner extends Base {
     getProjectsByGroup() {
         return this.parallel(this.groups, (group, done) => {
             this.get(`groups/${group.id}/projects`)
+                .then(response => response.json())
                 .then(projects => {
                     this.projects = this.projects.concat(projects.body);
                     done();
