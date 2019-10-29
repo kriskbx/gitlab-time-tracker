@@ -49,7 +49,7 @@
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
     "node-spinner": "^0.0.4",
-    "open": "^0.0.5",
+    "open": "^6.0.0",
     "progress": "^2.0.0",
     "prompt": "^1.0.0",
     "read-yaml": "^1.1.0",
