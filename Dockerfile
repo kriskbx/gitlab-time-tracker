@@ -7,5 +7,5 @@ WORKDIR /pwd
 RUN yarn global add --prefix /usr/local "gitlab-time-tracker@$GTT_VERSION"
 
 VOLUME ["/root", "/pwd"]
-ENTRYPOINT ["gtt", ""]
+ENTRYPOINT ["gtt"]
 CMD ["--help"]
