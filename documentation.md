@@ -70,12 +70,13 @@ you can use the official [Docker image](https://hub.docker.com/r/kriskbx/gitlab-
 docker run \
        --rm -it \
        -v ~:/root \
+       -v $(pwd):/pwd \
        kriskbx/gitlab-time-tracker \
        --help
 ```
 
 `--rm` removes the container after running, `-it` makes it interactive, `-v ~:/root` mounts your home directory to the
-home directory inside the container. If you want to store the config in another place, mount another directory: 
+home directory inside the container, `-v ~$(pwd):/pwd` mounts current directory inside the container to gtt be able to read local config. If you want to store the config in another place, mount another directory: 
  
  
  ```shell
