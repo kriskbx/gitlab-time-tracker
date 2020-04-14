@@ -1,6 +1,7 @@
 FROM node:8.2.1-alpine
 
 ENV GTT_VERSION 1.7.39
+ENV EDITOR vi
 
 WORKDIR /pwd
 
