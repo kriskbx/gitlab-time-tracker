@@ -20,7 +20,7 @@ class base {
         this._perPage = this.config ? this.config.get('_perPage') : 100;
         this._parallel = this.config ? this.config.get('_parallel') : 4;
         this._proxy = this.config && this.config.get('proxy') ? this.config.get('proxy') : undefined;
-        this._insecure = this.config && this.config.get('unsecure') ? this.config.get('unsecure') : false;
+        this._insecure = this.config && this.config.get('insecure') ? this.config.get('insecure') : false;
     }
 
     /**
