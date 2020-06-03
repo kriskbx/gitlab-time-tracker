@@ -37,9 +37,10 @@ class owner extends Base {
     getGroup() {
         return new Promise((resolve, reject) => {
             this.get(`groups`)
+                .then(response => response.json())
                 .then(groups => {
-                    if (groups.body.length === 0) return reject('Group not found');
-                    groups = groups.body;
+                    if (groups.length === 0) return reject('Group not found');
+                    groups = groups;
 
                     let filtered = groups.filter(group => group.full_path === this.config.get('project'));
                     if (filtered.length === 0) return reject('Group not found');
@@ -57,10 +58,11 @@ class owner extends Base {
     getSubGroups() {
         return new Promise((resolve, reject) => {
             this.get(`groups`)
+                .then(response => response.json())
                 .then(groups => {
-                    if (groups.body.length === 0) return resolve();
+                    if (groups.length === 0) return resolve();
 
-                    let filtered = this._filterGroupsByParents(groups.body, this.groups.map(g => g.id));
+                    let filtered = this._filterGroupsByParents(groups, this.groups.map(g => g.id));
                     if (filtered.length === 0) return resolve();
 
                     this.groups = this.groups.concat(filtered);
@@ -122,8 +124,9 @@ class owner extends Base {
     getProjectsByGroup() {
         return this.parallel(this.groups, (group, done) => {
             this.get(`groups/${group.id}/projects`)
+                .then(response => response.json())
                 .then(projects => {
-                    this.projects = this.projects.concat(projects.body);
+                    this.projects = this.projects.concat(projects);
                     done();
                 })
                 .catch(e => done(e));

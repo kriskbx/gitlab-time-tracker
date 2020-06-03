@@ -1,5 +1,3 @@
-const request = require('request-promise-native');
-const url = require('url');
 const async = require('async');
 const crypto = require('crypto');
 
@@ -36,9 +34,10 @@ class base {
         data.private_token = this.token;
 
         return new Promise((resolve, reject) => {
-            request.post(`${this.url}${path}`, {
+            fetch(`${this.url}${path}`, {
+                method: 'POST',
                 json: true,
-                body: data,
+                body: JSON.stringify(data),
                 insecure: this._insecure,
                 proxy: this._proxy,
                 resolveWithFullResponse: true,
@@ -67,7 +66,7 @@ class base {
         path += `&page=${page}&per_page=${perPage}`;
 
         return new Promise((resolve, reject) => {
-            request(`${this.url}${path}`, {
+            fetch(`${this.url}${path}`, {
                 json: true,
                 insecure: this._insecure,
                 proxy: this._proxy,
@@ -95,15 +94,17 @@ class base {
             let collect = [];
 
             this.get(path, 1, perPage).then(response => {
-                response.body.forEach(item => collect.push(item));
-                let pages = parseInt(response.headers['x-total-pages']);
-
-                if (pages === 1) return resolve(collect);
-
-                let tasks = base.createGetTasks(path, pages, 2, perPage);
-                this.getParallel(tasks, collect, runners).then(() => {
-                    resolve(collect);
-                }).catch(error => reject(error));
+                response.json().then(data => {
+                    data.forEach(item => collect.push(item));
+                    let pages = parseInt(response.headers['x-total-pages']);
+    
+                    if (pages === 1) return resolve(collect);
+    
+                    let tasks = base.createGetTasks(path, pages, 2, perPage);
+                    this.getParallel(tasks, collect, runners).then(() => {
+                        resolve(collect);
+                    }).catch(error => reject(error));
+                })
             }).catch(err => reject(err));
         });
     }
@@ -134,8 +135,10 @@ class base {
      */
     getParallel(tasks, collect = [], runners = this._parallel) {
         return this.parallel(tasks, (task, done) => {
-            this.get(task.path, task.page, task.perPage).then((response) => {
-                response.body.forEach(item => collect.push(item));
+            this.get(task.path, task.page, task.perPage)                
+                .then(response => response.json())
+                .then(items => {
+                items.forEach(item => collect.push(item));
                 done();
             }).catch(error => done(error));
         }, runners);
