@@ -25,13 +25,13 @@ class filesystem {
     static open(file) {
         let editor = process.env.VISUAL;
 
-        if (editor || (editor = process.env.EDITOR)) {
-            return child_process.spawn(editor, [file], {
-                stdio: 'inherit'
-            });
-        } else {
-            return open(file);
+        if (!editor && !(editor = process.env.EDITOR)) {
+            editor = "vi";
         }
+
+        return child_process.spawn(editor, [file], {
+            stdio: 'inherit'
+        });
     }
 
     static join(...args) {
