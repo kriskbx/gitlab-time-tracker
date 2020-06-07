@@ -2,6 +2,7 @@ const request = require('request-promise-native');
 const url = require('url');
 const async = require('async');
 const crypto = require('crypto');
+const throttle = require('throttled-queue')(10, 1000);
 
 /**
  * base model
@@ -35,7 +36,7 @@ class base {
 
         data.private_token = this.token;
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => throttle(() => {
             request.post(`${this.url}${path}`, {
                 json: true,
                 body: data,
@@ -49,7 +50,7 @@ class base {
                 if (this.config.get('_createDump')) this.setDump(response, key);
                 resolve(response);
             }).catch(e => reject(e));
-        });
+        }));
     }
 
     /**
@@ -66,7 +67,7 @@ class base {
         path += (path.includes('?') ? '&' : '?') + `private_token=${this.token}`;
         path += `&page=${page}&per_page=${perPage}`;
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => throttle(() => {
             request(`${this.url}${path}`, {
                 json: true,
                 insecure: this._insecure,
@@ -79,7 +80,7 @@ class base {
                 if (this.config.get('_createDump')) this.setDump(response, key);
                 resolve(response);
             }).catch(e => reject(e));
-        });
+        }));
     }
 
     /**
