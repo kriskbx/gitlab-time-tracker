@@ -20,7 +20,7 @@
     "gtt": "src/gtt.js"
   },
   "engines": {
-    "node": ">=6.11"
+    "node": ">=8.17"
   },
   "pkg": {
     "scripts": "src/**/*.js",
