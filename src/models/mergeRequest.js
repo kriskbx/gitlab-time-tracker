@@ -1,4 +1,5 @@
 const hasTimes = require('./hasTimes');
+const moment = require('moment');
 
 /**
  * merge request model
@@ -73,6 +74,14 @@ class mergeRequest extends hasTimes {
 
     get created_at() {
         return moment(this.data.created_at);
+    }
+
+    get merged_at() {
+        return this.data.merged_at ? moment(this.data.merged_at): null;
+    }
+
+    get closed_at() {
+        return this.data.closed_at ? moment(this.data.closed_at): "not closed"
     }
 
     get state() {

@@ -400,7 +400,7 @@ gtt report --issue_columns=iid --issue_columns=title --issue_columns=time_userna
 
 *Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`, 
 `project_namespace`, `description`, `labels`, `milestone`, `assignee`, `author`,
-`closed`, `updated_at`, `created_at`, `due_date`, `state`, `spent`, `total_spent`, `total_estimate`*
+`closed`, `updated_at`, `created_at`, `closed_at`, `due_date`, `state`, `spent`, `total_spent`, `total_estimate`*
 
 *You can also include columns that show the total time spent by a specific user 
 by following this convention: `time_username`*
@@ -413,7 +413,7 @@ gtt report --merge_request_columns=iid --merge_request_columns=title --merge_req
 
 *Note: Available columns to choose from: `id`, `iid`, `title`, `project_id`,
 `project_namespace`, `description`, `labels`, `milestone`, `assignee`, `author`,
-`updated_at`, `created_at`, `state`, `spent`, `total_spent`, `total_estimate`*
+`updated_at`, `created_at`, `closed_at`, `merged_at`, `state`, `spent`, `total_spent`, `total_estimate`*
 
 *You can also include columns that show the total time spent by a specific user 
 by following this convention: `time_username`*
