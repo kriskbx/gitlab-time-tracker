@@ -2,7 +2,9 @@
 
 ## How to test the basic functions of gtt
 
-Create a new project on GitLab if you haven't done so already and write down the project path. e.g. `kriskbx/example-project`. To test groups and subgroups, create a new group with at least one subgroup. Add a new project to both the parent group (e.g. `example-group`) and the subgroup (e.g. `example-group/example-subgroup`) and write down the paths of all the projects and groups. Create at least two issues (write down their id e.g. `42`, `43`) and one merge request (e.g. `13`) in all projects. Then run the following basic commands and check that they work as expected:
+Create a new project on GitLab if you haven't done so already and write down the project path. e.g. `kriskbx/example-project`. To test groups and subgroups, create a new group with at least one subgroup. Add a new project to both the parent group (e.g. `example-group`) and the subgroup (e.g. `example-group/example-subgroup`) and write down the paths of all the projects and groups. Create at least two issues (write down their id e.g. `42`, `43`) and one merge request (e.g. `13`) in all projects. Or just use our public group over here: https://gitlab.com/gtt
+
+Then run the following basic commands and check that they work as expected:
 
 ```
 # Test config command
