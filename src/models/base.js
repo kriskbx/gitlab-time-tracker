@@ -117,12 +117,7 @@ class base {
      * @returns {Promise}
      */
     parallel(tasks, worker, runners = this._parallel) {
-        return new Promise((resolve, reject) => {
-            async.eachLimit(Array.from(tasks), runners, worker, error => {
-                if (error) return reject(error);
-                resolve();
-            });
-        });
+        return async.eachLimit(Array.from(tasks), runners, worker);
     }
 
     /**
