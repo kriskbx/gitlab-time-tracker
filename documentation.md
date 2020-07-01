@@ -69,40 +69,36 @@ you can use the official [Docker image](https://hub.docker.com/r/kriskbx/gitlab-
 ```shell
 docker run \
        --rm -it \
-       -v ~:/root \
-       -v $(pwd):/pwd \
+       -v ~/.local/share/.gtt/:/home/gtt/.local/share/.gtt \
        kriskbx/gitlab-time-tracker \
        --help
 ```
 
-`--rm` removes the container after running, `-it` makes it interactive, `-v ~:/root` mounts your home directory to the
-home directory inside the container, `-v $(pwd):/pwd` mounts current directory inside the container to gtt be able to read local config. If you want to store the config in another place, mount another directory: 
+`--rm` removes the container after running, `-it` makes it interactive, `-v ~/.local/share/.gtt/:/home/gtt/.local/share/.gtt ` mounts your gtt configuration directory in the gtt user home directory inside the container. For example, to run a report for a particular user with a date range:
+
+```shell
+sudo docker run \
+       --rm -it \
+       -v ~/.local/share/.gtt/:/home/gtt/.local/share/.gtt \
+       kriskbx/gitlab-time-tracker \
+       report "ourorganization/aproject" --user=xxxx --from="2020-04-01" --to="2020-06-30"
+```
+
+If you want to store the config in another place, mount another directory: 
  
  
  ```shell
  docker run \
         --rm -it \
-        -v /path/to/gtt-config:/root \
+        -v /path/to/gtt-config-dir:/home/gtt/.local/share/.gtt \
         kriskbx/gitlab-time-tracker \
         --help
  ```
 
-... or use a Docker volume:
-
-```shell
-docker volume create gtt-config
-
-docker run \
-      --rm -it \
-      -v gtt-config:/root \
-      kriskbx/gitlab-time-tracker \
-      --help
-```
- 
 I highly recommend creating an alias and adding it to your `bashrc`:
  
 ```shell
-echo "alias gtt='docker run --rm -it -v ~:/root -v $(pwd):/pwd kriskbx/gitlab-time-tracker'" >>~/.bashrc
+echo "alias gtt='docker run --rm -it -v -v ~/.local/share/.gtt/:/home/gtt/.local/share/.gtt kriskbx/gitlab-time-tracker'" >>~/.bashrc
 ```
 
 Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
