@@ -25,8 +25,12 @@ class filesystem {
     static open(file) {
         let editor = process.env.VISUAL;
 
-        if (!editor && !(editor = process.env.EDITOR)) {
-            editor = "vi";
+        if (editor || (editor = process.env.EDITOR)) {
+            return child_process.spawn(editor, [file], {
+                stdio: 'inherit'
+            });
+        } else {
+            return (async () => await open(file))().catch(e => console.error(e));
         }
 
         return child_process.spawn(editor, [file], {
