@@ -32,10 +32,6 @@ class filesystem {
         } else {
             return (async () => await open(file))().catch(e => console.error(e));
         }
-
-        return child_process.spawn(editor, [file], {
-            stdio: 'inherit'
-        });
     }
 
     static join(...args) {
