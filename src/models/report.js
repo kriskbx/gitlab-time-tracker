@@ -144,6 +144,38 @@ class report extends Base {
     }
 
     /**
+     * process all notes the given input
+     * @param input
+     * @param model
+     * @param advance
+     * @returns {*|Promise}
+     */
+    processNote(input, model, advance = false) {
+        let collect = [];
+
+        let promise = this.parallel(this[input], (data, done) => {
+
+            let item = new model(this.config, data);
+            item.project_namespace = this.projects[item.project_id];
+
+            item.getNotes()
+                .then(() => {
+                    collect.push(item);
+
+                    if (advance) advance();
+                    return done();
+                });
+
+
+            // collect items, query times & stats
+            collect.push();
+        });
+
+        promise.then(() => this[input] = collect);
+        return promise;
+    }
+
+    /**
      * merge another report into this report
      * @param report
      */
@@ -162,6 +194,15 @@ class report extends Base {
      */
     processIssues(advance = false) {
         return this.process('issues', Issue, advance);
+    }
+
+     /**
+     * process notes
+     * @param advance
+     * @returns {Promise}
+     */
+    processNotes(advance = false) {
+        return this.processNote('issues', Issue, advance);
     }
 
     /**
