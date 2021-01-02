@@ -1,5 +1,4 @@
 const request = require('request-promise-native');
-const url = require('url');
 const async = require('async');
 const crypto = require('crypto');
 const throttle = require('throttled-queue')(10, 1000);
