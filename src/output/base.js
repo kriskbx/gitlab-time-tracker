@@ -135,8 +135,8 @@ class base {
 
             return a.date.isBefore(b.date) ? 1 : -1;
         });
-
         this.users = _.mapObject(users, user => this.config.toHumanReadable(user, 'stats'));
+
         this.projects = _.mapObject(projects, project => this.config.toHumanReadable(project, 'stats'));
         this.stats = {
             'total estimate': this.config.toHumanReadable(totalEstimate, 'stats'),

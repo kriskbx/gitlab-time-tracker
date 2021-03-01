@@ -15,7 +15,8 @@ const Output = {
     pdf: require('./output/pdf'),
     markdown: require('./output/markdown'),
     dump: require('./output/dump'),
-    xlsx: require('./output/xlsx')
+    xlsx: require('./output/xlsx'),
+    epj: require('./output/epj')
 };
 
 // this collects options
@@ -183,13 +184,7 @@ if (config.get('output') === 'xlsx' && !config.get('file')) {
 
 // file prompt
 new Promise(resolve => {
-    if (config.get('file') && fs.existsSync(config.get('file'))) {
-        Cli.ask(`The file "${config.get('file')}" already exists. Overwrite?`)
-            .then(() => resolve())
-            .catch(error => Cli.error(`can't write file.`, error));
-    } else {
-        resolve();
-    }
+    resolve()
 })
 
 // get project(s)
