@@ -35,15 +35,23 @@ class chart extends Base {
                     { label: '[h]', data: [this.stats['total estimate'], this.stats['total spent'], this.stats['spent']], minBarLength : minBarLength},
                 ]
             },
-            "options": {
-                "responsive": true,
-                "legend": {
-                  "position": "top"
+            options: {
+                responsive: true,
+                legend: {
+                  position: "top"
                 },
-                "title": {
-                  "display": true,
-                  "text": "Project"
-                }
+                title: {
+                  display: true,
+                  text: "Project"
+                },
+                plugins: {
+                    datalabels: {
+                      display: true,
+                      align: 'bottom',
+                      backgroundColor: '#ccc',
+                      borderRadius: 3
+                    },
+                  }
               }
         });
 
@@ -60,15 +68,23 @@ class chart extends Base {
                     { label: '[h]', data: Object.values(this.users)},
                 ]
             },
-            "options": {
-                "responsive": true,
-                "legend": {
-                  "position": "top"
+            options: {
+                responsive: true,
+                legend: {
+                  position: "top"
                 },
-                "title": {
-                  "display": true,
-                  "text": "Members"
-                }
+                title: {
+                  display: true,
+                  text: "Members"
+                },
+                plugins: {
+                    datalabels: {
+                      display: true,
+                      align: 'bottom',
+                      backgroundColor: '#ccc',
+                      borderRadius: 3
+                    },
+                  }
               }
         });
 
