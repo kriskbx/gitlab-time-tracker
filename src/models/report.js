@@ -5,6 +5,7 @@ const Base = require('./base');
 const Issue = require('./issue');
 const MergeRequest = require('./mergeRequest');
 const Project = require('./project');
+const Milestone = require('./milestone')
 
 /**
  * report model
@@ -23,6 +24,7 @@ class report extends Base {
 
         this.issues = [];
         this.mergeRequests = [];
+        this.milestones = [];
     }
 
     /**
@@ -95,6 +97,13 @@ class report extends Base {
         return promise;
     }
 
+    getMilestones(){
+        let promise = this.all(`projects/${this.project.id}/milestones`);
+        promise.then(milestones => this.milestones = milestones);
+
+        return promise;
+    }
+
     /**
      * filter empty
      * @param issues
@@ -153,6 +162,7 @@ class report extends Base {
         if (!this.members) this.members = [];
         this.members = this.members.concat(report.members ? report.members : []);
         this.projects = Object.assign(this.projects, report.projects);
+        this.milestones = this.milestones.concat(report.milestones);
     }
 
     /**
@@ -171,6 +181,15 @@ class report extends Base {
      */
     processMergeRequests(advance = false) {
         return this.process('mergeRequests', MergeRequest, advance);
+    }
+
+    /**
+     * process merge requests
+     * @param advance
+     * @return {Promise}
+     */
+    processMilestones(advance = false) {
+        return this.process('milestones', Milestone, advance);
     }
 }
 
