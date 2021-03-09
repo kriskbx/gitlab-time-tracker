@@ -1,9 +1,5 @@
-const _ = require('underscore');
-
-const Table = require('markdown-table');
 const Base = require('./base');
 const ChartJsImage = require('chartjs-to-image');
-const Time = require('./../models/time');
 
 const format = {
     headline: h => `\n## ${h}\n`,
@@ -60,6 +56,10 @@ class chart extends Base {
 
     getMemeberLink() {
         const memberStats = new ChartJsImage();
+        let milestones = {}
+        this.report.milestones.forEach(milestone => {
+            milestones[milestone.title] = milestone.stats;
+        })
         memberStats.setConfig({
             type: 'bar',  
             data: { 
@@ -89,6 +89,40 @@ class chart extends Base {
         });
 
         return memberStats.getUrl();
+    }
+
+    getMilestoneLink(){
+        const memberStats = new ChartJsImage();
+        memberStats.setConfig({
+            type: 'bar',
+            data: {
+                labels: Object.keys(this.users),
+                datasets: [
+                    { label: '[h]', data: Object.values(this.users)},
+                ]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: "top"
+                },
+                title: {
+                    display: true,
+                    text: "Members"
+                },
+                plugins: {
+                    datalabels: {
+                        display: true,
+                        align: 'bottom',
+                        backgroundColor: '#ccc',
+                        borderRadius: 3
+                    },
+                }
+            }
+        });
+
+        return memberStats.getUrl();
+
     }
 
     makeStats() {}

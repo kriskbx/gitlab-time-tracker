@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const moment = require('moment');
 
 const hasTimes = require('./hasTimes');
@@ -13,8 +12,8 @@ class milestone extends hasTimes {
         this.data = data;
         this.stats = {
             spent : 0,
-            total_spent : 0,
-            time_estimate : 0
+            time_estimate : 0,
+            total_time_spent : 0
         }
     }
 
@@ -86,12 +85,12 @@ class milestone extends hasTimes {
         return this.stats ? this.config.toHumanReadable(this.stats.spent, this._type) : null;
     }
 
-    get total_spent() {
-        return this.stats ? this.config.toHumanReadable(this.stats.total_spent, this._type) : null;
+    get time_estimate() {
+        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this._type) : null;
     }
 
     get total_estimate() {
-        return this.stats ? this.config.toHumanReadable(this.stats.time_estimate, this._type) : null;
+        return this.stats ? this.config.toHumanReadable(this.stats.total_estimate, this._type) : null;
     }
 
     get _type() {
@@ -103,12 +102,12 @@ class milestone extends hasTimes {
     }
 
     getIssues(){
-        let promise = new Promise(resolve => {
+        return new Promise(resolve => {
             this.get(`projects/${encodeURIComponent(this.project_id)}/issues/?milestone=${this.title}`)
                 .then(data => data.body)
                 .then(rawIssues => {
                     let issues = []
-                    rawIssues.forEach(data =>  {
+                    rawIssues.forEach(data => {
                         let issue = new Issue(this.config, data)
                         issues.push(issue)
                     })
@@ -116,25 +115,24 @@ class milestone extends hasTimes {
                     resolve()
                 })
         })
-
-        return promise
     }
 
     getStats(){
-        let promise = new Promise((resolve) => {
-            this.issues.forEach(async issue => {
-                await issue.getStats()
-                this.stats.time_estimate += issue.total_estimate;
-                this.stats.total_spent += issue.total_spent;
-                this.stats.spent += issue.spent;
-            })
-            resolve()
+        return new Promise((resolve) => {
+            this.parallel(this.issues, (issue, done) => {
+                issue.getStats()
+                    .then(() => {
+                        this.stats.time_estimate += issue.stats.time_estimate;
+                        this.stats.total_time_spent += issue.stats.total_time_spent;
+                        this.stats.spent += issue.spent;
+                        return done();
+                    })
+            }).then(() => resolve())
         })
-        return promise
     }
 
     async getNotes(){
-        let promise = new Promise(async resolve => {
+        return new Promise(async resolve => {
             await this.getIssues();
             this.notes = [];
             for (const issue of this.issues) {
@@ -143,9 +141,6 @@ class milestone extends hasTimes {
             }
             resolve()
         })
-
-
-        return promise
     }
 
 }

@@ -65,6 +65,7 @@ program
     .option('--verbose', 'show verbose output')
     .option('--show_without_times', 'show issues/merge requests without time records')
     .option('--from_dump <file>', 'instead of querying gitlab, use data from the given dump file')
+    .option('--tag <tag>', 'timeperiod until this tag')
     .parse(process.argv);
 
 // init helpers
@@ -123,8 +124,10 @@ config
     .set('proxy', program.proxy)
     .set('type', program.type)
     .set('subgroups', program.subgroups)
+    .set('tag', program.tag)
     .set('_verbose', program.verbose)
     .set('_createDump', program.output === 'dump');
+
 
 // date shortcuts
 if (program.today)
@@ -228,7 +231,6 @@ new Promise(resolve => {
             });
     }))
     .then(() => Cli.out(`\r${Cli.look}  Selected projects: ${reports.reports.map(r => r.project.name.bold.blue).join(', ')}\n`))
-
     // get members and user columns
     .then(() => new Promise(resolve => {
         if (!config.get('userColumns')) return resolve();

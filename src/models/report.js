@@ -1,6 +1,3 @@
-const _ = require('underscore');
-const moment = require('moment');
-
 const Base = require('./base');
 const Issue = require('./issue');
 const MergeRequest = require('./mergeRequest');
@@ -169,7 +166,7 @@ class report extends Base {
      * process issues
      * @param advance
      * @returns {Promise}
-     */
+     */0
     processIssues(advance = false) {
         return this.process('issues', Issue, advance);
     }
