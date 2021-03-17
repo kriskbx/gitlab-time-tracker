@@ -286,23 +286,6 @@ new Promise(resolve => {
             .then(() => resolve());
     }))
 
-    // get milestones
-    .then(() => new Promise(resolve => {
-        if (!config.get('query').includes('milestones')) return resolve();
-
-        Cli.list(`${Cli.fetch}  Fetching milestones`);
-
-        reports
-            .forEach((report, done) => {
-                report.getMilestones()
-                    .catch(error => done(error))
-                    .then(() => done());
-            })
-            .catch(error => Cli.x(`could not fetch milestones.`, error))
-            .then(() => Cli.mark())
-            .then(() => resolve());
-    }))
-
     // merge reports
     .then(() => new Promise(resolve => {
         Cli.list(`${Cli.merge}  Merging reports`);
@@ -336,17 +319,6 @@ new Promise(resolve => {
         master.processMergeRequests(() => Cli.advance())
             .then(() => Cli.mark())
             .catch(error => Cli.x(`could not process merge requests.`, error))
-            .then(() => resolve());
-    }))
-
-    // process milestones
-    .then(() => new Promise(resolve => {
-        if (!config.get('query').includes('milestones') || master.milestones.length === 0) return resolve();
-
-        Cli.bar(`${Cli.process}️️  Processing milestones`, master.milestones.length);
-        master.processMilestones(() => Cli.advance())
-            .then(() => Cli.mark())
-            .catch(error => Cli.x(`could not process milestones.`, error))
             .then(() => resolve());
     }))
 
