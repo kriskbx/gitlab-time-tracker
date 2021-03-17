@@ -106,12 +106,11 @@ class milestone extends hasTimes {
             this.get(`projects/${encodeURIComponent(this.project_id)}/issues/?milestone=${this.title}`)
                 .then(data => data.body)
                 .then(rawIssues => {
-                    let issues = []
+                    this.issues = []
                     rawIssues.forEach(data => {
                         let issue = new Issue(this.config, data)
-                        issues.push(issue)
+                        this.issues.push(issue)
                     })
-                    this.issues = issues
                     resolve()
                 })
         })

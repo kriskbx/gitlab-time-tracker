@@ -1,5 +1,6 @@
 const Base = require('./base');
 const ChartJsImage = require('chartjs-to-image');
+const _ = require('underscore')
 
 const format = {
     headline: h => `\n## ${h}\n`,
@@ -54,12 +55,11 @@ class chart extends Base {
         return projectStats.getUrl()
     }
 
-    getMemeberLink() {
+    getMilestoneLink() {
         const memberStats = new ChartJsImage();
-        let milestones = {}
-        this.report.milestones.forEach(milestone => {
-            milestones[milestone.title] = milestone.stats;
-        })
+        let labels = _.pluck(this.report.milestones, 'title')
+        let stats = _.pluck(this.report.milestones, 'stats')
+
         memberStats.setConfig({
             type: 'bar',  
             data: { 
@@ -91,7 +91,7 @@ class chart extends Base {
         return memberStats.getUrl();
     }
 
-    getMilestoneLink(){
+    getMemeberLink(){
         const memberStats = new ChartJsImage();
         memberStats.setConfig({
             type: 'bar',

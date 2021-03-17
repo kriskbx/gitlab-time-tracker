@@ -40,11 +40,6 @@ class epj extends Base {
         stats += `\n`;
         stats += "\n\n![alt Memebrs](" + this.chart.getMemeberLink() + ' "Members")\n\n'
 
-        this.headline('Milestones')
-
-        stats += `\n`;s
-        stats += "\n\n![alt Milestone](" + this.chart.getMilestoneLink() + ' "Milestone")\n\n'
-
 
         this.write(stats.substr(1));
     }
