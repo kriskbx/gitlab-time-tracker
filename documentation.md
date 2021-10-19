@@ -35,6 +35,11 @@ yarn global add gitlab-time-tracker --prefix /usr/local
 
 ... or download a compiled binary from [here](https://github.com/kriskbx/gitlab-time-tracker/releases) and put it into your `PATH`.
 
+In windows, before running `gtt config`, make sure you have setup the enviornmental variable `EDITOR` correctly pointing to a text editor binary. Otherwise, you will get an error just like mentioned in [issue #96](https://github.com/kriskbx/gitlab-time-tracker/issues/96)
+
+![image](https://user-images.githubusercontent.com/46928648/137857047-6b764226-9515-4594-8256-c7cd6f004f9a.png)
+
+
 Run the config command to create a config file and open it in your default editor.
 In linux terminal, you must set your preferred editor in the environment. For example, use `export EDITOR=vim` to edit the files with vim (put this in `.bashrc` or similar to have it always configured).
 If nothing happens, open the file manually: `~/.local/share/.gtt` - on Windows: `C:\Users\YourUserName\.gtt\config.yml`
