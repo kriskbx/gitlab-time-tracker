@@ -14,7 +14,7 @@ class reportCollection extends Base {
 
     push(report) {
         this.reports.push(report);
-        if (projlist.indexOf(report.project.name) === -1 {
+        if (projlist.indexOf(report.project.name) === -1) {
             projlist.push(report.project.name);
             this.reports.push(report);
         }
