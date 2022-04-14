@@ -34,7 +34,7 @@
   "license": "GPL-2.0",
   "dependencies": {
     "app-module-path": "^2.2.0",
-    "async": "^2.6.1",
+    "async": "^3.2.2",
     "camelcase": "^4.1.0",
     "cli-cursor": "^2.1.0",
     "cli-table": "^0.3.1",
