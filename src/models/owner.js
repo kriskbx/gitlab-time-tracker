@@ -123,8 +123,7 @@ class owner extends Base {
      */
     getProjectsByGroup() {
         return this.parallel(this.groups, (group, done) => {
-            this.get(`groups/${group.id}/projects`)
-                .then(response => response.json())
+            this.all(`groups/${group.id}/projects`)
                 .then(projects => {
                     this.projects = this.projects.concat(projects);
                     done();
