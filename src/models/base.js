@@ -96,7 +96,7 @@ class base {
             this.get(path, 1, perPage).then(response => {
                 response.json().then(data => {
                     data.forEach(item => collect.push(item));
-                    let pages = parseInt(response.headers['x-total-pages']);
+                    let pages = parseInt(response.headers.get('x-total-pages'));
     
                     if (pages === 1) return resolve(collect);
     
@@ -151,7 +151,7 @@ class base {
      */
     setDump(response, key) {
         this.config.setDump(key, {
-            headers: response.headers,
+            headers: Object.fromEntries(response.headers.entries()),
             body: response.body
         });
     }
