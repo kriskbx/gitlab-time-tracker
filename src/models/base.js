@@ -94,11 +94,11 @@ class base {
             let collect = [];
 
             this.get(path, 1, perPage).then(response => {
-                let pages = response.headers.get('x-total-pages')
-
-                response.json().then(data => {
+                response.json().then(async data => {
                     data.forEach(item => collect.push(item));
     
+                    let pages = await response.headers.get('x-total-pages')
+
                     if (pages === 1) return resolve(collect);
     
                     let tasks = base.createGetTasks(path, pages, 2, perPage);
