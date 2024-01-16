@@ -94,10 +94,10 @@ class base {
             let collect = [];
 
             this.get(path, 1, perPage).then(response => {
-                response.json().then(async data => {
+                response.json().then(data => {
                     data.forEach(item => collect.push(item));
     
-                    let pages = await response.headers.get('x-total-pages')
+                    let pages = response.headers.get('x-total-pages')
 
                     if (pages === 1) return resolve(collect);
     
