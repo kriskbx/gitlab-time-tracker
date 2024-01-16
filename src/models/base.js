@@ -94,9 +94,10 @@ class base {
             let collect = [];
 
             this.get(path, 1, perPage).then(response => {
+                let pages = response.headers.get('x-total-pages')
+
                 response.json().then(data => {
                     data.forEach(item => collect.push(item));
-                    let pages = parseInt(response.headers.get('x-total-pages'));
     
                     if (pages === 1) return resolve(collect);
     
