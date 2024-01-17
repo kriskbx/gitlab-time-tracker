@@ -1,5 +1,6 @@
 const async = require('async');
 const crypto = require('crypto');
+const throttle = require('throttled-queue')(10, 1000);
 
 /**
  * base model
@@ -18,7 +19,7 @@ class base {
         this._perPage = this.config ? this.config.get('_perPage') : 100;
         this._parallel = this.config ? this.config.get('_parallel') : 4;
         this._proxy = this.config && this.config.get('proxy') ? this.config.get('proxy') : undefined;
-        this._insecure = this.config && this.config.get('unsecure') ? this.config.get('unsecure') : false;
+        this._insecure = this.config && this.config.get('insecure') ? this.config.get('insecure') : false;
     }
 
     /**
@@ -48,7 +49,7 @@ class base {
                 if (this.config.get('_createDump')) this.setDump(response, key);
                 resolve(response);
             }).catch(e => reject(e));
-        });
+        }));
     }
 
     /**
@@ -78,7 +79,7 @@ class base {
                 if (this.config.get('_createDump')) this.setDump(response, key);
                 resolve(response);
             }).catch(e => reject(e));
-        });
+        }));
     }
 
     /**
