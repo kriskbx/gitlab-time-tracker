@@ -8,6 +8,10 @@
 <a href="https://www.npmjs.com/package/gitlab-time-tracker"><img src="https://img.shields.io/npm/l/gitlab-time-tracker.svg?style=flat-square"></a>
 </p>
 
+## ⚠️ Attention
+
+This repository is not maintained anymore. If you still want to use gtt and get regular updates, I recommend checking out this fork: https://github.com/ndu2/gitlab-time-tracker
+
 ## introduction
 
 gtt is a fully featured command line interface for GitLab's time tracking feature. It monitors the time you spent on an issue or merge request locally and syncs it to GitLab. It also allows you to create reports in various formats from time tracking data stored on GitLab. **Looking for a graphical user interface? Check out the [gtt taskbar/menubar app](https://github.com/kriskbx/gitlab-time-tracker-taskbar) for Linux, Mac & Windows!**
