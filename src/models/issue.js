@@ -94,6 +94,10 @@ class issue extends hasTimes {
         return this.data.due_date ? moment(this.data.due_date): null;
     }
 
+    get closed_at() {
+        return this.data.closed_at ? moment(this.data.closed_at): null;
+    }
+
     get total_spent() {
         return this.stats ? this.config.toHumanReadable(this.stats.total_time_spent, this._type) : null;
     }
