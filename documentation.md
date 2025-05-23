@@ -69,19 +69,21 @@ you can use the official [Docker image](https://hub.docker.com/r/kriskbx/gitlab-
 ```shell
 docker run \
        --rm -it \
+       -e EDITOR=vi \
        -v ~:/root \
        -v $(pwd):/pwd \
        kriskbx/gitlab-time-tracker \
        --help
 ```
 
-`--rm` removes the container after running, `-it` makes it interactive, `-v ~:/root` mounts your home directory to the
+`--rm` removes the container after running, `-it` makes it interactive, `-e EDITOR=vi` picks `vi` as the editor inside docker to allow for `gtt config` to edit the file directly, `-v ~:/root` mounts your home directory to the
 home directory inside the container, `-v $(pwd):/pwd` mounts current directory inside the container to gtt be able to read local config. If you want to store the config in another place, mount another directory: 
  
  
  ```shell
  docker run \
         --rm -it \
+        -e EDITOR=vi \
         -v /path/to/gtt-config:/root \
         kriskbx/gitlab-time-tracker \
         --help
@@ -94,6 +96,7 @@ docker volume create gtt-config
 
 docker run \
       --rm -it \
+      -e EDITOR=vi \
       -v gtt-config:/root \
       kriskbx/gitlab-time-tracker \
       --help
@@ -102,7 +105,7 @@ docker run \
 I highly recommend creating an alias and adding it to your `bashrc`:
  
 ```shell
-echo "alias gtt='docker run --rm -it -v ~:/root -v $(pwd):/pwd kriskbx/gitlab-time-tracker'" >>~/.bashrc
+echo "alias gtt='docker run --rm -it -e EDITOR=vi -v ~:/root -v $(pwd):/pwd kriskbx/gitlab-time-tracker'" >>~/.bashrc
 ```
 
 Now you can simply write `gtt` instead of the bulky Docker command before. Try it out: `gtt --help`
