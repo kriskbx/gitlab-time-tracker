@@ -43,7 +43,7 @@ If nothing happens, open the file manually: `~/.local/share/.gtt` - on Windows: 
 gtt config
 ```
 
-Add your GitLab API url and your [GitLab API personal token](https://gitlab.com/profile/personal_access_tokens) 
+Add your GitLab API url and your [GitLab API personal token](https://gitlab.com/-/profile/personal_access_tokens) 
 to the config file and save it afterwards. **You need to activate the `api` scope when creating your access token.**
 
 ```yaml
