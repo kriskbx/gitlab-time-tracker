@@ -558,6 +558,7 @@ mergeRequestColumns:
 recordColumns:
 - user
 - iid
+- title
 - time
 
 # Add columns for each project member to issue and
