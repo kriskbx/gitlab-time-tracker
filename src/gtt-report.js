@@ -15,7 +15,8 @@ const Output = {
     pdf: require('./output/pdf'),
     markdown: require('./output/markdown'),
     dump: require('./output/dump'),
-    xlsx: require('./output/xlsx')
+    xlsx: require('./output/xlsx'),
+    sqlite: require('./output/sqlite')
 };
 
 // this collects options
@@ -179,6 +180,10 @@ if (!config.get('to').isValid()) {
 }
 if (config.get('output') === 'xlsx' && !config.get('file')) {
     Cli.error(`Cannot output an xlsx to stdout. You probably forgot to use the --file parameter`);
+}
+
+if (config.get('output') === 'sqlite' && !config.get('file')) {
+    Cli.error(`Cannot output an sqlite to stdout. You probably forgot to use the --file parameter`);
 }
 
 // file prompt
