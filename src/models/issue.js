@@ -29,6 +29,23 @@ class issue extends hasTimes {
         return promise;
     }
 
+    list(project, state, my) {
+      return new Promise((resolve, reject) => {
+        let promise;
+        const query = `scope=${my ? "assigned-to-me" : "all"}&state=${state}`;
+        if (project) {
+          promise = this.get(`projects/${encodeURIComponent(project)}/issues?${query}`);
+        } else {
+          promise = this.get(`issues/?${query}`);
+        }
+        promise.then(response => {
+          const issues = response.body.map(issue => new this.constructor(this.config, issue))
+          resolve(issues)
+        });
+        promise.catch(error => reject(error))
+      })
+    }
+
     /*
      * properties
      */
