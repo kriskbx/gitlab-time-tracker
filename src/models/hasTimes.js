@@ -5,7 +5,7 @@ const Base = require('./base');
 const Time = require('./time');
 
 const regex = /added (.*) of time spent(?: at (.*))?/i;
-const subRegex = /subtracted (.*) of time spent(?: at (.*))?/i;
+const subRegex = /deleted (.*) of spent time(?: from (.*))?/i;
 const removeRegex = /Removed time spent/i;
 
 /**
