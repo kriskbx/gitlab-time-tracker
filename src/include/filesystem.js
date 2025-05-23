@@ -30,7 +30,7 @@ class filesystem {
                 stdio: 'inherit'
             });
         } else {
-            return open(file);
+            return (async () => await open(file))().catch(e => console.error(e));
         }
     }
 
