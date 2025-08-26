@@ -1,8 +1,7 @@
 const Config = require('../include/config');
 
 const moment = require('moment-timezone');
-const Hashids = require('hashids');
-const hashids = new Hashids();
+const hashids = require('hashids/cjs')();
 
 class baseFrame {
     /**
